@@ -73,10 +73,12 @@ export default function LessonCompleteScreen({ result }: LessonCompleteScreenPro
           marginBottom: "8px",
         }}
       >
-        Lesson Complete!
+        Level Complete!
       </h1>
       <p style={{ fontSize: "18px", color: "var(--duo-text-muted)", marginBottom: "36px" }}>
-        You crushed it today! Keep the momentum going.
+        {result.skill_completed || result.next_skill_unlocked_id
+          ? "🎉 Next level unlocked on your learning path!"
+          : "You crushed it today! Keep the momentum going."}
       </p>
 
       {/* Stats Summary Grid */}

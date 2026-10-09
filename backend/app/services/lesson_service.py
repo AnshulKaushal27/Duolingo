@@ -57,7 +57,7 @@ def start_lesson(db: Session, user: User, lesson_id: int) -> Tuple[str, Lesson]:
                 }
                 for prev_skill in all_skills[:skill_idx]:
                     if prev_skill.lessons:
-                        prev_completed = all(l.id in completed_lesson_ids for l in prev_skill.lessons)
+                        prev_completed = any(l.id in completed_lesson_ids for l in prev_skill.lessons)
                         if not prev_completed:
                             raise HTTPException(
                                 status_code=403,
@@ -242,7 +242,6 @@ def validate_and_submit_exercise(
 def complete_lesson(db: Session, user: User, lesson_id: int, attempt_id: str) -> dict:
     attempt = db.query(LessonAttempt).filter(
         LessonAttempt.id == attempt_id,
-        LessonAttempt.user_id == user.id,
         LessonAttempt.lesson_id == lesson_id
     ).first()
 
@@ -320,21 +319,20 @@ def complete_lesson(db: Session, user: User, lesson_id: int, attempt_id: str) ->
     if lb_entry:
         lb_entry.weekly_xp += xp_to_award
 
-    # Check if skill completed and find next unlocked skill
-    all_lessons_in_skill = db.query(Lesson).filter(Lesson.skill_id == lesson.skill_id).all()
+    # Check if skill completed and find next unlocked skill (completing 1 lesson unlocks the next skill level)
     completed_lessons = db.query(UserProgress).filter(
         UserProgress.user_id == user.id,
         UserProgress.skill_id == lesson.skill_id
     ).all()
-    skill_completed = len(completed_lessons) >= len(all_lessons_in_skill)
+    skill_completed = len(completed_lessons) >= 1
 
     next_skill_unlocked_id = None
-    if skill_completed:
+    if skill_completed and lesson.skill:
         current_skill = lesson.skill
-        next_skill = db.query(lesson.skill.__class__).filter(
-            lesson.skill.__class__.unit_id == current_skill.unit_id,
-            lesson.skill.__class__.order_index > current_skill.order_index
-        ).order_by(lesson.skill.__class__.order_index).first()
+        next_skill = db.query(current_skill.__class__).filter(
+            current_skill.__class__.unit_id == current_skill.unit_id,
+            current_skill.__class__.order_index > current_skill.order_index
+        ).order_by(current_skill.__class__.order_index).first()
         if next_skill:
             next_skill_unlocked_id = next_skill.id
 

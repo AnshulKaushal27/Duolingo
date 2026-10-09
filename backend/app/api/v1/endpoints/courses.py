@@ -24,6 +24,9 @@ def get_course_tree(
         raise HTTPException(status_code=404, detail="Course not found")
     
     # Fetch all user completed lesson IDs for this course
+    if not user:
+        user = db.query(User).first()
+
     completed_lesson_ids = set()
     if user:
         user_progress_records = db.query(UserProgress).filter(
@@ -43,15 +46,16 @@ def get_course_tree(
             total_lessons = len(all_lessons)
             completed_in_skill = sum(1 for l in all_lessons if l.id in completed_lesson_ids)
 
-            is_completed = (completed_in_skill >= total_lessons and total_lessons > 0)
+            # Completing a lesson completes that level and unlocks the next stepping stone
+            is_completed = (completed_in_skill >= 1 and total_lessons > 0)
             
             # Determine status
             if is_completed:
                 status = "completed"
-                crowns_earned = skill.total_crowns
+                crowns_earned = max(1, min(skill.total_crowns, completed_in_skill))
             elif previous_skill_completed:
                 status = "available"
-                crowns_earned = min(skill.total_crowns, completed_in_skill)
+                crowns_earned = 0
             else:
                 status = "locked"
                 crowns_earned = 0

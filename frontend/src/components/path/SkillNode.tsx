@@ -101,10 +101,10 @@ export default function SkillNode({
           </span>
           <span style={{ fontSize: "13px", opacity: 0.9, color: isLocked ? "var(--duo-text-muted)" : "#fff" }}>
             {isCompleted
-              ? `Skill Completed! (${skill.crowns_earned}/${skill.total_crowns} Crowns)`
+              ? `Level Completed! (${skill.crowns_earned}/${skill.total_crowns} Crowns)`
               : isAvailable
-              ? `Lesson ${skill.completed_lessons + 1} of ${skill.total_lessons}`
-              : "Complete previous skills or jump ahead!"}
+              ? `Level ${skill.order_index} • Ready to Start!`
+              : "Complete previous levels to unlock!"}
           </span>
 
           {!isLocked && skill.next_lesson_id && (
