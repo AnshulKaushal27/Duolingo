@@ -126,6 +126,25 @@ export default function HeartsModal({
           {hearts === 5 ? "You have full hearts!" : `${hearts} / 5 Hearts`}
         </h3>
 
+        {hearts < 5 && (
+          <div style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+            backgroundColor: "var(--duo-surface)",
+            padding: "6px 14px",
+            borderRadius: "20px",
+            fontSize: "13px",
+            fontWeight: 800,
+            color: "var(--duo-red)",
+            marginTop: "6px",
+            border: "1px solid var(--duo-border)",
+          }}>
+            <span>⏳</span>
+            <span>Regenerates 1 heart every hour automatically</span>
+          </div>
+        )}
+
         <p style={{ color: "var(--duo-text-muted)", fontSize: "15px", margin: "12px 0 20px 0" }}>
           Hearts keep your lesson active. Make mistakes and you lose hearts. Practice or refill to keep going!
         </p>

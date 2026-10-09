@@ -88,23 +88,12 @@ function LearnContent() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "var(--duo-canvas)" }}>
+    <div className="duo-app-layout">
       {/* 1. Left Fixed Sidebar */}
       <Sidebar />
 
       {/* 2. Middle Content Feed (Serpentine Learning Path) */}
-      <main
-        style={{
-          marginLeft: "256px",
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "32px 24px 80px 24px",
-          maxWidth: "760px",
-          width: "100%",
-        }}
-      >
+      <main className="duo-main-content">
         {loading ? (
           <div style={{ padding: "60px 0", textAlign: "center" }}>
             <img src="/mascot/duo-happy.svg" alt="Loading" style={{ width: "80px", height: "80px", animation: "duoBounce 1s infinite" }} />

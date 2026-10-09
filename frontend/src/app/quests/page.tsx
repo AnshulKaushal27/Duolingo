@@ -40,21 +40,10 @@ function QuestsContent() {
   }, []);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "var(--duo-canvas)" }}>
+    <div className="duo-app-layout">
       <Sidebar />
 
-      <main
-        style={{
-          marginLeft: "256px",
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "36px 24px 80px 24px",
-          maxWidth: "680px",
-          width: "100%",
-        }}
-      >
+      <main className="duo-main-content">
         <div style={{ width: "100%", marginBottom: "32px" }}>
           <h1 style={{ fontSize: "28px", fontWeight: 900, color: "var(--duo-text)" }}>
             Daily Quests

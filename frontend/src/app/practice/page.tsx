@@ -79,7 +79,7 @@ function PracticeContent() {
   );
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "var(--duo-canvas)" }}>
+    <div className="duo-app-layout">
       <Sidebar />
 
       {/* Story Modal */}
@@ -103,17 +103,7 @@ function PracticeContent() {
         />
       )}
 
-      <main
-        style={{
-          marginLeft: "256px",
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          padding: "36px 32px 80px 32px",
-          maxWidth: "760px",
-          width: "100%",
-        }}
-      >
+      <main className="duo-main-content">
         {/* Header */}
         <div style={{ marginBottom: "24px" }}>
           <h1 style={{ fontSize: "28px", fontWeight: 900, color: "var(--duo-text-dark)" }}>

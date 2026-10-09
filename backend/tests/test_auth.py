@@ -9,18 +9,20 @@ from app.main import app
 client = TestClient(app)
 
 def test_auth_comprehensive():
-    print("--- 1. Testing Unauthenticated Access to Protected Routes ---")
+    print("--- 1. Testing Default Learner Fallback (No Cookie) ---")
     res = client.get("/api/v1/auth/me")
-    assert res.status_code == 401, f"Expected 401, got {res.status_code}"
-    print("✓ /auth/me blocked for unauthenticated request (401)")
+    assert res.status_code == 200, f"Expected 200 with default learner, got {res.status_code}"
+    assert res.json()["username"] == "alexramos"
+    print("✓ /auth/me returns default learner Alex Ramos for unauthenticated visitors (per assignment spec)")
 
     res = client.get("/api/v1/user/profile")
-    assert res.status_code == 401
-    print("✓ /user/profile blocked without session cookie (401)")
+    assert res.status_code == 200
+    assert res.json()["username"] == "alexramos"
+    print("✓ /user/profile serves default learner without cookie (200)")
 
     res = client.get("/api/v1/courses/es/tree")
-    assert res.status_code == 401
-    print("✓ /courses/es/tree blocked without session cookie (401)")
+    assert res.status_code == 200
+    print("✓ /courses/es/tree accessible without session cookie (200)")
 
     print("\n--- 2. Testing Seed User Login via Username ---")
     res = client.post("/api/v1/auth/login", json={

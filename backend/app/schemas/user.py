@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime, date
+from typing import Optional
 
 class UserBase(BaseModel):
     username: str
@@ -16,6 +17,7 @@ class UserProfile(UserBase):
     total_xp: int
     last_active_date: date
     created_at: datetime
+    next_heart_in_seconds: Optional[int] = 0
 
     class Config:
         from_attributes = True
@@ -25,3 +27,4 @@ class RefillHeartsResponse(BaseModel):
     hearts: int
     gems: int
     message: str
+    next_heart_in_seconds: Optional[int] = 0

@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from sqlalchemy.orm import Session
 from ..models import User, ActivityLog
 
@@ -27,6 +27,42 @@ def get_or_create_default_user(db: Session) -> User:
         db.refresh(user)
     return user
 
+HEART_REGEN_INTERVAL_SECONDS = 3600  # 1 hour per heart regeneration
+
+def check_and_regenerate_hearts(db: Session, user: User) -> int:
+    """Checks if time-based heart regeneration has triggered and awards hearts.
+    Returns seconds remaining until the next heart regenerates (or 0 if full).
+    """
+    if user.hearts >= user.max_hearts:
+        if user.last_heart_regenerated_at is not None:
+            user.last_heart_regenerated_at = None
+            db.commit()
+        return 0
+
+    now = datetime.utcnow()
+    if not user.last_heart_regenerated_at:
+        user.last_heart_regenerated_at = now
+        db.commit()
+        return HEART_REGEN_INTERVAL_SECONDS
+
+    elapsed = (now - user.last_heart_regenerated_at).total_seconds()
+    hearts_to_add = int(elapsed // HEART_REGEN_INTERVAL_SECONDS)
+
+    if hearts_to_add > 0:
+        user.hearts = min(user.max_hearts, user.hearts + hearts_to_add)
+        if user.hearts >= user.max_hearts:
+            user.last_heart_regenerated_at = None
+        else:
+            user.last_heart_regenerated_at += timedelta(seconds=hearts_to_add * HEART_REGEN_INTERVAL_SECONDS)
+        db.commit()
+        db.refresh(user)
+
+    if user.hearts >= user.max_hearts:
+        return 0
+
+    remaining = int(HEART_REGEN_INTERVAL_SECONDS - ((now - user.last_heart_regenerated_at).total_seconds() % HEART_REGEN_INTERVAL_SECONDS))
+    return max(1, remaining)
+
 def refill_hearts_with_gems(db: Session, user: User, cost: int = 350) -> tuple[bool, str]:
     """Refills hearts to maximum using gems."""
     if user.hearts >= user.max_hearts:
@@ -37,6 +73,7 @@ def refill_hearts_with_gems(db: Session, user: User, cost: int = 350) -> tuple[b
     
     user.gems -= cost
     user.hearts = user.max_hearts
+    user.last_heart_regenerated_at = None
     db.commit()
     db.refresh(user)
     return True, "Hearts fully refilled!"
@@ -47,6 +84,8 @@ def practice_regain_heart(db: Session, user: User) -> tuple[bool, str]:
         return False, "Hearts are already full!"
     
     user.hearts = min(user.max_hearts, user.hearts + 1)
+    if user.hearts >= user.max_hearts:
+        user.last_heart_regenerated_at = None
     db.commit()
     db.refresh(user)
     return True, "+1 Heart earned from practice!"

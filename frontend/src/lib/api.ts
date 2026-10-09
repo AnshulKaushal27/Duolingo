@@ -10,6 +10,7 @@ export interface UserProfile {
   gems: number;
   total_xp: number;
   last_active_date: string;
+  next_heart_in_seconds?: number;
 }
 
 export interface SkillStatus {

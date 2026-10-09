@@ -55,22 +55,14 @@ export default function Sidebar() {
   };
 
   return (
-    <aside
-      style={{
-        width: "256px",
-        minWidth: "256px",
-        height: "100vh",
-        position: "fixed",
-        left: 0,
-        top: 0,
-        borderRight: "2px solid var(--duo-border)",
-        backgroundColor: "var(--duo-canvas)",
-        display: "flex",
-        flexDirection: "column",
-        padding: "24px 16px",
-        zIndex: 50,
-      }}
-    >
+    <>
+      <aside
+        className="duo-sidebar-desktop"
+        style={{
+          borderRight: "2px solid var(--duo-border)",
+          backgroundColor: "var(--duo-canvas)",
+        }}
+      >
       {/* Brand Header */}
       <Link
         href="/learn"
@@ -371,5 +363,37 @@ export default function Sidebar() {
         </button>
       </div>
     </aside>
+
+    {/* Mobile Bottom Navigation Bar (< 768px viewports) */}
+    <nav className="duo-bottom-nav">
+      {NAV_ITEMS.map((item) => {
+        const isActive = pathname === item.href || (item.href === "/learn" && pathname === "/");
+        return (
+          <Link
+            key={`mobile-${item.href}`}
+            href={item.href}
+            className="duo-bottom-nav-item"
+            onClick={() => playClickSound()}
+            style={{
+              backgroundColor: isActive ? "var(--duo-blue-bg)" : "transparent",
+            }}
+          >
+            <span style={{ fontSize: "22px", lineHeight: 1 }}>{item.icon}</span>
+            <span
+              style={{
+                fontSize: "10px",
+                fontWeight: 800,
+                marginTop: "3px",
+                letterSpacing: "0.5px",
+                color: isActive ? "var(--duo-blue)" : "var(--duo-text-muted)",
+              }}
+            >
+              {item.label}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
+  </>
   );
 }

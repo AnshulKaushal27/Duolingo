@@ -40,21 +40,10 @@ function LeaderboardContent() {
   }, []);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "var(--duo-canvas)" }}>
+    <div className="duo-app-layout">
       <Sidebar />
 
-      <main
-        style={{
-          marginLeft: "256px",
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "36px 24px 80px 24px",
-          maxWidth: "680px",
-          width: "100%",
-        }}
-      >
+      <main className="duo-main-content">
         {/* League Header Card */}
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <div style={{ fontSize: "64px", marginBottom: "8px" }}>🛡️</div>

@@ -66,18 +66,49 @@ export default function RightSidebar({
 
   return (
     <>
+      {/* Mobile & Tablet Compact Top Stats Bar (< 1024px) */}
+      <header className="duo-mobile-topbar">
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <img
+            src={`/images/flags/${courseCode}.svg`}
+            alt={courseTitle}
+            style={{ width: "24px", height: "18px", borderRadius: "3px", objectFit: "cover" }}
+          />
+        </div>
+
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
+          onClick={() => playClickSound()}
+        >
+          <img src="/icons/streak-flame.svg" alt="Streak" style={{ width: "22px", height: "22px" }} />
+          <span style={{ fontWeight: 800, fontSize: "14px", color: "var(--duo-orange)" }}>{streak}</span>
+        </div>
+
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
+          onClick={() => playClickSound()}
+        >
+          <img src="/icons/gem.svg" alt="Gems" style={{ width: "22px", height: "22px" }} />
+          <span style={{ fontWeight: 800, fontSize: "14px", color: "var(--duo-blue)" }}>{gems}</span>
+        </div>
+
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
+          onClick={() => {
+            playClickSound();
+            setHeartsModalOpen(true);
+          }}
+        >
+          <img src="/icons/heart.svg" alt="Hearts" style={{ width: "22px", height: "22px" }} />
+          <span style={{ fontWeight: 800, fontSize: "14px", color: "var(--duo-red)" }}>{hearts}</span>
+        </div>
+      </header>
+
       <aside
+        className="duo-right-sidebar"
         style={{
-          width: "368px",
-          minWidth: "368px",
-          height: "100vh",
-          position: "sticky",
-          top: 0,
           padding: "20px 24px",
-          display: "flex",
-          flexDirection: "column",
           gap: "24px",
-          overflowY: "auto",
         }}
       >
         {/* Top Floating Stats Bar with Authentic Hover Dropdown Menus */}
