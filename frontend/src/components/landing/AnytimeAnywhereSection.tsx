@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import lottie, { AnimationItem } from "lottie-web";
 import { playClickSound } from "@/lib/sound";
 
@@ -9,13 +9,23 @@ export default function AnytimeAnywhereSection() {
   const animRef = useRef<AnimationItem | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [readyToShow, setReadyToShow] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   const targetFrameRef = useRef(0);
   const currentFrameRef = useRef(0);
   const rafIdRef = useRef<number | null>(null);
   const isIntersectingRef = useRef(false);
+
+  // Calculate current scroll progress based on trigger element
+  const calcScrollProgress = useCallback(() => {
+    if (!triggerRef.current) return 0;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const totalDistance = vh + rect.height;
+    const progress = (vh - rect.top) / totalDistance;
+    return Math.min(Math.max(progress, 0), 1);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -35,8 +45,28 @@ export default function AnytimeAnywhereSection() {
 
     anim.addEventListener("DOMLoaded", () => {
       if (isCancelled) return;
-      setIsLoaded(true);
-      anim.goToAndStop(0, true);
+
+      // CRITICAL: Calculate the current scroll position and jump
+      // the Lottie to the matching frame BEFORE making it visible.
+      // This prevents the "pop" from SVG (final state) -> Lottie (frame 0).
+      const currentProgress = calcScrollProgress();
+      const initialFrame = currentProgress * 450;
+
+      // Set both target and current to the same frame so the
+      // interpolation loop doesn't cause any jump
+      targetFrameRef.current = initialFrame;
+      currentFrameRef.current = initialFrame;
+      anim.goToAndStop(initialFrame, true);
+
+      // Small delay to let the browser render the Lottie SVG at the
+      // correct frame before we begin the crossfade
+      requestAnimationFrame(() => {
+        if (isCancelled) return;
+        requestAnimationFrame(() => {
+          if (isCancelled) return;
+          setReadyToShow(true);
+        });
+      });
     });
 
     // Smooth RAF loop for interpolation
@@ -44,7 +74,8 @@ export default function AnytimeAnywhereSection() {
       if (animRef.current && isIntersectingRef.current) {
         const diff = targetFrameRef.current - currentFrameRef.current;
         if (Math.abs(diff) > 0.05) {
-          currentFrameRef.current += diff * 0.15;
+          // Smooth easing factor for buttery animation
+          currentFrameRef.current += diff * 0.12;
           animRef.current.goToAndStop(currentFrameRef.current, true);
         }
       }
@@ -54,16 +85,7 @@ export default function AnytimeAnywhereSection() {
 
     // Scroll listener using trigger zone
     const handleScroll = () => {
-      if (!triggerRef.current) return;
-      const rect = triggerRef.current.getBoundingClientRect();
-      const vh = window.innerHeight;
-
-      // When trigger top is at bottom of viewport: progress = 0
-      // When trigger top is at top of viewport (or past): progress = 1
-      const totalDistance = vh + rect.height;
-      const progress = (vh - rect.top) / totalDistance;
-      const clampedProgress = Math.min(Math.max(progress, 0), 1);
-
+      const clampedProgress = calcScrollProgress();
       setScrollProgress(clampedProgress);
       targetFrameRef.current = clampedProgress * 450;
     };
@@ -93,7 +115,7 @@ export default function AnytimeAnywhereSection() {
       anim.destroy();
       animRef.current = null;
     };
-  }, []);
+  }, [calcScrollProgress]);
 
   // Compute dynamic background color: transitions from white to sky blue as user scrolls
   // Matching Duolingo screenshot where background becomes sky blue (#dcf2ff)
@@ -287,7 +309,9 @@ export default function AnytimeAnywhereSection() {
               width: "100%",
               height: "100%",
               objectFit: "contain",
-              visibility: isLoaded ? "hidden" : "visible",
+              opacity: readyToShow ? 0 : 1,
+              transition: "opacity 0.8s ease-in-out",
+              pointerEvents: "none",
             }}
           />
 
@@ -300,8 +324,8 @@ export default function AnytimeAnywhereSection() {
               gridRow: 1,
               width: "100%",
               height: "100%",
-              opacity: isLoaded ? 1 : 0,
-              transition: "opacity 0.3s ease",
+              opacity: readyToShow ? 1 : 0,
+              transition: "opacity 0.8s ease-in-out",
             }}
           />
 
