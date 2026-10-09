@@ -580,4 +580,36 @@ html, body {
   }
 }
 
+/* Companion Path Character Illustrations */
+.duo-char-illustration {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+  user-select: none;
+}
+
+.duo-char-illustration:hover {
+  transform: translateY(-4px) scale(1.04);
+}
+
+@media (max-width: 900px) {
+  .duo-char-illustration {
+    display: none !important;
+  }
+}
+
+/* Floating Scroll To Top Button */
+.duo-scroll-top-btn {
+  user-select: none;
+}
+
+.duo-scroll-top-btn:hover {
+  filter: brightness(1.08);
+}
+
+@media (max-width: 1100px) {
+  .duo-scroll-top-btn {
+    right: 20px !important;
+    bottom: 80px !important;
+  }
+}
+
 

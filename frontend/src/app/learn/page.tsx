@@ -4,6 +4,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import RightSidebar from "@/components/layout/RightSidebar";
 import UnitSection from "@/components/path/UnitSection";
+import StickyUnitHeader from "@/components/path/StickyUnitHeader";
+import ScrollToTopButton from "@/components/common/ScrollToTopButton";
+import GuidebookModal from "@/components/path/GuidebookModal";
 import { api, CourseTree, UserProfile } from "@/lib/api";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -23,6 +26,12 @@ function LearnContent() {
   const [tree, setTree] = useState<CourseTree | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeUnitNumber, setActiveUnitNumber] = useState<number>(1);
+  const [guidebookTarget, setGuidebookTarget] = useState<{
+    unitId: number;
+    unitTitle: string;
+    unitColor: string;
+  } | null>(null);
 
   // Load course tree for a given code
   const loadCourseData = useCallback(async (courseCode: string) => {
@@ -134,6 +143,51 @@ function LearnContent() {
     }
   };
 
+  // Dynamic Scroll Tracking: Detect which Unit is currently in the active viewport area
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!tree || !tree.units || tree.units.length === 0) return;
+
+      const stickyThreshold = 180; // px from top of viewport
+      let currentActive = tree.units[0].unit_number;
+
+      for (const unit of tree.units) {
+        const el = document.getElementById(`unit-section-${unit.unit_number}`);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        // If the top of this unit is at or above the threshold and its bottom is still below the threshold
+        if (rect.top <= stickyThreshold && rect.bottom > stickyThreshold) {
+          currentActive = unit.unit_number;
+          break;
+        }
+      }
+
+      setActiveUnitNumber(currentActive);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [tree]);
+
+  const handlePreviousUnit = () => {
+    if (activeUnitNumber > 1) {
+      const targetUnit = activeUnitNumber - 1;
+      const prevEl = document.getElementById(`unit-section-${targetUnit}`);
+      if (prevEl) {
+        const rect = prevEl.getBoundingClientRect();
+        const targetY = window.scrollY + rect.top - 100;
+        window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
+        return;
+      }
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const activeUnit =
+    tree?.units.find((u) => u.unit_number === activeUnitNumber) || tree?.units[0] || null;
+
   return (
     <div className="duo-app-layout">
       {/* 1. Left Fixed Sidebar */}
@@ -141,6 +195,18 @@ function LearnContent() {
 
       {/* 2. Middle Content Feed (Serpentine Learning Path) */}
       <main className="duo-main-content">
+        {/* Dynamic Sticky Unit Header (Remains fixed on top and dynamically changes as units scroll) */}
+        {!loading && activeUnit && (
+          <StickyUnitHeader
+            activeUnit={activeUnit}
+            courseCode={tree?.code || activeCourse}
+            onOpenGuidebook={(unitId, unitTitle, unitColor) => {
+              setGuidebookTarget({ unitId, unitTitle, unitColor });
+            }}
+            onPreviousUnit={handlePreviousUnit}
+          />
+        )}
+
         {loading ? (
           <div style={{ padding: "60px 0", textAlign: "center" }}>
             <img
@@ -187,6 +253,19 @@ function LearnContent() {
         onHeartsUpdated={handleHeartsUpdated}
         onCourseSwitched={handleCourseSwitched}
       />
+
+      {/* 4. Floating Scroll To Top Button */}
+      <ScrollToTopButton />
+
+      {/* 5. Guidebook Modal */}
+      {guidebookTarget && (
+        <GuidebookModal
+          unitId={guidebookTarget.unitId}
+          unitTitle={guidebookTarget.unitTitle}
+          unitColor={guidebookTarget.unitColor}
+          onClose={() => setGuidebookTarget(null)}
+        />
+      )}
     </div>
   );
 }

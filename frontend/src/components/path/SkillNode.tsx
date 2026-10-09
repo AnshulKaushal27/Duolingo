@@ -27,9 +27,9 @@ export default function SkillNode({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [showJumpModal, setShowJumpModal] = useState(false);
 
-  // Compute smooth winding serpentine horizontal offset
-  const offsetMultiplier = Math.sin((index * Math.PI) / 2);
-  const horizontalOffset = Math.round(offsetMultiplier * 54);
+  // Symmetrical winding serpentine curve: center -> right (+48px) -> left (-46px)
+  const serpentineOffsets = [0, 48, -46, 48, -46, 48];
+  const horizontalOffset = serpentineOffsets[index % serpentineOffsets.length];
 
   const isCompleted = skill.status === "completed" || skill.status === "mastered";
   const isAvailable = skill.status === "available";
@@ -57,7 +57,8 @@ export default function SkillNode({
         alignItems: "center",
         transform: `translateX(${horizontalOffset}px)`,
         position: "relative",
-        margin: "18px 0",
+        margin: "12px 0",
+        zIndex: popoverOpen ? 30 : 2,
       }}
     >
       {/* Jump Ahead Modal */}
@@ -160,29 +161,31 @@ export default function SkillNode({
 
       {/* 3D Stepping Stone Skill Button */}
       <div style={{ position: "relative" }}>
-        {/* Authentic START Speech Bubble (Matching Image 1, 3, 4) */}
+        {/* Authentic START Speech Bubble (Centered, crisp, unencumbered) */}
         {isAvailable && !popoverOpen && (
           <div
             style={{
               position: "absolute",
-              top: "-42px",
+              top: "-46px",
               left: "50%",
               transform: "translateX(-50%)",
               backgroundColor: "var(--duo-surface)",
               border: "2px solid var(--duo-border)",
-              borderRadius: "12px",
-              padding: "5px 14px",
+              borderBottom: "4px solid var(--duo-border-dark)",
+              borderRadius: "14px",
+              padding: "6px 16px",
               fontWeight: 900,
               fontSize: "13px",
               letterSpacing: "0.8px",
               color: "var(--duo-text)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.18)",
+              boxShadow: "0 6px 16px rgba(0,0,0,0.16)",
               zIndex: 10,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               pointerEvents: "none",
               animation: "duoBounce 2s ease-in-out infinite",
+              whiteSpace: "nowrap",
             }}
           >
             <span>START</span>
@@ -190,7 +193,7 @@ export default function SkillNode({
             <div
               style={{
                 position: "absolute",
-                bottom: "-6px",
+                bottom: "-7px",
                 left: "50%",
                 transform: "translateX(-50%)",
                 width: 0,
@@ -263,23 +266,6 @@ export default function SkillNode({
             <span>{icon}</span>
           )}
         </button>
-
-        {/* Floating Mascot Cameo on available node */}
-        {isAvailable && (
-          <img
-            src="/mascot/duo-happy.svg"
-            alt="Duo"
-            style={{
-              position: "absolute",
-              top: "-38px",
-              right: "-32px",
-              width: "48px",
-              height: "48px",
-              zIndex: 2,
-              animation: "duoBounce 2s infinite ease-in-out",
-            }}
-          />
-        )}
       </div>
 
       {/* Skill Title Subtitle under button */}
@@ -288,9 +274,10 @@ export default function SkillNode({
           marginTop: "12px",
           fontWeight: 800,
           fontSize: "14px",
+          lineHeight: "1.25",
           color: isLocked ? "var(--duo-text-muted)" : "var(--duo-text)",
           textAlign: "center",
-          maxWidth: "110px",
+          maxWidth: "120px",
         }}
       >
         {skill.title}

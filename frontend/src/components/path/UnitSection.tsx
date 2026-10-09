@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { UnitWithSkills } from "@/lib/api";
 import SkillNode from "./SkillNode";
-import GuidebookModal from "./GuidebookModal";
 import ChestRewardModal from "./ChestRewardModal";
 import { playClickSound } from "@/lib/sound";
 
@@ -14,26 +13,87 @@ interface UnitSectionProps {
   onGemsUpdated?: (newGems: number) => void;
 }
 
+interface CharacterSceneConfig {
+  src: string;
+  alt: string;
+  side: "left" | "right";
+  top: string;
+  width: string;
+  title: string;
+}
+
+const UNIT_CHARACTERS: Record<number, CharacterSceneConfig> = {
+  1: {
+    src: "/images/characters/bea_smores.svg",
+    alt: "Bea roasting marshmallows",
+    side: "right",
+    top: "120px",
+    width: "140px",
+    title: "Bea roasting marshmallows at camp!",
+  },
+  2: {
+    src: "/images/characters/vikram_pansies.svg",
+    alt: "Vikram watering flowers",
+    side: "left",
+    top: "110px",
+    width: "140px",
+    title: "Vikram watering flowers!",
+  },
+  3: {
+    src: "/images/characters/junior_frog.svg",
+    alt: "Junior and frog",
+    side: "right",
+    top: "110px",
+    width: "135px",
+    title: "Junior with his frog friend!",
+  },
+  4: {
+    src: "/images/characters/lily_doomscroll.svg",
+    alt: "Lily listening to music",
+    side: "left",
+    top: "60px",
+    width: "125px",
+    title: "Lily listening to tunes!",
+  },
+  5: {
+    src: "/images/characters/oscar_bonsai.svg",
+    alt: "Oscar pruning bonsai",
+    side: "right",
+    top: "60px",
+    width: "135px",
+    title: "Oscar tending his bonsai!",
+  },
+  6: {
+    src: "/images/characters/eddy_basketball.svg",
+    alt: "Eddy playing basketball",
+    side: "left",
+    top: "60px",
+    width: "135px",
+    title: "Eddy playing basketball!",
+  },
+};
+
 export default function UnitSection({
   unit,
   courseCode = "es",
   onRefreshPath,
   onGemsUpdated,
 }: UnitSectionProps) {
-  const [showGuidebook, setShowGuidebook] = useState(false);
   const [showChest, setShowChest] = useState(false);
 
+  const charScene = UNIT_CHARACTERS[unit.unit_number];
+
   return (
-    <div style={{ width: "100%", maxWidth: "600px", margin: "0 auto 40px auto" }}>
-      {/* Modals */}
-      {showGuidebook && (
-        <GuidebookModal
-          unitId={unit.id}
-          unitTitle={unit.title}
-          unitColor={unit.color_hex}
-          onClose={() => setShowGuidebook(false)}
-        />
-      )}
+    <div
+      id={`unit-section-${unit.unit_number}`}
+      data-unit-number={unit.unit_number}
+      style={{
+        width: "100%",
+        maxWidth: "600px",
+        margin: "0 auto 48px auto",
+        scrollMarginTop: "100px",
+      }}
+    >
 
       {showChest && (
         <ChestRewardModal
@@ -94,59 +154,56 @@ export default function UnitSection({
         </div>
       )}
 
-      {/* Unit Header Banner */}
-      <div
-        style={{
-          backgroundColor: unit.color_hex || "var(--duo-green)",
-          borderRadius: "20px",
-          padding: "24px 28px",
-          color: "#ffffff",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: "0 6px 0 rgba(0,0,0,0.15)",
-          marginBottom: "36px",
-        }}
-      >
-        <div>
-          <span
-            style={{
-              textTransform: "uppercase",
-              fontSize: "13px",
-              fontWeight: 800,
-              letterSpacing: "0.8px",
-              opacity: 0.9,
-            }}
-          >
-            Unit {unit.unit_number}
-          </span>
-          <h2 style={{ fontSize: "22px", fontWeight: 800, margin: "4px 0" }}>{unit.title}</h2>
-          <p style={{ fontSize: "14px", opacity: 0.9, maxWidth: "400px" }}>{unit.description}</p>
-        </div>
-
-        {/* Guidebook Button */}
-        <button
-          onClick={() => {
-            playClickSound();
-            setShowGuidebook(true);
-          }}
-          className="duo-btn duo-btn-outline"
+      {/* Unit In-Path Transition Marker (Flanked divider for Units > 1) */}
+      {unit.unit_number > 1 && (
+        <div
           style={{
-            backgroundColor: "rgba(255,255,255,0.2)",
-            borderColor: "rgba(255,255,255,0.4)",
-            borderBottomColor: "rgba(0,0,0,0.2)",
-            color: "#ffffff",
-            padding: "10px 16px",
-            fontSize: "13px",
+            width: "100%",
+            maxWidth: "520px",
+            margin: "8px auto 36px auto",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
+            gap: "16px",
           }}
         >
-          <span>📖</span>
-          <span>Guidebook</span>
-        </button>
-      </div>
+          <div style={{ flex: 1, height: "2px", backgroundColor: "var(--duo-border)", opacity: 0.6 }} />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "8px 18px",
+              borderRadius: "16px",
+              backgroundColor: "var(--duo-surface)",
+              border: "2px solid var(--duo-border)",
+              boxShadow: "0 4px 0 var(--duo-border-dark)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: 900,
+                textTransform: "uppercase",
+                letterSpacing: "0.8px",
+                color: unit.color_hex || "var(--duo-green)",
+              }}
+            >
+              Unit {unit.unit_number}
+            </span>
+            <span style={{ color: "var(--duo-border)", fontWeight: 900 }}>•</span>
+            <span
+              style={{
+                fontSize: "13px",
+                fontWeight: 800,
+                color: "var(--duo-text)",
+              }}
+            >
+              {unit.title.replace(/^Unit \d+:\s*/i, "")}
+            </span>
+          </div>
+          <div style={{ flex: 1, height: "2px", backgroundColor: "var(--duo-border)", opacity: 0.6 }} />
+        </div>
+      )}
 
       {/* Winding Serpentine Path of Skills with Companion Scene Illustrations */}
       <div
@@ -155,104 +212,31 @@ export default function UnitSection({
           flexDirection: "column",
           alignItems: "center",
           position: "relative",
-          gap: "16px",
+          gap: "44px",
           width: "100%",
+          padding: "8px 0 20px 0",
         }}
       >
-        {/* Unit 1: Bea S'mores campfire scene (Image 3/4) & Duo Cheer (Image 1) */}
-        {unit.unit_number === 1 && (
-          <>
-            <div
-              className="duo-char-illustration"
-              style={{
-                position: "absolute",
-                left: "calc(50% + 55px)",
-                top: "135px",
-                width: "155px",
-                zIndex: 4,
-                filter: "drop-shadow(0 8px 18px rgba(0,0,0,0.18))",
-                cursor: "pointer",
-                transition: "transform 0.15s ease",
-              }}
-              title="Bea roasting marshmallows!"
-              onClick={() => playClickSound()}
-            >
-              <img
-                src="/images/characters/bea_smores.svg"
-                alt="Bea roasting marshmallows"
-                style={{ width: "100%", height: "auto", display: "block" }}
-              />
-            </div>
-
-            <div
-              className="duo-char-illustration"
-              style={{
-                position: "absolute",
-                left: "calc(50% - 175px)",
-                top: "40px",
-                width: "115px",
-                zIndex: 4,
-                filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.16))",
-                cursor: "pointer",
-                transition: "transform 0.15s ease",
-              }}
-              title="Duo cheering!"
-              onClick={() => playClickSound()}
-            >
-              <img
-                src="/images/characters/duo_cheer.svg"
-                alt="Duo cheering"
-                style={{ width: "100%", height: "auto", display: "block" }}
-              />
-            </div>
-          </>
-        )}
-
-        {/* Unit 2: Vikram watering pansy flowers (Image 5) */}
-        {unit.unit_number === 2 && (
+        {/* Unit Companion Character Scene (Positioned cleanly in the gutter alongside the path) */}
+        {charScene && (
           <div
             className="duo-char-illustration"
             style={{
               position: "absolute",
-              left: "calc(50% + 55px)",
-              top: "90px",
-              width: "150px",
+              [charScene.side === "right" ? "left" : "right"]: "calc(50% + 145px)",
+              top: charScene.top,
+              width: charScene.width,
               zIndex: 4,
               filter: "drop-shadow(0 8px 18px rgba(0,0,0,0.18))",
               cursor: "pointer",
               transition: "transform 0.15s ease",
             }}
-            title="Vikram watering flowers!"
+            title={charScene.title}
             onClick={() => playClickSound()}
           >
             <img
-              src="/images/characters/vikram_pansies.svg"
-              alt="Vikram watering flowers"
-              style={{ width: "100%", height: "auto", display: "block" }}
-            />
-          </div>
-        )}
-
-        {/* Unit 3: Junior with frog */}
-        {unit.unit_number === 3 && (
-          <div
-            className="duo-char-illustration"
-            style={{
-              position: "absolute",
-              left: "calc(50% + 55px)",
-              top: "80px",
-              width: "140px",
-              zIndex: 4,
-              filter: "drop-shadow(0 8px 18px rgba(0,0,0,0.18))",
-              cursor: "pointer",
-              transition: "transform 0.15s ease",
-            }}
-            title="Junior and frog!"
-            onClick={() => playClickSound()}
-          >
-            <img
-              src="/images/characters/junior_frog.svg"
-              alt="Junior with frog"
+              src={charScene.src}
+              alt={charScene.alt}
               style={{ width: "100%", height: "auto", display: "block" }}
             />
           </div>
@@ -271,7 +255,7 @@ export default function UnitSection({
         ))}
 
         {/* Milestone Treasure Chest Node */}
-        <div style={{ margin: "24px 0", textAlign: "center" }}>
+        <div style={{ marginTop: "36px", marginBottom: "16px", textAlign: "center" }}>
           <div
             onClick={() => {
               playClickSound();
@@ -279,27 +263,34 @@ export default function UnitSection({
             }}
             title="Tap to claim milestone reward!"
             style={{
-              width: "68px",
-              height: "68px",
+              width: "72px",
+              height: "72px",
               borderRadius: "50%",
               backgroundColor: "var(--duo-surface)",
               border: "2px solid var(--duo-border)",
-              borderBottom: "5px solid var(--duo-border-dark)",
+              borderBottom: "6px solid var(--duo-border-dark)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
               transition: "transform 0.1s ease",
+              margin: "0 auto",
+            }}
+            onMouseDown={(e) => {
+              e.currentTarget.style.transform = "translateY(3px)";
+            }}
+            onMouseUp={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
-            <img src="/icons/chest.svg" alt="Chest" style={{ width: "38px", height: "38px" }} />
+            <img src="/icons/chest.svg" alt="Chest" style={{ width: "40px", height: "40px" }} />
           </div>
           <span
             style={{
               fontSize: "12px",
               fontWeight: 800,
               color: "var(--duo-text-muted)",
-              marginTop: "6px",
+              marginTop: "8px",
               display: "block",
             }}
           >
