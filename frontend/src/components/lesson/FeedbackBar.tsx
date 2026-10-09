@@ -8,6 +8,7 @@ interface FeedbackBarProps {
   canCheck: boolean;
   onCheck: () => void;
   onContinue: () => void;
+  onSkip?: () => void;
   correctSolution?: string;
   explanation?: string;
   comboStreak?: number;
@@ -18,6 +19,7 @@ export default function FeedbackBar({
   canCheck,
   onCheck,
   onContinue,
+  onSkip,
   correctSolution,
   explanation,
   comboStreak = 0,
@@ -32,7 +34,6 @@ export default function FeedbackBar({
     }
     return "Nicely done!";
   };
-
 
   return (
     <footer
@@ -63,8 +64,28 @@ export default function FeedbackBar({
           gap: "20px",
         }}
       >
-        {/* Left Side: Status & Feedback message */}
+        {/* Left Side: Status & Feedback message OR Skip Button */}
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          {!isEvaluated && onSkip && (
+            <button
+              type="button"
+              onClick={() => {
+                if (status !== "submitting") {
+                  playClickSound();
+                  onSkip();
+                }
+              }}
+              className="duo-btn duo-btn-secondary"
+              style={{
+                padding: "14px 28px",
+                fontSize: "15px",
+                letterSpacing: "0.8px",
+              }}
+            >
+              SKIP
+            </button>
+          )}
+
           {isCorrect && (
             <>
               <div
@@ -89,6 +110,46 @@ export default function FeedbackBar({
                 <p style={{ fontSize: "14px", fontWeight: 700, color: "var(--duo-green-dark)", opacity: 0.85 }}>
                   {explanation || "You got it right!"}
                 </p>
+                <div style={{ display: "flex", gap: "16px", marginTop: "4px" }}>
+                  <button
+                    type="button"
+                    onClick={() => alert("Thank you! Reported to the Duolingo language team.")}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: "var(--duo-green-dark)",
+                      fontWeight: 800,
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      opacity: 0.85,
+                      padding: 0,
+                    }}
+                  >
+                    🚩 Report
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => alert("Discussion thread is active in Super Duolingo!")}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: "var(--duo-green-dark)",
+                      fontWeight: 800,
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      opacity: 0.85,
+                      padding: 0,
+                    }}
+                  >
+                    💬 Discuss
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -118,11 +179,51 @@ export default function FeedbackBar({
                 <p style={{ fontSize: "16px", fontWeight: 800, color: "var(--duo-red-dark)" }}>
                   {correctSolution}
                 </p>
+                <div style={{ display: "flex", gap: "16px", marginTop: "4px" }}>
+                  <button
+                    type="button"
+                    onClick={() => alert("Thank you! Reported to the Duolingo language team.")}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: "var(--duo-red-dark)",
+                      fontWeight: 800,
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      opacity: 0.85,
+                      padding: 0,
+                    }}
+                  >
+                    🚩 Report
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => alert("Discussion thread is active in Super Duolingo!")}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: "var(--duo-red-dark)",
+                      fontWeight: 800,
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      opacity: 0.85,
+                      padding: 0,
+                    }}
+                  >
+                    💬 Discuss
+                  </button>
+                </div>
               </div>
             </>
           )}
 
-          {!isEvaluated && <div />}
+          {!isEvaluated && !onSkip && <div />}
         </div>
 
         {/* Right Side: Action Button */}

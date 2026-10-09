@@ -1,13 +1,24 @@
-from fastapi import APIRouter, Depends
+from datetime import date, timedelta
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from ....core.database import get_db
 from ....core.deps import get_current_user
 from ....models import User
-from ....schemas import UserProfile, RefillHeartsResponse
+from ....schemas import (
+    UserProfile,
+    RefillHeartsResponse,
+    StreakFreezeResponse,
+    DailyGoalUpdateRequest,
+    SimulateDayRequest,
+    SimulateDayResponse,
+)
 from ....services.user_service import (
     refill_hearts_with_gems,
     practice_regain_heart,
     check_and_regenerate_hearts,
+    buy_streak_freeze,
+    set_daily_goal,
+    simulate_day_progression,
 )
 
 router = APIRouter()
@@ -19,6 +30,17 @@ def get_profile(
 ):
     next_seconds = check_and_regenerate_hearts(db, user)
     user.next_heart_in_seconds = next_seconds
+    
+    # Check streak expiry if user missed more than 1 day without freeze
+    if user.last_active_date:
+        days_diff = (date.today() - user.last_active_date).days
+        if days_diff > 1 and user.streak > 0:
+            if days_diff == 2 and (getattr(user, "streak_freezes", 0) or 0) > 0:
+                pass  # Protected by freeze until today's lesson resolves it
+            else:
+                user.streak = 0
+                db.commit()
+
     return user
 
 @router.post("/hearts/refill", response_model=RefillHeartsResponse)
@@ -48,6 +70,43 @@ def practice_heart(
         gems=user.gems,
         message=message,
         next_heart_in_seconds=next_seconds
+    )
+
+@router.post("/shop/streak-freeze", response_model=StreakFreezeResponse)
+def purchase_streak_freeze(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    success, message = buy_streak_freeze(db, user, cost=200)
+    return StreakFreezeResponse(
+        success=success,
+        streak_freezes=getattr(user, "streak_freezes", 0) or 0,
+        gems=user.gems,
+        message=message
+    )
+
+@router.put("/daily-goal")
+def update_daily_goal(
+    payload: DailyGoalUpdateRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    set_daily_goal(db, user, payload.daily_goal_xp)
+    return {"success": True, "daily_goal_xp": user.daily_goal_xp}
+
+@router.post("/debug/simulate-day", response_model=SimulateDayResponse)
+def simulate_day(
+    days_ago: int = Query(1, description="Simulate that user's last activity was N days ago (1 = yesterday, 2 = 2 days ago)"),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    sim_date, streak, freezes, msg = simulate_day_progression(db, user, days_ago)
+    return SimulateDayResponse(
+        success=True,
+        simulated_last_active_date=sim_date,
+        streak=streak,
+        streak_freezes=freezes,
+        message=msg
     )
 
 @router.post("/chest/claim")

@@ -1,4 +1,12 @@
-from .user import UserBase, UserProfile, RefillHeartsResponse
+from .user import (
+    UserBase,
+    UserProfile,
+    RefillHeartsResponse,
+    StreakFreezeResponse,
+    DailyGoalUpdateRequest,
+    SimulateDayRequest,
+    SimulateDayResponse,
+)
 from .auth import (
     SignupRequest,
     LoginRequest,
@@ -26,6 +34,10 @@ __all__ = [
     "UserBase",
     "UserProfile",
     "RefillHeartsResponse",
+    "StreakFreezeResponse",
+    "DailyGoalUpdateRequest",
+    "SimulateDayRequest",
+    "SimulateDayResponse",
     "SignupRequest",
     "LoginRequest",
     "ForgotPasswordRequest",

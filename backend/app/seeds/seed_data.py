@@ -616,6 +616,8 @@ def seed_database_if_empty(db: Session):
         max_hearts=5,
         gems=780,
         total_xp=345,
+        streak_freezes=1,
+        daily_goal_xp=30,
         current_course_id=course.id,
         created_at=datetime.utcnow()
     )

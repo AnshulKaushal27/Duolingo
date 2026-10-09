@@ -5,6 +5,8 @@ import { ExerciseClient } from "@/lib/api";
 import { playTilePlaceSound, playTileRemoveSound } from "@/lib/sound";
 import { speakText } from "@/lib/speech";
 
+import PromptWordHints from "./PromptWordHints";
+
 interface TranslateWordBankExerciseProps {
   exercise: ExerciseClient;
   placedTokens: string[];
@@ -83,9 +85,10 @@ export default function TranslateWordBankExercise({
               🔊
             </button>
           )}
-          <span style={{ fontSize: "19px", fontWeight: 700, color: "var(--duo-text)" }}>
-            {exercise.question_text}
-          </span>
+          <PromptWordHints
+            sentence={exercise.question_text}
+            customHints={exercise.client_payload?.hints}
+          />
 
           {/* Speech bubble pointer */}
           <div style={{

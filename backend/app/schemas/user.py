@@ -15,6 +15,8 @@ class UserProfile(UserBase):
     max_hearts: int
     gems: int
     total_xp: int
+    streak_freezes: Optional[int] = 0
+    daily_goal_xp: Optional[int] = 30
     last_active_date: date
     created_at: datetime
     next_heart_in_seconds: Optional[int] = 0
@@ -28,3 +30,22 @@ class RefillHeartsResponse(BaseModel):
     gems: int
     message: str
     next_heart_in_seconds: Optional[int] = 0
+
+class StreakFreezeResponse(BaseModel):
+    success: bool
+    streak_freezes: int
+    gems: int
+    message: str
+
+class DailyGoalUpdateRequest(BaseModel):
+    daily_goal_xp: int
+
+class SimulateDayRequest(BaseModel):
+    days_ago: Optional[int] = 1
+
+class SimulateDayResponse(BaseModel):
+    success: bool
+    simulated_last_active_date: date
+    streak: int
+    streak_freezes: int
+    message: str

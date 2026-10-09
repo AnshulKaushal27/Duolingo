@@ -234,7 +234,7 @@ export default function Sidebar() {
 
               {/* Item 2: SETTINGS */}
               <Link
-                href="/profile"
+                href="/settings"
                 onClick={() => {
                   playClickSound();
                   setShowMoreMenu(false);

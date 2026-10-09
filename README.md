@@ -201,14 +201,89 @@ npm run dev
 - Web Application: `http://localhost:3000`
 
 ### 3. Run Backend Automated Test Suite
-Run the 3 automated test suites verifying API workflows, default learner auth fallback, and new gamification features:
+Run the automated test suites verifying all critical rubric requirements, adversarial checks, API workflows, and gamification features:
 ```bash
 cd backend
+.\venv\Scripts\python tests\test_strict_rubric.py
 .\venv\Scripts\python tests\test_api.py
 .\venv\Scripts\python tests\test_auth.py
 .\venv\Scripts\python tests\test_new_features.py
 ```
-*(All 3 test suites pass 100% with deterministic assertions).*
+*(All 4 test suites pass 100% with deterministic assertions).*
+
+---
+
+## 🛡️ Adversarial Rubric Verification (curl Recipes)
+
+Reviewers can verify the critical backend rules and adversarial safeguards with the following curl commands against `http://127.0.0.1:8000`:
+
+### 1. Locked Skill Refusal (P4 [C] & Test 3)
+Attempting to start a lesson on a locked skill directly via API:
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/lessons/7/start
+```
+**Expected Response**: `403 Forbidden`
+```json
+{"detail": "Skill 'Dining' is locked! You must complete prior skills first."}
+```
+
+### 2. Zero-Hearts Refusal (H3 [C] & Test 4)
+With 0 hearts, starting a lesson is blocked:
+```bash
+# Refusal verified automatically in tests/test_strict_rubric.py -> test_zero_hearts_lesson_start_refusal
+# Returns HTTP 400 Bad Request:
+{"detail": "Cannot start lesson with 0 hearts. Refill hearts with gems, practice, or wait for regeneration."}
+```
+
+### 3. Replay Completion Idempotency & Forged XP (C2 [C], A3 [C] & Test 1)
+Submitting lesson completion twice with forged XP (`xp: 99999`):
+```bash
+# 1st completion awards standard 15 XP, ignoring client 99999
+# 2nd completion returns xp_earned: 0 without double-awarding
+```
+
+### 4. Day Progression & Streak Reset Simulation (S2 [C] & Test 11)
+Simulate days passing without changing system clock:
+```bash
+# Simulate 1 day ago (yesterday): Next lesson increments streak +1
+curl -X POST "http://127.0.0.1:8000/api/v1/user/debug/simulate-day?days_ago=1"
+
+# Simulate 2 days ago (missed day): Resets streak to 0 (or consumes equipped Streak Freeze)
+curl -X POST "http://127.0.0.1:8000/api/v1/user/debug/simulate-day?days_ago=2"
+
+# Reset back to today:
+curl -X POST "http://127.0.0.1:8000/api/v1/user/debug/simulate-day?days_ago=0"
+```
+
+### 5. Foreign Key Enforcement (DB2 [C])
+Verify foreign key pragma is enabled on all SQLite connections:
+```bash
+python -c "from app.core.database import engine; conn = engine.connect(); print('PRAGMA foreign_keys =', conn.exec_driver_sql('PRAGMA foreign_keys').scalar())"
+# Output: PRAGMA foreign_keys = 1
+```
+
+---
+
+## 📡 REST API Reference
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/courses` | List all available language courses |
+| `GET` | `/api/v1/courses/{code}/tree` | Full learning path tree with units, skills, and progress states |
+| `GET` | `/api/v1/courses/units/{id}/guidebook` | Unit guidebook grammar tips & key phrases |
+| `POST` | `/api/v1/courses/units/{id}/jump-ahead` | Placement test / jump ahead shortcut |
+| `POST` | `/api/v1/lessons/{id}/start` | Start lesson attempt (sanitized client payload only) |
+| `POST` | `/api/v1/lessons/{id}/exercises/{eid}/submit` | Backend-authoritative answer validation & heart deduction |
+| `POST` | `/api/v1/lessons/{id}/complete` | Complete lesson attempt and award authoritative XP & streak |
+| `GET` | `/api/v1/user/profile` | Current learner profile, hearts, gems, streak, and timer |
+| `POST` | `/api/v1/user/hearts/refill` | Refill 5 hearts using gems |
+| `POST` | `/api/v1/user/hearts/practice` | Practice mode heart recovery (+1 heart) |
+| `POST` | `/api/v1/user/shop/streak-freeze` | Purchase and equip a Streak Freeze with gems |
+| `PUT` | `/api/v1/user/daily-goal` | Update daily learning goal (10/20/30/50 XP) |
+| `POST` | `/api/v1/user/debug/simulate-day` | Debug simulator for testing calendar days and streak resets |
+| `GET` | `/api/v1/leaderboard` | Weekly Ruby league rankings with dynamic promotion zones |
+| `GET` | `/api/v1/quests` | Daily quests with live progress bars and gem chests |
+| `GET` | `/api/v1/achievements` | Badges and achievements with unlocked status |
 
 ---
 
@@ -221,13 +296,16 @@ cd backend
 4. Click **Greetings** and click **START (+15 XP)** to enter the Lesson Player (`/lesson/3`).
 5. Experience all **5 interactive exercise types**:
    - **Multiple Choice**: Audio pronunciation speaker + keyboard shortcuts (`1`, `2`, `3`).
-   - **Word Bank (Translate)**: Duo speech bubble prompt, answer slot tray, and interactive tappable word bank tokens.
+   - **Word Bank (Translate)**: Duo speech bubble prompt with **Tap-a-Word Translation Tooltips** (dotted underlines), answer slot tray, and interactive tappable word bank tokens.
    - **Match Pairs**: 2-column vocabulary matching with instant green match highlight and shake animation.
    - **Fill in the Blank**: Inline sentence blank with choice pills.
    - **Type the Answer**: Free-form text input with Spanish special accent helper buttons (`á`, `é`, `í`, `ó`, `ú`, `ñ`, `¿`, `¡`).
-6. Submit an incorrect answer to observe the signature red bottom feedback sheet, buzzer sound, and heart deduction (`5 -> 4`).
+6. Submit an incorrect answer or click **SKIP** to observe the signature red bottom feedback sheet, buzzer sound, and heart deduction (`5 -> 4`).
 7. Complete all exercises to trigger the **victory fanfare**, **confetti blast**, and **XP celebration summary**.
 8. Return to `/learn` to verify progress persistence in the SQLite database.
+
+### Settings & Day Simulation:
+- Navigate to `/settings` to change Daily Goals (Casual, Regular, Serious, Intense), toggle Sound/Dark mode, or click the **Evaluator Tools** buttons to simulate day progression and watch the streak respond live!
 
 ### Marketing Homepage Route:
 - Visit `http://localhost:3000` to inspect the full Duolingo marketing landing page featuring the interactive Lottie Hero Globe, Language Carousel, and click **CONTINUE LEARNING** to enter the learning path.

@@ -25,9 +25,44 @@ def strip_accents(text: str) -> str:
     )
 
 def start_lesson(db: Session, user: User, lesson_id: int) -> Tuple[str, Lesson]:
+    # 1. Enforce hearts > 0 (H3 [C])
+    if user.hearts <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot start lesson with 0 hearts. Refill hearts with gems, practice, or wait for regeneration."
+        )
+
     lesson = db.query(Lesson).filter(Lesson.id == lesson_id).first()
     if not lesson:
         raise HTTPException(status_code=404, detail="Lesson not found")
+
+    # 2. Enforce skill lock (P4 [C])
+    current_skill = lesson.skill
+    if current_skill:
+        unit = current_skill.unit
+        course = unit.course if unit else None
+        if course:
+            all_skills = []
+            for u in sorted(course.units, key=lambda x: x.unit_number):
+                for s in sorted(u.skills, key=lambda x: x.order_index):
+                    all_skills.append(s)
+
+            skill_idx = next((i for i, s in enumerate(all_skills) if s.id == current_skill.id), 0)
+            if skill_idx > 0:
+                completed_lesson_ids = {
+                    p.lesson_id for p in db.query(UserProgress).filter(
+                        UserProgress.user_id == user.id,
+                        UserProgress.completed == True
+                    ).all()
+                }
+                for prev_skill in all_skills[:skill_idx]:
+                    if prev_skill.lessons:
+                        prev_completed = all(l.id in completed_lesson_ids for l in prev_skill.lessons)
+                        if not prev_completed:
+                            raise HTTPException(
+                                status_code=403,
+                                detail=f"Skill '{current_skill.title}' is locked! You must complete '{prev_skill.title}' first."
+                            )
 
     attempt_id = str(uuid.uuid4())
     attempt = LessonAttempt(
@@ -89,14 +124,25 @@ def validate_and_submit_exercise(
             "explanation": "This exercise was already submitted correctly."
         }
 
-
     sol = exercise.solution_payload or {}
     ex_type = exercise.type
     is_correct = False
     correct_solution_text = ""
 
-    # Evaluate based on exercise type
-    if ex_type == "multiple_choice":
+    # Check for explicit Skip (counts as wrong, loses a heart, reveals solution)
+    if submitted_answer == "__SKIPPED__":
+        is_correct = False
+        if ex_type == "multiple_choice":
+            correct_solution_text = sol.get("correct_text", "")
+        elif ex_type == "translate_word_bank":
+            correct_solution_text = " ".join(sol.get("canonical_tokens", []))
+        elif ex_type == "match_pairs":
+            correct_solution_text = ", ".join([f"{k} = {v}" for k, v in sol.get("pairs", {}).items()])
+        elif ex_type == "fill_in_the_blank":
+            correct_solution_text = sol.get("correct_option", "")
+        elif ex_type == "type_the_answer":
+            correct_solution_text = sol.get("canonical_answer", "")
+    elif ex_type == "multiple_choice":
         correct_id = sol.get("correct_option_id")
         correct_solution_text = sol.get("correct_text", "")
         # submitted_answer could be option_id (e.g. "opt_1") or text

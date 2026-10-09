@@ -19,6 +19,8 @@ class User(Base):
     max_hearts = Column(Integer, default=5)
     gems = Column(Integer, default=500)
     total_xp = Column(Integer, default=0)
+    streak_freezes = Column(Integer, default=0)
+    daily_goal_xp = Column(Integer, default=30)
     current_course_id = Column(Integer, nullable=True)
     last_heart_regenerated_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

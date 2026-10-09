@@ -50,15 +50,26 @@ function ShopContent() {
     }
   };
 
-  const handleBuyStreakFreeze = () => {
+  const handleBuyStreakFreeze = async () => {
     playClickSound();
-    if (!profile || profile.gems < 200) {
-      setMessage("Not enough gems for Streak Freeze!");
-      return;
+    try {
+      const res = await api.buyStreakFreeze();
+      if (res.success) {
+        playCorrectSound();
+        if (profile) {
+          setProfile({
+            ...profile,
+            gems: res.gems,
+            streak_freezes: res.streak_freezes,
+          });
+        }
+        setMessage(`Streak Freeze equipped! 🧊 (${res.streak_freezes}/2 held). Your streak is protected for 1 missed day.`);
+      } else {
+        setMessage(res.message);
+      }
+    } catch (e: any) {
+      setMessage(e.message || "Failed to purchase Streak Freeze");
     }
-    playCorrectSound();
-    setProfile({ ...profile, gems: profile.gems - 200 });
-    setMessage("Streak Freeze equipped! 🧊 Your streak is protected for 1 missed day.");
   };
 
   return (

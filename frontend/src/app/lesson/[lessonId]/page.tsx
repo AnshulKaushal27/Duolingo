@@ -178,6 +178,42 @@ function LessonContent() {
     }
   };
 
+  // Handle Skip (E8: counts as wrong, loses a heart, reveals solution, requeues exercise)
+  const handleSkip = async () => {
+    if (feedbackStatus === "submitting" || isEvaluated) return;
+    setFeedbackStatus("submitting");
+    try {
+      const res = await api.submitExercise(
+        lessonId,
+        currentExercise.id,
+        lessonData.attempt_id,
+        "__SKIPPED__"
+      );
+      setEvalResult(res);
+      setHearts(res.hearts_remaining);
+      playIncorrectSound();
+      playHeartLostSound();
+      setFeedbackStatus("incorrect");
+      setComboStreak(0);
+
+      // Requeue exercise at the end
+      setLessonData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          exercises: [...prev.exercises, currentExercise],
+        };
+      });
+
+      if (res.hearts_remaining <= 0) {
+        setTimeout(() => setOutOfHeartsOpen(true), 600);
+      }
+    } catch (err: any) {
+      alert("Error skipping exercise: " + err.message);
+      setFeedbackStatus("idle");
+    }
+  };
+
   // Continue to next exercise or complete lesson
   const handleContinue = async () => {
     if (currentIndex + 1 < totalExercises) {
@@ -196,6 +232,24 @@ function LessonContent() {
       }
     }
   };
+
+  // Keyboard shortcut: Enter key submits or continues (E7)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if exit modal or out of hearts modal is open
+      if (exitModalOpen || outOfHeartsOpen) return;
+
+      if (e.key === "Enter") {
+        if (isEvaluated) {
+          handleContinue();
+        } else if (canCheckAnswer() && feedbackStatus !== "submitting") {
+          handleCheck();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isEvaluated, feedbackStatus, exitModalOpen, outOfHeartsOpen, currentAnswer, currentIndex]);
 
   // Progress Bar width calculation
   const progressPercent = Math.round(((currentIndex + (isEvaluated ? 1 : 0)) / totalExercises) * 100);
@@ -339,6 +393,7 @@ function LessonContent() {
         canCheck={canCheckAnswer()}
         onCheck={handleCheck}
         onContinue={handleContinue}
+        onSkip={handleSkip}
         correctSolution={evalResult?.correct_solution}
         explanation={evalResult?.explanation}
         comboStreak={comboStreak}

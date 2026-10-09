@@ -100,6 +100,10 @@ def update_streak_and_activity(db: Session, user: User, xp_earned: int) -> bool:
         if days_diff == 1:
             user.streak += 1
             streak_extended = True
+        elif days_diff == 2 and (getattr(user, "streak_freezes", 0) or 0) > 0:
+            user.streak_freezes -= 1
+            user.streak += 1
+            streak_extended = True
         elif days_diff > 1:
             user.streak = 1
             streak_extended = True
@@ -129,3 +133,40 @@ def update_streak_and_activity(db: Session, user: User, xp_earned: int) -> bool:
 
     db.commit()
     return streak_extended
+
+def buy_streak_freeze(db: Session, user: User, cost: int = 200) -> tuple[bool, str]:
+    """Purchases a streak freeze with gems (capped at 2)."""
+    current_freezes = getattr(user, "streak_freezes", 0) or 0
+    if current_freezes >= 2:
+        return False, "You already have the maximum number of Streak Freezes (2)."
+    if user.gems < cost:
+        return False, f"Not enough gems! Streak Freeze costs {cost} gems."
+    user.gems -= cost
+    user.streak_freezes = current_freezes + 1
+    db.commit()
+    db.refresh(user)
+    return True, f"Streak Freeze equipped! ({user.streak_freezes}/2 held)"
+
+def set_daily_goal(db: Session, user: User, target_xp: int) -> bool:
+    """Updates user daily XP goal."""
+    user.daily_goal_xp = target_xp
+    db.commit()
+    db.refresh(user)
+    return True
+
+def simulate_day_progression(db: Session, user: User, days_ago: int = 1) -> tuple[date, int, int, str]:
+    """Debug helper to simulate days passing and test streak behavior."""
+    simulated_date = date.today() - timedelta(days=days_ago)
+    user.last_active_date = simulated_date
+    msg = f"Last active date shifted to {simulated_date.isoformat()} ({days_ago} days ago)."
+    
+    if days_ago > 1:
+        if (getattr(user, "streak_freezes", 0) or 0) > 0 and days_ago == 2:
+            msg += " (Protected by 1 equipped Streak Freeze)."
+        else:
+            user.streak = 0
+            msg += " Streak reset to 0 due to inactivity."
+
+    db.commit()
+    db.refresh(user)
+    return simulated_date, user.streak, getattr(user, "streak_freezes", 0) or 0, msg
