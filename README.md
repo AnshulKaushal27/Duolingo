@@ -1,426 +1,702 @@
 # Duolingo Web Application Clone
 
-A fullstack web application clone of Duolingo replicating its design, user experience, core lesson player, and gamification workflows.
+[![Next.js](https://img.shields.io/badge/Next.js-16.4.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.11+-yellow?style=for-the-badge&logo=python)](https://www.python.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite)](https://www.sqlite.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-Built as an SDE Fullstack Assignment following modern software engineering practices, clean architecture, and strict separation of concerns.
+A pixel-perfect, fullstack web application clone of **Duolingo** replicating its authentic learning path, interactive lesson player, Japanese Kana characters hub, procedural audio soundscape, and gamification economy.
 
----
-
-## 🚀 Key Features
-
-### 1. Authentic Duolingo Look & Feel
-- **Tactile 3D Buttons**: Signature beveled borders with realistic press micro-interactions (`border-bottom` collapsing on click).
-- **Duolingo Color System**: Faithful palette with brand greens (`#58cc02`), blues (`#1cb0f6`), reds (`#ff4b4b`), yellows (`#ffc800`), and dark mode tokens.
-- **Duo Mascot & Celebratory Flourishes**: SVG illustrations of Duo the Owl in cheering, coaching, and crying states.
-- **Web Audio Sound Effects**: Low-latency procedural sound synthesizer for button taps, correct chords, wrong buzzes, heart breaks, and victory fanfares.
-- **Web Speech API Text-to-Speech**: Authentic pronunciation for Spanish (`es-ES`) and Japanese (`ja-JP`) with automatic script detection.
-- **Dedicated Japanese Characters Hub (`/characters`)**: Authentic Duolingo "あ" Kana learning center featuring complete Hiragana & Katakana interactive Gojūon charts, audio playback on tap, and gamified practice drills.
-- **Extensive Multi-Course Support**: Seamless instant switching between Spanish (🇪🇸) and Japanese (🇯🇵) across the entire application, header, right sidebar, and learning path.
-- **Celebratory Confetti**: Interactive confetti cannon on lesson completion.
-- **Dark Mode**: Full toggleable dark mode respecting Duolingo's dark theme palette.
-
-### 2. Learning Path / Skill Tree (`/learn`)
-- **Extensive Spanish & Japanese Curricula**: 6 authentic units each with multiple skills, lessons, and exercises covering all 5 core exercise types.
-- **Serpentine Winding Path**: Mathematical curve offset placing skill circles along an authentic curved path.
-- **Unit Cards & Comprehensive Guidebooks**: Unit titles, descriptions, and guidebooks featuring key phrases, audio pronunciation, and grammar explanations in Spanish and Japanese.
-- **Skill States**: Visually distinct Completed (Gold with crown badge), Available (pulsing glow with Duo mascot cameo), and Locked states.
-- **Milestone Treasure Chests**: Periodic reward chests along the trail.
-- **Sticky Status Header / Sidebar**: Real-time streak counter (🔥), gems (💎), and hearts (❤️).
-
-### 3. The Lesson Player (`/lesson/[id]`)
-- **Distraction-Free Interface**: Clean header with exit confirmation modal, animated smooth progress bar, and active heart indicator.
-- **All 5 Required Exercise Types**:
-  1. **Multiple Choice**: Image and text option cards with keyboard number shortcuts (`1`, `2`, `3`) and TTS speaker button.
-  2. **Translate (Word Bank)**: Sentence prompt with Duo speech bubble, answer slot tray, and interactive tappable word bank tokens.
-  3. **Match Pairs**: 2 columns of vocabulary tiles with match flash and mismatch shake animations.
-  4. **Fill in the Blank**: Sentence with inline blank slot and choice pills.
-  5. **Type the Answer**: Text field with real-time Spanish accent buttons (`á`, `é`, `í`, `ó`, `ú`, `ñ`).
-- **Signature Bottom Feedback Sheet**:
-  - **Correct State**: Vibrant green bottom banner, "Nicely done!" message, and green "CONTINUE" button.
-  - **Incorrect State**: Vibrant red bottom banner, "Correct solution:" display, and red "CONTINUE" button.
-- **Heart Loss & Out of Hearts Flow**: Mistakes decrement hearts in real time with audio cues. Reaching 0 hearts triggers the "Out of Hearts" dialog with options to refill with gems or return to practice.
-- **Celebration Screen**: Lesson summary featuring XP gained, accuracy percentage, streak extension, and confetti.
-
-### 4. Gamification & Progress Persistence
-- **Daily Streak Engine**: Tracks daily activity dates, increments streaks, and logs XP into user activity logs.
-- **Hearts System**: 5-heart cap, real-time deduction on errors, gems refill (350 gems), and practice-to-earn-hearts mode.
-- **Tiered League Leaderboards (`/leaderboard`)**: Weekly Ruby League table featuring user ranking dynamically adjusting against 9 seeded competitors.
-- **Daily Quests (`/quests`)**: Progress bars for daily XP goals and lesson milestones with gem rewards.
-- **Learner Profile (`/profile`)**: Total XP, streak record, current league, and achievements showcase (Wildfire, Sage, Sharpshooter, Champion).
-- **Power-Ups Shop (`/shop`)**: Heart refills, Streak Freezes, Double-or-Nothing wagers, and Super Duolingo preview.
+Built as an **SDE Fullstack Assignment** following modern software engineering practices, clean architecture, backend-authoritative validation, and strict separation of concerns.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 📌 Executive Summary (Assumptions / Mocked Data / Notes)
 
-```
-Duolingo Clone
-├── frontend/ (Next.js 14 App Router, TypeScript, Vanilla CSS Modules)
-│   ├── src/app/
-│   │   ├── learn/page.tsx         # Learning path serpentine home
-│   │   ├── lesson/[id]/page.tsx   # Interactive core lesson player
-│   │   ├── leaderboard/page.tsx   # League standings
-│   │   ├── quests/page.tsx        # Daily goals and quests
-│   │   ├── profile/page.tsx       # User stats and achievements
-│   │   └── shop/page.tsx          # Gems shop and powerups
-│   ├── src/components/
-│   │   ├── layout/                # Sidebar, RightSidebar, HeartsModal
-│   │   ├── path/                  # LearningPath, UnitSection, SkillNode
-│   │   └── lesson/                # 5 Exercise renderers, FeedbackBar, Modals
-│   └── src/lib/                   # API client, Web Audio SFX, Web Speech TTS
-│
-└── backend/ (Python 3.11+, FastAPI, SQLAlchemy, SQLite)
-    ├── app/
-    │   ├── core/                  # Database engine, config, session
-    │   ├── models/                # Normalized SQLAlchemy models
-    │   ├── schemas/               # Pydantic v2 validation contracts
-    │   ├── services/              # Authoritative answer validation, streak logic
-    │   ├── api/v1/endpoints/      # REST API routers (courses, lessons, user, lb)
-    │   └── seeds/seed_data.py     # Pre-seeded Spanish curriculum & learner
-    └── tests/test_api.py          # End-to-end automated test suite
+- **Assumptions**: Assumes a pre-authenticated demo user (`alexramos`, 7-day streak) with backend-authoritative grading and browser Web Speech API for TTS.
+- **Mocked Data**: Pre-seeded SQLite database with 12 Spanish and Japanese units (125+ exercises across all 5 types), bilingual guidebooks, Kana charts, and 9 leaderboard rivals.
+- **Notes**: Zero exercise answers are exposed in client payloads, all SFX are generated procedurally via the Web Audio API, and server cold starts auto-recover via live polling.
+
+---
+
+## 🏛️ High-Level System Design
+
+The system adheres to a **decoupled client-server architecture**:
+1. **Frontend (Presentation Tier)**: Next.js 16 (App Router) rendering tactile 3D UI components, managing reactive client state, procedural Web Audio synthesizer, and Web Speech API synthesis.
+2. **Backend (Application Tier)**: FastAPI ASGI application running on Uvicorn, enforcing business rules, session authentication, streak calculations, and exercise answer evaluation.
+3. **Database (Data Tier)**: SQLite database engine with foreign key constraints enabled via SQLite PRAGMA enforcement, structured into 12 relational models.
+
+```mermaid
+graph TD
+    subgraph Client["Web Browser Client"]
+        UI["Next.js 16 React App (SPA)"]
+        Audio["Web Audio API (Procedural SFX)"]
+        TTS["Web Speech API (Native es-ES / ja-JP)"]
+        Store["Local Session & Course State"]
+    end
+
+    subgraph CDN["Edge & Static Delivery"]
+        Vercel["Vercel Edge Network / Assets"]
+    end
+
+    subgraph BackendApp["FastAPI Backend Server (Port 8000)"]
+        Router["API V1 Endpoints Router"]
+        AuthMiddleware["Session & Auth Middleware"]
+        LessonService["Lesson & Evaluation Service"]
+        StreakService["Streak & Gamification Service"]
+        GuidebookService["Guidebook & Curriculum Service"]
+    end
+
+    subgraph Database["Persistent Storage"]
+        SQLite[("SQLite Relational DB (duolingo.db)")]
+    end
+
+    UI --> |"HTTP REST + Cookies / Bearer Token"| Router
+    UI --- Audio
+    UI --- TTS
+    Vercel -.-> UI
+
+    Router --> AuthMiddleware
+    AuthMiddleware --> LessonService
+    AuthMiddleware --> StreakService
+    AuthMiddleware --> GuidebookService
+
+    LessonService --> |"SQLAlchemy ORM (Foreign Keys Enabled)"| SQLite
+    StreakService --> |"Atomic Commits"| SQLite
+    GuidebookService --> SQLite
 ```
 
-### Backend-Authoritative Validation & Security
-1. **Sanitized Exercise Payloads**: The frontend receives only `client_payload` (options text/image, shuffled tokens, pair words). Solutions (`correct_option_id`, `canonical_tokens`, `acceptable_answers`) are retained strictly on the backend.
-2. **Anti-Duplicate Submission Protection**: Each lesson session creates a unique `attempt_id`. The backend rejects or safely ignores duplicate submissions of the same exercise within an attempt, preventing race conditions or exploit-driven XP duplication.
-3. **Idempotent Gamification Calculations**: XP, streaks, hearts, and achievements are computed and committed atomically on the backend.
+### Core Security & Architectural Principles
+
+1. **Zero Answer Leakage (Sanitized Payloads)**:
+   When a user starts a lesson (`POST /api/v1/lessons/{id}/start`), the backend returns **only** `client_payload` (shuffled tokens, choice text, pair tiles, prompts). The `solution_payload` (correct option IDs, canonical token orders, acceptable regex patterns) is **never sent to the client**, making cheat inspection via DevTools impossible.
+2. **Anti-Duplicate Submission & Anti-Replay Safeguards**:
+   Each lesson generates a unique UUID `attempt_id`. The backend checks `answered_exercise_ids` in `LessonAttempt`. If an exercise ID is re-submitted within the same attempt, the backend safely ignores it without deducting hearts or awarding duplicate XP.
+3. **Backend-Authoritative Gamification**:
+   XP increments, hearts deduction, gem deductions, streak increments, and quest milestones are calculated exclusively server-side. Forged completion requests (`xp: 99999`) are ignored; the server awards the exact configured lesson reward.
+4. **Idempotent Day-Progression Engine**:
+   Daily streaks evaluate the delta between `last_active_date` and the current date:
+   - Same calendar day: Streak preserved, activity logged.
+   - Consecutive day ($T+1$): Streak incremented by $+1$.
+   - Missed day ($T > 1$): If `streak_freezes > 0`, consume 1 freeze and preserve streak; otherwise reset streak to `0`.
 
 ---
 
-## 📊 Database Schema (SQLite)
+## 🔄 Lesson Execution & Submission Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Learner as Learner (Browser)
+    participant UI as Lesson Player UI
+    participant API as FastAPI Backend
+    participant DB as SQLite Database
+
+    Learner->>UI: Clicks "START" on Skill Node
+    UI->>API: POST /api/v1/lessons/{id}/start
+    API->>DB: Check User Hearts > 0 & Skill Unlocked
+    alt Hearts == 0 or Skill Locked
+        API-->>UI: 400 Bad Request / 403 Forbidden
+        UI-->>Learner: Show "Out of Hearts" or "Skill Locked" Modal
+    else Eligible
+        API->>DB: Create LessonAttempt (UUID)
+        API-->>UI: 200 OK (attempt_id, exercises with client_payload ONLY)
+        UI-->>Learner: Render Exercise 1 (Multiple Choice / Word Bank / Match Pairs)
+    end
+
+    Learner->>UI: Selects / Types Answer & Clicks "CHECK"
+    UI->>API: POST /api/v1/lessons/{id}/exercises/{eid}/submit
+    Note over API: Compare submitted_answer against backend solution_payload
+    alt Answer is Correct
+        API->>DB: Record exercise ID in attempt
+        API-->>UI: 200 OK (is_correct=true, explanation)
+        UI-->>Learner: Play Correct Chime (Web Audio), Green Feedback Sheet
+    else Answer is Incorrect
+        API->>DB: Deduct 1 Heart (min 0), record mistake
+        API-->>UI: 200 OK (is_correct=false, solution, remaining_hearts)
+        UI-->>Learner: Play Error Buzz, Red Feedback Sheet, -1 Heart Animation
+    end
+
+    Learner->>UI: Completes All Lesson Exercises
+    UI->>API: POST /api/v1/lessons/{id}/complete
+    API->>DB: Verify attempt completion & calculate XP
+    API->>DB: Atomically increment user XP, streak, and complete daily quests
+    API-->>UI: 200 OK (xp_earned=15, new_streak, quest_updates)
+    UI-->>Learner: Victory Fanfare, Confetti Cannon, Celebration Summary
+```
+
+---
+
+## 📊 Database Schema & Data Models
+
+The SQLite database uses foreign-key constraints enforced on every connection through SQLAlchemy connection listeners (`PRAGMA foreign_keys=ON`).
 
 ```mermaid
 erDiagram
+    USERS ||--o{ USER_SESSIONS : maintains
     USERS ||--o{ USER_PROGRESS : tracks
-    USERS ||--o{ USER_ACHIEVEMENTS : earns
+    USERS ||--o{ LESSON_ATTEMPTS : initiates
+    USERS ||--o{ USER_ACHIEVEMENTS : unlocks
+    USERS ||--o{ DAILY_QUESTS : undertakes
     USERS ||--o{ ACTIVITY_LOGS : records
-    COURSES ||--o{ UNITS : contains
-    UNITS ||--o{ SKILLS : contains
+
+    COURSES ||--o{ UNITS : organizes
+    UNITS ||--o{ SKILLS : groups
     SKILLS ||--o{ LESSONS : contains
-    LESSONS ||--o{ EXERCISES : contains
-    LESSONS ||--o{ USER_PROGRESS : completes
+    LESSONS ||--o{ EXERCISES : presents
     LESSONS ||--o{ LESSON_ATTEMPTS : logs
-    ACHIEVEMENTS ||--o{ USER_ACHIEVEMENTS : unlocks
+    LESSONS ||--o{ USER_PROGRESS : fulfills
+
+    ACHIEVEMENTS ||--o{ USER_ACHIEVEMENTS : maps
 
     USERS {
         int id PK
-        string username
+        string username UK
+        string email UK
         string display_name
+        string password_hash
+        string auth_provider
+        string avatar_url
         int streak
         date last_active_date
         int hearts
+        int max_hearts
         int gems
         int total_xp
+        int streak_freezes
+        int daily_goal_xp
+        int current_course_id
+        datetime last_heart_regenerated_at
+        datetime created_at
+    }
+
+    USER_SESSIONS {
+        string id PK "Token (UUID/SHA256)"
+        int user_id FK
+        datetime created_at
+        datetime expires_at
     }
 
     COURSES {
         int id PK
-        string code
-        string title
-        string flag_icon
+        string code UK "es, ja"
+        string title "Spanish, Japanese"
+        string flag_icon "SVG path"
+        string description
     }
 
     UNITS {
         int id PK
         int course_id FK
-        int unit_number
+        int unit_number "1 through 6"
         string title
-        string color_hex
+        string description
+        string color_hex "Brand unit color"
     }
 
     SKILLS {
         int id PK
         int unit_id FK
+        int order_index
         string title
-        string icon_name
+        string icon_name "star, cup, chat, etc."
         int total_crowns
     }
 
     LESSONS {
         int id PK
         int skill_id FK
+        int order_index
         string title
-        int xp_reward
+        int xp_reward "15 XP default"
     }
 
     EXERCISES {
         int id PK
         int lesson_id FK
-        string type
+        int order_index
+        string type "5 core exercise types"
         string prompt
-        json client_payload
-        json solution_payload
+        string question_text
+        string audio_text
+        json client_payload "Sanitized options/tokens"
+        json solution_payload "Private canonical solution"
     }
 
     LESSON_ATTEMPTS {
-        string id PK
+        string id PK "UUID"
         int user_id FK
         int lesson_id FK
         json answered_exercise_ids
         int mistakes_count
         boolean is_completed
+        datetime started_at
+        datetime completed_at
+    }
+
+    USER_PROGRESS {
+        int id PK
+        int user_id FK
+        int lesson_id FK
+        int skill_id FK
+        boolean completed
+        int crowns_earned
+        datetime completed_at
+    }
+
+    LEADERBOARD_ENTRIES {
+        int id PK
+        int user_id FK
+        string league "Ruby, Emerald, etc."
+        string username
+        string display_name
+        string avatar_url
+        int weekly_xp
+        boolean is_current_user
+    }
+
+    ACHIEVEMENTS {
+        int id PK
+        string code UK "wildfire, sage, etc."
+        string title
+        string description
+        string icon
+        int target_value
+    }
+
+    USER_ACHIEVEMENTS {
+        int id PK
+        int user_id FK
+        int achievement_id FK
+        int current_value
+        boolean unlocked
+        datetime unlocked_at
+    }
+
+    DAILY_QUESTS {
+        int id PK
+        int user_id FK
+        string title
+        int current_progress
+        int target_progress
+        int reward_gems
+        boolean completed
+        date quest_date
+    }
+
+    ACTIVITY_LOGS {
+        int id PK
+        int user_id FK
+        date activity_date
+        int xp_earned
+        int lessons_completed
     }
 ```
 
 ---
 
-## ⚡ Quickstart & Local Setup
+## 📂 Project Directory Structure
+
+```
+Duolingo/
+├── backend/
+│   ├── app/
+│   │   ├── api/v1/endpoints/
+│   │   │   ├── auth.py              # User signup, login, session validation
+│   │   │   ├── courses.py           # Course tree, units, guidebooks, jump-ahead
+│   │   │   ├── lessons.py           # Start attempt, submit exercise, complete lesson
+│   │   │   └── user.py              # Profile, course switch, hearts refill, debug simulator
+│   │   ├── core/
+│   │   │   ├── config.py            # Pydantic BaseSettings, CORS origins, secrets
+│   │   │   ├── database.py          # SQLAlchemy engine, session maker, PRAGMA hooks
+│   │   │   └── security.py          # Passlib password hashing, token utilities
+│   │   ├── models/                  # SQLAlchemy model classes (Course, Unit, Skill, etc.)
+│   │   ├── schemas/                 # Pydantic validation contracts and API schemas
+│   │   ├── seeds/
+│   │   │   ├── spanish_curriculum.py # 6 Spanish units, 12 lessons, 65 exercises
+│   │   │   ├── japanese_curriculum.py# 6 Japanese units, 11 lessons, 60 exercises
+│   │   │   └── seed_data.py         # Primary database seeder & demo user builder
+│   │   ├── services/
+│   │   │   ├── guidebook_service.py # Bilingual unit guidebooks and grammar tips
+│   │   │   └── lesson_service.py    # Answer evaluation & tolerant matching engine
+│   │   └── main.py                  # FastAPI app factory, CORS, warmup hooks
+│   ├── tests/
+│   │   ├── test_api.py              # End-to-end API test workflow (health, auth, courses)
+│   │   ├── test_auth.py             # Authentication and session test suite
+│   │   ├── test_new_features.py     # Guidebook, course switching, Kana tests
+│   │   └── test_strict_rubric.py    # Adversarial rubric verification tests
+│   ├── duolingo.db                  # Pre-seeded canonical SQLite database
+│   ├── requirements.txt             # Python dependencies (FastAPI, Uvicorn, SQLAlchemy)
+│   ├── run.py                       # Local startup script with auto-seeding
+│   └── render.yaml                  # Render cloud blueprint manifest
+│
+├── frontend/
+│   ├── public/
+│   │   ├── icons/                   # UI icons (heart, gem, streak, chest, crown)
+│   │   ├── images/characters/       # SVG character scenes (Bea, Vikram, Junior, Lily, Oscar, Eddy)
+│   │   └── mascot/                  # Duo the Owl SVG states (happy, cheer, crying)
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── characters/          # Japanese Kana Hub (/characters) with Gojūon audio charts
+│   │   │   ├── leaderboard/         # Ruby League standings (/leaderboard)
+│   │   │   ├── learn/               # Serpentine Learning Path home (/learn)
+│   │   │   ├── lesson/[lessonId]/   # Fullscreen 5-type Lesson Player (/lesson/[id])
+│   │   │   ├── profile/             # Learner profile & achievements (/profile)
+│   │   │   ├── quests/              # Daily quests & gem chests (/quests)
+│   │   │   ├── settings/            # Daily goal adjustments & day simulator (/settings)
+│   │   │   ├── shop/                # Gems shop, streak freeze, refill hearts (/shop)
+│   │   │   ├── globals.css          # Vanilla CSS Design System, tokens & animations
+│   │   │   └── layout.tsx           # Root layout with fonts and metadata
+│   │   ├── components/
+│   │   │   ├── auth/                # ProtectedRoute wrapper
+│   │   │   ├── common/              # BackendWarmupBanner, ScrollToTopButton
+│   │   │   ├── layout/              # Sidebar (left), RightSidebar (sticky), Header
+│   │   │   ├── lesson/              # 5 Exercise components, FeedbackBar, CompleteScreen
+│   │   │   └── path/                # StickyUnitHeader, UnitSection, SkillNode, GuidebookModal
+│   │   └── lib/
+│   │       ├── api.ts               # Type-safe API client with auto-fallback & cookie/token sync
+│   │       ├── auth-context.tsx     # React auth provider & local state
+│   │       ├── sound.ts             # Procedural Web Audio API sound synthesizer
+│   │       └── speech.ts            # Web Speech API TTS for es-ES and ja-JP
+│   ├── package.json                 # Next.js 16, React 19, TypeScript dependencies
+│   └── tsconfig.json                # TypeScript strict configuration
+│
+├── start-backend.bat                # 1-Click Windows batch script for FastAPI
+├── start-frontend.bat               # 1-Click Windows batch script for Next.js
+└── README.md                        # Project documentation
+```
+
+---
+
+## 📡 REST API Architecture
+
+All endpoints are versioned under `/api/v1` and return standard JSON responses. Interactive OpenAPI documentation is accessible at `http://127.0.0.1:8000/api/v1/docs`.
+
+### Complete Endpoint Specification
+
+| Module | Method | Endpoint | Request Body | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **System** | `GET` | `/` | None | Root health and service version |
+| **System** | `GET` | `/health` | None | Lightweight liveness probe for cold-start monitors |
+| **Auth** | `POST` | `/api/v1/auth/signup` | `{username, email, password, display_name}` | Register new learner account |
+| **Auth** | `POST` | `/api/v1/auth/login` | `{identifier, password}` | Authenticate & issue session cookie + token |
+| **Auth** | `GET` | `/api/v1/auth/me` | None | Get current authenticated user session |
+| **Auth** | `POST` | `/api/v1/auth/logout` | None | Clear session cookie and invalidate token |
+| **Courses**| `GET` | `/api/v1/courses` | None | List available language courses (Spanish, Japanese) |
+| **Courses**| `GET` | `/api/v1/courses/{code}/tree` | None | Fetch full curriculum tree with units, skills, and status |
+| **Courses**| `GET` | `/api/v1/courses/units/{id}/guidebook` | None | Fetch unit grammar notes, pronunciation, and key phrases |
+| **Courses**| `POST` | `/api/v1/courses/units/{id}/jump-ahead` | None | Unlock unit skills via placement jump |
+| **Lessons**| `POST` | `/api/v1/lessons/{id}/start` | None | Start lesson attempt; returns sanitized client exercises |
+| **Lessons**| `POST` | `/api/v1/lessons/{id}/exercises/{eid}/submit` | `{attempt_id, user_answer}` | Authoritative answer verification & heart deduction |
+| **Lessons**| `POST` | `/api/v1/lessons/{id}/complete` | `{attempt_id}` | Complete lesson attempt, award XP, and update streak |
+| **User** | `GET` | `/api/v1/user/profile` | None | Current user stats: hearts, gems, streak, total XP |
+| **User** | `POST` | `/api/v1/user/course/switch` | `{course_code: "es" \| "ja"}` | Switch active learner course |
+| **User** | `POST` | `/api/v1/user/hearts/refill` | None | Refill hearts to 5 using 350 gems |
+| **User** | `POST` | `/api/v1/user/hearts/practice` | None | Practice session heart recovery (+1 heart) |
+| **User** | `POST` | `/api/v1/user/shop/streak-freeze` | None | Purchase and equip a Streak Freeze |
+| **User** | `PUT` | `/api/v1/user/daily-goal` | `{daily_goal_xp: 10..50}` | Update daily XP milestone goal |
+| **User** | `POST` | `/api/v1/user/debug/simulate-day` | Query: `?days_ago=N` | Test simulator for calendar progression and streak logic |
+| **Social** | `GET` | `/api/v1/leaderboard` | None | Weekly Ruby League standings with dynamic promotion zones |
+| **Social** | `GET` | `/api/v1/quests` | None | Daily quests with progress bars and gem chests |
+| **Social** | `GET` | `/api/v1/achievements` | None | Badges (Wildfire, Sage, Sharpshooter, Champion) |
+
+### Sample API Contracts
+
+#### 1. Start Lesson (Sanitized Client Payload)
+`POST /api/v1/lessons/1/start`
+```json
+{
+  "attempt_id": "8c01476d-0691-4cf1-92b7-a359ce91a56e",
+  "lesson": {
+    "id": 1,
+    "title": "Basics 1",
+    "xp_reward": 15,
+    "exercises": [
+      {
+        "id": 1,
+        "type": "multiple_choice",
+        "prompt": "Select the correct translation",
+        "question_text": "Hello",
+        "audio_text": "Hola",
+        "client_payload": {
+          "options": [
+            {"id": "opt_1", "text": "Hola", "image_url": "/mascot/duo-happy.svg"},
+            {"id": "opt_2", "text": "Adiós", "image_url": "/mascot/duo-crying.svg"},
+            {"id": "opt_3", "text": "Gracias", "image_url": "/icons/gem.svg"}
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+*(Notice: No `correct_option_id` or answer keys exist in the response payload).*
+
+#### 2. Submit Exercise Answer
+`POST /api/v1/lessons/1/exercises/1/submit`
+```json
+// Request Payload:
+{
+  "attempt_id": "8c01476d-0691-4cf1-92b7-a359ce91a56e",
+  "user_answer": "opt_1"
+}
+
+// Response Payload:
+{
+  "is_correct": true,
+  "explanation": "¡Excelente! 'Hola' means 'Hello'.",
+  "remaining_hearts": 5,
+  "already_answered": false
+}
+```
+
+---
+
+## 🎨 UI/UX Architecture & Learning Path Design
+
+### 1. Sticky Dynamic Unit Header
+As the user scrolls through the serpentine learning path, the unit header card stays pinned at the top (`position: sticky; top: 16px; z-index: 40;`) and dynamically transforms to display:
+- `← SECTION X, UNIT Y`: Previous unit jump button and section indicator.
+- **Bold Topic Headline**: Current unit's learning topic (e.g. `Talk about habits`, `Food & Café`, `Hiragana Basics`).
+- **📖 GUIDEBOOK**: Direct modal trigger loading the bilingual grammar notes for that unit.
+- **Smooth Color Interpolation**: Background color transitions fluidly (`transition: background-color 0.35s ease`) matching each unit's brand color token.
+
+```mermaid
+graph TD
+    Scroll[User Scrolls Window] --> Detect[Viewport Scroll Tracker]
+    Detect --> CheckUnit{Which UnitSection is at top of viewport?}
+    CheckUnit -->|Unit 1 in view| U1[Header Color: #58cc02 Green<br>Title: Get started in Spanish<br>Target: Unit 1 Guidebook]
+    CheckUnit -->|Unit 2 in view| U2[Header Color: #ce82ff Purple<br>Title: Food & Café<br>Target: Unit 2 Guidebook]
+    CheckUnit -->|Unit 3 in view| U3[Header Color: #b83280 Magenta<br>Title: Everyday Routines<br>Target: Unit 3 Guidebook]
+    CheckUnit -->|Unit 4 in view| U4[Header Color: #1cb0f6 Blue<br>Title: Travel & Getting Around<br>Target: Unit 4 Guidebook]
+```
+
+### 2. Serpentine Winding Path with Safety Margins
+Nodes curve gracefully in a balanced horizontal wave:
+- Center ($0\text{px}$) $\rightarrow$ Right ($+48\text{px}$) $\rightarrow$ Left ($-46\text{px}$) $\rightarrow$ Center ($0\text{px}$).
+- Vertical spacing is set to `gap: 44px` with `margin: 12px 0` on [`SkillNode`](file:///c:/Repos/Duolingo/frontend/src/components/path/SkillNode.tsx), guaranteeing a **$22\text{px}+$ clearance** between labels and floating `START` tooltips.
+- Companion scenes (Bea, Vikram, Junior, Lily, Oscar, Eddy) are positioned in the outer path gutters at `calc(50% + 145px)` with a **$42\text{px}+$ safety margin** preventing any overlap with nodes or text.
+
+### 3. The 5 Core Exercise Types
+All 5 required exercise formats are implemented with sound effects, audio pronunciation, and responsive touch controls:
+1. **Multiple Choice**: Choice cards with image thumbnails, TTS speaker button, and keyboard shortcuts (`1`, `2`, `3`).
+2. **Translate (Word Bank)**: Sentence prompt with interactive word token tray and tap-to-select mechanics.
+3. **Match Pairs**: Dual-column vocabulary tiles with instantaneous green match flash and mismatch shake animations.
+4. **Fill in the Blank**: Inline sentence sentence slot with select pills.
+5. **Type the Answer**: Free-form text input with special character helpers (Spanish accents: `á, é, í, ó, ú, ñ, ¿, ¡`; Japanese Kana helper bar).
+
+### 4. Dedicated Japanese Characters Hub (`/characters`)
+Accessible via the sidebar navigation (`あ` tab):
+- **Hiragana & Katakana Switcher**: Tabbed views for both primary Japanese phonetic syllabaries.
+- **Interactive Gojūon Grid**: Complete rows ($a, ka, sa, ta, na, ha, ma, ya, ra, wa, n$) plus Dakuten / Handakuten variations ($ga, za, da, ba, pa$).
+- **Tap-to-Speak**: Clicking any character triggers native Japanese TTS voice synthesis.
+- **5-Question Practice Drill**: Interactive gamified character quiz testing romanization recognition.
+
+### 5. Procedural Web Audio Synthesizer (`sound.ts`)
+Zero external MP3 dependencies! The application synthesizes Duolingo sound effects procedurally via the browser's native `AudioContext`:
+- **Click**: Short $800\text{Hz}$ triangle wave pulse ($30\text{ms}$).
+- **Correct Answer**: Bright major chord arpeggio ($C_5 \rightarrow E_5 \rightarrow G_5 \rightarrow C_6$).
+- **Incorrect Answer**: Low dual-sawtooth dissonance ($160\text{Hz} + 152\text{Hz}$) with fast decay.
+- **Heart Loss**: Descending $400\text{Hz} \rightarrow 200\text{Hz}$ pitch drop.
+- **Lesson Complete**: 5-note victory fanfare with vibrato.
+
+---
+
+## 🚀 Local Installation & Quickstart
 
 ### Prerequisites
-- **Node.js** (v18 or higher)
-- **Python** (v3.10 or higher)
+- **Node.js**: v18.0.0 or higher
+- **Python**: v3.10.0 or higher
+- **Git**
 
-### 1. One-Click Startup (Windows)
-Double-click the included launcher batch scripts from the repository root:
-- `start-backend.bat`: Launches FastAPI with Uvicorn on `http://127.0.0.1:8000`.
-- `start-frontend.bat`: Launches Next.js on `http://localhost:3000`.
+### 1. One-Click Launch (Windows)
+Double-click the included batch files from the repository root:
+1. `start-backend.bat`: Starts FastAPI with Uvicorn on `http://127.0.0.1:8000`.
+2. `start-frontend.bat`: Starts Next.js development server on `http://localhost:3000`.
+
+---
 
 ### 2. Manual Startup
 
-#### Backend API (FastAPI)
+#### Step 1: Clone the Repository
+```bash
+git clone https://github.com/AnshulKaushal27/Duolingo.git
+cd Duolingo
+```
+
+#### Step 2: Backend Setup (FastAPI)
 ```bash
 cd backend
+
+# Create Python virtual environment
 python -m venv venv
 
-# Windows:
+# Activate virtual environment
+# On Windows:
 .\venv\Scripts\activate
-# Linux/macOS:
+# On macOS / Linux:
 source venv/bin/activate
 
+# Install dependencies
 pip install -r requirements.txt
 
-# Run server (auto-seeds SQLite database if empty)
+# Run the server (auto-seeds database on first launch)
 python run.py
 ```
-- Backend API: `http://127.0.0.1:8000`
-- Interactive Swagger OpenAPI Docs: `http://127.0.0.1:8000/api/v1/docs`
+- Backend API is live at: `http://127.0.0.1:8000`
+- Interactive Swagger docs: `http://127.0.0.1:8000/api/v1/docs`
 
-#### Frontend Web App (Next.js)
+#### Step 3: Frontend Setup (Next.js)
+Open a new terminal window:
 ```bash
 cd frontend
+
+# Install npm packages
 npm install
+
+# Start development server
 npm run dev
 ```
-- Web Application: `http://localhost:3000`
+- Open your browser at: `http://localhost:3000`
 
-### 3. Run Backend Automated Test Suite
-Run the automated test suites verifying all critical rubric requirements, adversarial checks, API workflows, and gamification features:
+---
+
+### 3. Run Automated Backend Test Suites
+
+Run the end-to-end automated test suites verifying all rubric requirements, API flows, and security constraints:
+
 ```bash
 cd backend
-.\venv\Scripts\python tests\test_strict_rubric.py
+
+# Full API workflow test (health, auth, courses, lesson flow, leaderboard)
 .\venv\Scripts\python tests\test_api.py
+
+# Strict rubric & adversarial safeguard test suite
+.\venv\Scripts\python tests\test_strict_rubric.py
+
+# Authentication & session token test suite
 .\venv\Scripts\python tests\test_auth.py
+
+# New features test suite (guidebooks, course switching, Kana support)
 .\venv\Scripts\python tests\test_new_features.py
 ```
-*(All 4 test suites pass 100% with deterministic assertions).*
+
+*(All test suites execute deterministically and achieve 100% pass rates).*
+
+---
+
+## ☁️ Cloud Deployment Architecture
+
+This project is configured for continuous deployment on zero-cost infrastructure:
+- **Frontend Web App**: Deployed on **[Vercel](https://vercel.com/)** (Next.js Edge CDN).
+- **Backend API Server**: Deployed on **[Render](https://render.com/)** (FastAPI Web Service).
+
+```mermaid
+graph LR
+    Browser["Learner Browser"] --> |"Static Assets & Pages"| Vercel["Vercel (Frontend)"]
+    Browser --> |"API Requests"| Render["Render (Backend)"]
+    Render --> |"SQLite File or PostgreSQL"| Storage[("Persistent Storage")]
+```
+
+### 1. Backend Deployment on Render
+
+1. Sign in to your [Render Dashboard](https://dashboard.render.com/) and click **New +** $\rightarrow$ **Web Service**.
+2. Connect your GitHub repository (`AnshulKaushal27/Duolingo`).
+3. Set configuration fields:
+   - **Name**: `duolingo-clone-backend`
+   - **Root Directory**: `backend` *(CRITICAL)*
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - **Instance Type**: `Free`
+4. Add Environment Variables:
+   | Variable | Value | Description |
+   | :--- | :--- | :--- |
+   | `ENVIRONMENT` | `production` | Enables secure cross-origin cookies (`SameSite=None; Secure`) |
+   | `CORS_ORIGINS` | `https://your-frontend.vercel.app,http://localhost:3000` | Allowed origins (all `*.vercel.app` domains are auto-allowed) |
+   | `SECRET_KEY` | *(Random 32-char hex string)* | Session signing key |
+5. Click **Create Web Service**. Note your Render URL (e.g. `https://duolingo-backend.onrender.com`).
+
+---
+
+### 2. Frontend Deployment on Vercel
+
+1. Sign in to [Vercel](https://vercel.com/) and click **Add New...** $\rightarrow$ **Project**.
+2. Import the GitHub repository.
+3. Configure project settings:
+   - **Framework Preset**: `Next.js`
+   - **Root Directory**: Select `frontend` *(CRITICAL)*
+   - **Build Command**: `npm run build`
+4. Add Environment Variable:
+   | Variable | Example Value | Description |
+   | :--- | :--- | :--- |
+   | `NEXT_PUBLIC_API_URL` | `https://duolingo-backend.onrender.com/api/v1` | Points frontend to live Render API |
+5. Click **Deploy**.
+
+---
+
+### 3. Render Spin-Down Handling & Cold-Start Auto-Recovery
+
+Render's free tier spins down inactive web services after 15 minutes of idle time. Cold starts require **30–50 seconds** to boot.
+
+To handle this smoothly:
+1. **Initial Probe**: On page load, the frontend probes `GET /health`.
+2. **Cold-Start Detection**: If the probe takes longer than $1.4\text{s}$ or fails, the [`BackendWarmupBanner`](file:///c:/Repos/Duolingo/frontend/src/components/common/BackendWarmupBanner.tsx) slides down from the top with an animated Duo mascot, an active elapsed timer, and an explanation.
+3. **Auto-Recovery Polling**: The banner pings `/health` every $2.5\text{s}$. The moment Render finishes waking up, the banner turns green, dispatches a `duo:backend_online` event to automatically re-fetch learning path data without requiring a manual browser refresh, and gracefully dismisses itself.
+
+---
+
+### 4. Cross-Origin Session Preservation
+
+Because Vercel (`*.vercel.app`) and Render (`*.onrender.com`) operate on different top-level domains:
+- **Primary Channel**: HTTP-only session cookies configured with `SameSite=None; Secure`.
+- **Fallback Channel**: The backend returns an `X-Duo-Token` header on login, which the frontend stores in `localStorage` and transmits via `Authorization: Bearer <token>`. This guarantees persistent login even on browsers with aggressive third-party cookie blocking (e.g. Safari ITP, Chrome Incognito).
+- **Default Learner Fallback**: If no cookie or token is supplied, requests automatically resolve to the pre-seeded demo user **Alex Ramos** (`7-day streak`, `345+ XP`), eliminating 401 barriers for reviewers.
 
 ---
 
 ## 🛡️ Adversarial Rubric Verification (curl Recipes)
 
-Reviewers can verify the critical backend rules and adversarial safeguards with the following curl commands against `http://127.0.0.1:8000`:
+You can verify critical business logic and anti-cheat constraints directly via `curl`:
 
-### 1. Locked Skill Refusal (P4 [C] & Test 3)
-Attempting to start a lesson on a locked skill directly via API:
+### 1. Locked Skill Start Refusal (HTTP 403)
 ```bash
 curl -X POST http://127.0.0.1:8000/api/v1/lessons/7/start
-```
-**Expected Response**: `403 Forbidden`
-```json
-{"detail": "Skill 'Dining' is locked! You must complete prior skills first."}
+# Response: 403 Forbidden
+# {"detail": "Skill 'Dining' is locked! You must complete prior skills first."}
 ```
 
-### 2. Zero-Hearts Refusal (H3 [C] & Test 4)
-With 0 hearts, starting a lesson is blocked:
+### 2. Zero-Hearts Lesson Start Refusal (HTTP 400)
 ```bash
-# Refusal verified automatically in tests/test_strict_rubric.py -> test_zero_hearts_lesson_start_refusal
-# Returns HTTP 400 Bad Request:
-{"detail": "Cannot start lesson with 0 hearts. Refill hearts with gems, practice, or wait for regeneration."}
+# With 0 hearts, lesson initiation is blocked:
+curl -X POST http://127.0.0.1:8000/api/v1/lessons/1/start
+# Response: 400 Bad Request
+# {"detail": "Cannot start lesson with 0 hearts. Refill hearts with gems, practice, or wait for regeneration."}
 ```
 
-### 3. Replay Completion Idempotency & Forged XP (C2 [C], A3 [C] & Test 1)
-Submitting lesson completion twice with forged XP (`xp: 99999`):
+### 3. Replay Completion Idempotency & Forged XP Prevention
 ```bash
-# 1st completion awards standard 15 XP, ignoring client 99999
-# 2nd completion returns xp_earned: 0 without double-awarding
+# 1st completion awards 15 XP
+# 2nd completion of same attempt returns xp_earned: 0 without duplicate XP
+curl -X POST http://127.0.0.1:8000/api/v1/lessons/1/complete \
+  -H "Content-Type: application/json" \
+  -d '{"attempt_id": "test-attempt-id", "forged_xp": 99999}'
 ```
 
-### 4. Day Progression & Streak Reset Simulation (S2 [C] & Test 11)
-Simulate days passing without changing system clock:
+### 4. Calendar Simulation & Streak Reset
 ```bash
-# Simulate 1 day ago (yesterday): Next lesson increments streak +1
-curl -X POST "http://127.0.0.1:8000/api/v1/user/debug/simulate-day?days_ago=1"
-
-# Simulate 2 days ago (missed day): Resets streak to 0 (or consumes equipped Streak Freeze)
+# Simulate missed day (2 days ago): Streak resets to 0 (or consumes streak freeze)
 curl -X POST "http://127.0.0.1:8000/api/v1/user/debug/simulate-day?days_ago=2"
 
 # Reset back to today:
 curl -X POST "http://127.0.0.1:8000/api/v1/user/debug/simulate-day?days_ago=0"
 ```
 
-### 5. Foreign Key Enforcement (DB2 [C])
-Verify foreign key pragma is enabled on all SQLite connections:
-```bash
-python -c "from app.core.database import engine; conn = engine.connect(); print('PRAGMA foreign_keys =', conn.exec_driver_sql('PRAGMA foreign_keys').scalar())"
-# Output: PRAGMA foreign_keys = 1
-```
-
 ---
 
-## 📡 REST API Reference
+## 📄 License
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/courses` | List all available language courses |
-| `GET` | `/api/v1/courses/{code}/tree` | Full learning path tree with units, skills, and progress states |
-| `GET` | `/api/v1/courses/units/{id}/guidebook` | Unit guidebook grammar tips & key phrases |
-| `POST` | `/api/v1/courses/units/{id}/jump-ahead` | Placement test / jump ahead shortcut |
-| `POST` | `/api/v1/lessons/{id}/start` | Start lesson attempt (sanitized client payload only) |
-| `POST` | `/api/v1/lessons/{id}/exercises/{eid}/submit` | Backend-authoritative answer validation & heart deduction |
-| `POST` | `/api/v1/lessons/{id}/complete` | Complete lesson attempt and award authoritative XP & streak |
-| `GET` | `/api/v1/user/profile` | Current learner profile, hearts, gems, streak, and timer |
-| `POST` | `/api/v1/user/hearts/refill` | Refill 5 hearts using gems |
-| `POST` | `/api/v1/user/hearts/practice` | Practice mode heart recovery (+1 heart) |
-| `POST` | `/api/v1/user/shop/streak-freeze` | Purchase and equip a Streak Freeze with gems |
-| `PUT` | `/api/v1/user/daily-goal` | Update daily learning goal (10/20/30/50 XP) |
-| `POST` | `/api/v1/user/debug/simulate-day` | Debug simulator for testing calendar days and streak resets |
-| `GET` | `/api/v1/leaderboard` | Weekly Ruby league rankings with dynamic promotion zones |
-| `GET` | `/api/v1/quests` | Daily quests with live progress bars and gem chests |
-| `GET` | `/api/v1/achievements` | Badges and achievements with unlocked status |
-
----
-
-## 🧪 Evaluation & Demo Flow
-
-### Direct Evaluator Route:
-1. Open `http://localhost:3000/learn` directly in your browser.
-2. The application automatically resolves the default pre-seeded learner **Alex Ramos** (`7-day streak`, `345+ XP`, `5 hearts`), completely eliminating 401 authentication barriers.
-3. Observe **Unit 1**: "Basics" is marked Completed (👑 3/3 crowns), and "Greetings" is Available with the pulsing ring and Duo mascot cameo.
-4. Click **Greetings** and click **START (+15 XP)** to enter the Lesson Player (`/lesson/3`).
-5. Experience all **5 interactive exercise types**:
-   - **Multiple Choice**: Audio pronunciation speaker + keyboard shortcuts (`1`, `2`, `3`).
-   - **Word Bank (Translate)**: Duo speech bubble prompt with **Tap-a-Word Translation Tooltips** (dotted underlines), answer slot tray, and interactive tappable word bank tokens.
-   - **Match Pairs**: 2-column vocabulary matching with instant green match highlight and shake animation.
-   - **Fill in the Blank**: Inline sentence blank with choice pills.
-   - **Type the Answer**: Free-form text input with Spanish special accent helper buttons (`á`, `é`, `í`, `ó`, `ú`, `ñ`, `¿`, `¡`).
-6. Submit an incorrect answer or click **SKIP** to observe the signature red bottom feedback sheet, buzzer sound, and heart deduction (`5 -> 4`).
-7. Complete all exercises to trigger the **victory fanfare**, **confetti blast**, and **XP celebration summary**.
-8. Return to `/learn` to verify progress persistence in the SQLite database.
-
-### Settings & Day Simulation:
-- Navigate to `/settings` to change Daily Goals (Casual, Regular, Serious, Intense), toggle Sound/Dark mode, or click the **Evaluator Tools** buttons to simulate day progression and watch the streak respond live!
-
-### Marketing Homepage Route:
-- Visit `http://localhost:3000` to inspect the full Duolingo marketing landing page featuring the interactive Lottie Hero Globe, Language Carousel, and click **CONTINUE LEARNING** to enter the learning path.
-
-### Responsive Design Testing (Mobile & Tablet):
-- Open DevTools (F12) and toggle device emulation:
-  - **Desktop (>= 1024px)**: Full 256px navigation sidebar on the left and 368px stats sidebar on the right.
-  - **Tablet (768px - 1023px)**: Left sidebar persists; right sidebar transforms into a sticky compact top stats bar.
-  - **Mobile (< 768px)**: Left sidebar transforms into an authentic **bottom tab navigation bar** (Learn, Practice, Leaderboard, Quests, Shop, Profile) and stats appear in a compact top bar with interactive modal triggers.
-
----
-
-## ☁️ Cloud Deployment Guide
-
-This project is architected for frictionless zero-cost deployment:
-- **Frontend**: Deployed on **[Vercel](https://vercel.com)** (Next.js App Router, edge-optimized CDN)
-- **Backend**: Deployed on **[Render](https://render.com)** (FastAPI, Python 3.11+, Uvicorn)
-
----
-
-### 1. Deploying the Backend on Render
-
-You can deploy the backend using Render's Web Service interface or Render Blueprint.
-
-#### Option A: Manual Web Service Setup (Recommended)
-1. Push your latest code to your GitHub repository.
-2. Sign in to your [Render Dashboard](https://dashboard.render.com/) and click **New +** -> **Web Service**.
-3. Connect your GitHub repository.
-4. Fill in the service configuration:
-   - **Name**: `duolingo-clone-backend` (or your preferred name)
-   - **Region**: Choose the region closest to you (e.g. Frankfurt, Oregon, Singapore)
-   - **Branch**: `main`
-   - **Root Directory**: `backend` *(CRITICAL: ensure this is set to `backend`)*
-   - **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - **Instance Type**: `Free`
-5. Under **Environment Variables**, add:
-   | Variable | Value | Description |
-   | :--- | :--- | :--- |
-   | `ENVIRONMENT` | `production` | Enables cross-origin secure cookies (`SameSite=None; Secure`) |
-   | `CORS_ORIGINS` | `https://your-frontend.vercel.app,http://localhost:3000` | Comma-separated list of allowed frontend URLs (Note: all `*.vercel.app` preview URLs are automatically permitted) |
-   | `SECRET_KEY` | *(A random 32-character string)* | Session token signing secret |
-   | `DATABASE_URL` | *(Optional)* `sqlite:///duolingo.db` | Defaults to auto-seeded SQLite. For persistent PostgreSQL, supply a Render Postgres URL. |
-6. Click **Create Web Service**.
-7. Once deployed, note down your Render service URL (e.g., `https://duolingo-backend.onrender.com`).
-   - You can test it by opening `https://duolingo-backend.onrender.com/health` in your browser. It should return `{"status":"ok"}`.
-
-#### Option B: 1-Click Blueprint
-This repository includes a pre-configured [`backend/render.yaml`](file:///c:/Repos/Duolingo/backend/render.yaml). In Render, click **New +** -> **Blueprint**, select your repo, and Render will parse the configuration automatically.
-
----
-
-### 2. Deploying the Frontend on Vercel
-
-1. Sign in to your [Vercel Dashboard](https://vercel.com/) and click **Add New...** -> **Project**.
-2. Import your GitHub repository.
-3. Configure the project settings:
-   - **Framework Preset**: `Next.js`
-   - **Root Directory**: Click `Edit` and select `frontend` *(CRITICAL)*
-   - **Build Command**: `npm run build` (default)
-   - **Output Directory**: `.next` (default)
-4. Expand the **Environment Variables** section and add:
-   | Variable | Example Value | Description |
-   | :--- | :--- | :--- |
-   | `NEXT_PUBLIC_API_URL` | `https://duolingo-backend.onrender.com/api/v1` | Points all frontend API calls to your live Render backend (must include `/api/v1`) |
-5. Click **Deploy**.
-6. Once deployment finishes, Vercel gives you your production URL (e.g. `https://duolingo-clone-xxx.vercel.app`).
-7. Update `CORS_ORIGINS` in your Render backend settings to include your new Vercel production domain!
-
----
-
-### 3. Render Spin-Down Handling & Frontend Health Check Loader
-
-> [!NOTE]
-> **Why is this necessary?**
-> Render's **Free Tier** automatically puts web services to sleep after 15 minutes of inactivity to conserve resources. When a new user opens the website, Render takes **30–50 seconds** to boot up the container (a "cold start").
-
-To provide a delightful user experience during this waiting period, our frontend includes an automatic **Duolingo-Themed Spin-Down Health Loader**:
-
-1. **Intelligent Initial Probe**:
-   - On initial page load, the frontend checks backend liveness (`GET /health`).
-   - If the backend is active, the app loads instantly with zero interruptions.
-2. **Cold-Start Detection**:
-   - If the server takes longer than 1.4s to respond or fails due to sleep, the [`BackendWarmupBanner`](file:///c:/Repos/Duolingo/frontend/src/components/common/BackendWarmupBanner.tsx) smoothly drops down from the top.
-   - Displays a bouncing Duo mascot, live elapsed timer (*"Elapsed: 24s"*), simulated progress bar, and user-friendly explanation:
-     > *"The backend is hosted on Render's free tier, which spins down idle servers. We are waking it up for you right now (typically takes 30–50s)..."*
-3. **Live Polling & Auto-Recovery**:
-   - The banner continuously pings `/health` in the background every 2.5 seconds.
-   - The moment Render completes its cold start, the banner turns green (*"Server Online! Ready to Learn!"*), broadcasts a `duo:backend_online` event to automatically re-fetch learning path data without requiring a manual browser refresh, and gracefully slides away.
-4. **Resilient Network Event Bus**:
-   - Any background network fetch failures immediately trigger the warmup banner so users always know their system is waiting for server wake-up rather than broken.
-
----
-
-### 4. Cross-Origin Authentication & Session Preservation
-
-When deploying the frontend on Vercel (`*.vercel.app`) and the backend on Render (`*.onrender.com`), the two services operate on **different top-level domains**.
-
-This application handles cross-site authentication through a dual-channel strategy:
-1. **HTTP-only Cookie**: Configured with `SameSite=None; Secure` in production so browsers deliver the `duo_session` cookie across origins.
-2. **Authorization Header Backup**: The backend returns an `X-Duo-Token` header on login/signup, which the frontend caches in `localStorage` and sends via `Authorization: Bearer <token>`. This guarantees authentication even if the user is in an aggressive tracking-prevention browser (such as Safari ITP or Chrome Incognito) that blocks third-party cookies.
-3. **Default Learner Fallback**: If no cookie or token is present, the backend gracefully defaults to **Alex Ramos** (`7-day streak`, `345+ XP`), satisfying the evaluation rubric and enabling immediate exploration of all features.
-
----
-
-### 5. Verification Checklist
-
-Before sharing your deployed application, verify:
-- [ ] Render backend `/health` returns `{"status":"ok"}`.
-- [ ] Vercel frontend loads the home marketing page and `/learn` dashboard.
-- [ ] Starting a lesson (`/lesson/1` or `/lesson/3`) loads interactive exercises and submits answers with live sound effects.
-- [ ] Leaderboard (`/leaderboard`), Quests (`/quests`), Profile (`/profile`), and Shop (`/shop`) render user data accurately.
-- [ ] If the Render backend goes to sleep, visiting the frontend reveals the friendly Duo warmup banner until the backend finishes spinning up.
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Duolingo trademark, assets, and branding are the property of Duolingo, Inc. This project is an educational, non-commercial portfolio replication.
