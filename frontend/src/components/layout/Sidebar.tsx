@@ -16,9 +16,20 @@ interface SidebarProps {
   activeCourse?: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
+const CHARACTER_LANGUAGES: Record<string, NavItem> = {
+  ja: { label: "CHARACTERS", href: "/characters", icon: "あ" },
+  ko: { label: "CHARACTERS", href: "/characters", icon: "ㅎ" },
+  zh: { label: "CHARACTERS", href: "/characters", icon: "字" },
+  ru: { label: "CHARACTERS", href: "/characters", icon: "Д" },
+  hi: { label: "CHARACTERS", href: "/characters", icon: "अ" },
+  ar: { label: "CHARACTERS", href: "/characters", icon: "ع" },
+};
+
+const BASE_NAV_ITEMS_BEFORE: NavItem[] = [
   { label: "LEARN", href: "/learn", icon: "🏠" },
-  { label: "CHARACTERS", href: "/characters", icon: "あ" },
+];
+
+const BASE_NAV_ITEMS_AFTER: NavItem[] = [
   { label: "PRACTICE", href: "/practice", icon: "🏋️" },
   { label: "LEADERBOARDS", href: "/leaderboard", icon: "🏆" },
   { label: "QUESTS", href: "/quests", icon: "📜" },
@@ -32,6 +43,51 @@ export default function Sidebar({ activeCourse }: SidebarProps = {}) {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuth();
+
+  const [currentCourse, setCurrentCourse] = useState<string>(() => {
+    if (activeCourse) return activeCourse.toLowerCase();
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("duo_active_course");
+      if (stored) return stored.toLowerCase();
+    }
+    return user?.current_course_code?.toLowerCase() || "es";
+  });
+
+  useEffect(() => {
+    if (activeCourse) {
+      setCurrentCourse(activeCourse.toLowerCase());
+      return;
+    }
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("duo_active_course");
+      if (stored) {
+        setCurrentCourse(stored.toLowerCase());
+        return;
+      }
+    }
+    if (user?.current_course_code) {
+      setCurrentCourse(user.current_course_code.toLowerCase());
+    }
+  }, [activeCourse, user?.current_course_code]);
+
+  useEffect(() => {
+    const handleCourseChanged = (e: any) => {
+      const code = e.detail?.code?.toLowerCase();
+      if (code) {
+        setCurrentCourse(code);
+      }
+    };
+    window.addEventListener("duo:course_changed", handleCourseChanged);
+    return () => window.removeEventListener("duo:course_changed", handleCourseChanged);
+  }, []);
+
+  const navItems = React.useMemo(() => {
+    const charTab = CHARACTER_LANGUAGES[currentCourse];
+    if (charTab) {
+      return [...BASE_NAV_ITEMS_BEFORE, charTab, ...BASE_NAV_ITEMS_AFTER];
+    }
+    return [...BASE_NAV_ITEMS_BEFORE, ...BASE_NAV_ITEMS_AFTER];
+  }, [currentCourse]);
 
   useEffect(() => {
     const saved = localStorage.getItem("duo-theme") as "light" | "dark";
@@ -95,7 +151,7 @@ export default function Sidebar({ activeCourse }: SidebarProps = {}) {
 
       {/* Navigation List */}
       <nav style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
-        {NAV_ITEMS.map((item) => {
+        {navItems.map((item) => {
           const isActive = pathname === item.href || (item.href === "/learn" && pathname === "/");
           return (
             <Link
@@ -371,7 +427,7 @@ export default function Sidebar({ activeCourse }: SidebarProps = {}) {
 
     {/* Mobile Bottom Navigation Bar (< 768px viewports) */}
     <nav className="duo-bottom-nav">
-      {NAV_ITEMS.map((item) => {
+      {navItems.map((item) => {
         const isActive = pathname === item.href || (item.href === "/learn" && pathname === "/");
         return (
           <Link
