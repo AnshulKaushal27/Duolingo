@@ -8,6 +8,7 @@ import HeroGlobe from "@/components/landing/HeroGlobe";
 import LanguageCarousel from "@/components/landing/LanguageCarousel";
 import LandingSections from "@/components/landing/LandingSections";
 import LandingFooter from "@/components/landing/LandingFooter";
+import ScrollToTopButton from "@/components/common/ScrollToTopButton";
 
 export default function HomePage() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -16,8 +17,15 @@ export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 300);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 300);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
@@ -392,6 +400,9 @@ export default function HomePage() {
 
       {/* Official multi-column footer */}
       <LandingFooter />
+
+      {/* Floating Scroll To Top Button */}
+      <ScrollToTopButton right="32px" />
     </div>
   );
 }

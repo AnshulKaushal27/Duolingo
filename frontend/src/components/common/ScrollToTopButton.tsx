@@ -3,12 +3,23 @@
 import React, { useState, useEffect } from "react";
 import { playClickSound } from "@/lib/sound";
 
-export default function ScrollToTopButton() {
+interface ScrollToTopButtonProps {
+  right?: string;
+}
+
+export default function ScrollToTopButton({ right = "392px" }: ScrollToTopButtonProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setVisible(window.scrollY > 280);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setVisible(window.scrollY > 280);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -28,7 +39,7 @@ export default function ScrollToTopButton() {
       style={{
         position: "fixed",
         bottom: "32px",
-        right: "392px",
+        right,
         zIndex: 45,
         width: "50px",
         height: "50px",

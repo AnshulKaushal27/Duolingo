@@ -9,8 +9,8 @@ export default function AnytimeAnywhereSection() {
   const animRef = useRef<AnimationItem | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const [readyToShow, setReadyToShow] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   const targetFrameRef = useRef(0);
   const currentFrameRef = useRef(0);
@@ -25,6 +25,22 @@ export default function AnytimeAnywhereSection() {
     const totalDistance = vh + rect.height;
     const progress = (vh - rect.top) / totalDistance;
     return Math.min(Math.max(progress, 0), 1);
+  }, []);
+
+  const updateDynamicStyles = useCallback((progress: number) => {
+    if (sectionRef.current) {
+      let bg = "rgb(255, 255, 255)";
+      if (progress >= 0.1 && progress <= 0.9) {
+        const intensity = Math.sin(progress * Math.PI);
+        const r = Math.round(255 - (255 - 220) * intensity);
+        const g = Math.round(255 - (255 - 242) * intensity);
+        bg = `rgb(${r}, ${g}, 255)`;
+      }
+      sectionRef.current.style.backgroundColor = bg;
+    }
+    if (titleRef.current) {
+      titleRef.current.style.color = progress > 0.35 ? "rgb(var(--color-manta-ray))" : "#58cc02";
+    }
   }, []);
 
   useEffect(() => {
@@ -46,20 +62,14 @@ export default function AnytimeAnywhereSection() {
     anim.addEventListener("DOMLoaded", () => {
       if (isCancelled) return;
 
-      // CRITICAL: Calculate the current scroll position and jump
-      // the Lottie to the matching frame BEFORE making it visible.
-      // This prevents the "pop" from SVG (final state) -> Lottie (frame 0).
       const currentProgress = calcScrollProgress();
       const initialFrame = currentProgress * 450;
 
-      // Set both target and current to the same frame so the
-      // interpolation loop doesn't cause any jump
       targetFrameRef.current = initialFrame;
       currentFrameRef.current = initialFrame;
       anim.goToAndStop(initialFrame, true);
+      updateDynamicStyles(currentProgress);
 
-      // Small delay to let the browser render the Lottie SVG at the
-      // correct frame before we begin the crossfade
       requestAnimationFrame(() => {
         if (isCancelled) return;
         requestAnimationFrame(() => {
@@ -73,9 +83,8 @@ export default function AnytimeAnywhereSection() {
     const updateLoop = () => {
       if (animRef.current && isIntersectingRef.current) {
         const diff = targetFrameRef.current - currentFrameRef.current;
-        if (Math.abs(diff) > 0.05) {
-          // Smooth easing factor for buttery animation
-          currentFrameRef.current += diff * 0.12;
+        if (Math.abs(diff) > 0.08) {
+          currentFrameRef.current += diff * 0.14;
           animRef.current.goToAndStop(currentFrameRef.current, true);
         }
       }
@@ -83,24 +92,36 @@ export default function AnytimeAnywhereSection() {
     };
     rafIdRef.current = requestAnimationFrame(updateLoop);
 
-    // Scroll listener using trigger zone
+    // Scroll listener throttled to RAF and only executed when section is intersecting
+    let scrollTicking = false;
     const handleScroll = () => {
-      const clampedProgress = calcScrollProgress();
-      setScrollProgress(clampedProgress);
-      targetFrameRef.current = clampedProgress * 450;
+      if (!isIntersectingRef.current) return;
+      if (!scrollTicking) {
+        requestAnimationFrame(() => {
+          const clampedProgress = calcScrollProgress();
+          targetFrameRef.current = clampedProgress * 450;
+          updateDynamicStyles(clampedProgress);
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
 
     // IntersectionObserver to pause work when off-screen
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           isIntersectingRef.current = entry.isIntersecting;
+          if (entry.isIntersecting) {
+            const p = calcScrollProgress();
+            targetFrameRef.current = p * 450;
+            updateDynamicStyles(p);
+          }
         });
       },
-      { threshold: 0.01 }
+      { threshold: 0.01, rootMargin: "100px" }
     );
 
     if (sectionRef.current) {
@@ -115,28 +136,15 @@ export default function AnytimeAnywhereSection() {
       anim.destroy();
       animRef.current = null;
     };
-  }, [calcScrollProgress]);
-
-  // Compute dynamic background color: transitions from white to sky blue as user scrolls
-  // Matching Duolingo screenshot where background becomes sky blue (#dcf2ff)
-  const bgStyle = (() => {
-    if (scrollProgress < 0.1) return "rgb(255, 255, 255)";
-    if (scrollProgress > 0.9) return "rgb(255, 255, 255)";
-    // Smooth peak around progress 0.3 - 0.7
-    const intensity = Math.sin(scrollProgress * Math.PI);
-    const r = Math.round(255 - (255 - 220) * intensity);
-    const g = Math.round(255 - (255 - 242) * intensity);
-    const b = 255;
-    return `rgb(${r}, ${g}, ${b})`;
-  })();
+  }, [calcScrollProgress, updateDynamicStyles]);
 
   return (
     <section
       ref={sectionRef}
       className="Gijhh"
       style={{
-        backgroundColor: bgStyle,
-        transition: "background-color 0.2s ease-out",
+        backgroundColor: "rgb(255, 255, 255)",
+        transition: "background-color 0.15s ease-out",
         position: "relative",
         overflow: "hidden",
         minHeight: "100vh",
@@ -173,15 +181,16 @@ export default function AnytimeAnywhereSection() {
           }}
         >
           <h1
+            ref={titleRef}
             className="QO0Sm"
             style={{
               fontSize: "clamp(36px, 5vw, 56px)",
               fontWeight: 800,
-              color: scrollProgress > 0.35 ? "rgb(var(--color-manta-ray))" : "#58cc02",
+              color: "#58cc02",
               lineHeight: 1.15,
               margin: 0,
               letterSpacing: "-0.5px",
-              transition: "color 0.3s ease",
+              transition: "color 0.25s ease",
             }}
           >
             learn anytime, anywhere
