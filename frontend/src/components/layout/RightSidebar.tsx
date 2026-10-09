@@ -20,11 +20,11 @@ interface RightSidebarProps {
 }
 
 const AVAILABLE_COURSES = [
-  { code: "es", title: "Spanish", flag: "/images/flags/es.svg", level: "Section 1 • 6 Units" },
-  { code: "ja", title: "Japanese", flag: "/images/flags/ja.svg", level: "Section 1 • Hiragana & 6 Units" },
-  { code: "fr", title: "French", flag: "/images/flags/fr.svg", level: "Section 1 • Intro" },
-  { code: "de", title: "German", flag: "/images/flags/de.svg", level: "Section 1 • Basics" },
-  { code: "chess", title: "Chess", flag: "/images/flags/chess.svg", level: "Section 1 • Openings" },
+  { code: "es", title: "Spanish", flag: "/images/flags/es.svg", level: "Section 1 • 6 Units", available: true },
+  { code: "ja", title: "Japanese", flag: "/images/flags/ja.svg", level: "Section 1 • Hiragana & 6 Units", available: true },
+  { code: "fr", title: "French", flag: "/images/flags/fr.svg", level: "Coming soon", available: false },
+  { code: "de", title: "German", flag: "/images/flags/de.svg", level: "Coming soon", available: false },
+  { code: "chess", title: "Chess", flag: "/images/flags/chess.svg", level: "Coming soon", available: false },
 ];
 
 export default function RightSidebar({
@@ -234,6 +234,7 @@ export default function RightSidebar({
                       <div
                         key={c.code}
                         onClick={async () => {
+                          if (!c.available) return;
                           playClickSound();
                           if (!isCurrent) {
                             try {
@@ -263,27 +264,35 @@ export default function RightSidebar({
                           borderRadius: "14px",
                           backgroundColor: isCurrent ? "var(--duo-surface)" : "transparent",
                           border: isCurrent ? "2px solid var(--duo-border)" : "2px solid transparent",
-                          cursor: "pointer",
-                          transition: "background-color 0.1s ease",
+                          cursor: c.available ? "pointer" : "not-allowed",
+                          opacity: c.available ? 1 : 0.55,
+                          transition: "background-color 0.1s ease, opacity 0.1s ease",
+                          userSelect: "none",
                         }}
                         onMouseEnter={(e) => {
-                          if (!isCurrent) e.currentTarget.style.backgroundColor = "var(--duo-surface)";
+                          if (!isCurrent && c.available) e.currentTarget.style.backgroundColor = "var(--duo-surface)";
                         }}
                         onMouseLeave={(e) => {
-                          if (!isCurrent) e.currentTarget.style.backgroundColor = "transparent";
+                          if (!isCurrent && c.available) e.currentTarget.style.backgroundColor = "transparent";
                         }}
                       >
                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                           <img
                             src={c.flag}
                             alt={c.title}
-                            style={{ width: "32px", height: "24px", borderRadius: "4px", objectFit: "cover" }}
+                            style={{
+                              width: "32px",
+                              height: "24px",
+                              borderRadius: "4px",
+                              objectFit: "cover",
+                              opacity: c.available ? 1 : 0.65,
+                            }}
                           />
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: "15px", color: "var(--duo-text)" }}>
+                            <div style={{ fontWeight: 800, fontSize: "15px", color: c.available ? "var(--duo-text)" : "var(--duo-text-muted)" }}>
                               {c.title}
                             </div>
-                            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--duo-text-muted)" }}>
+                            <div style={{ fontSize: "11px", fontWeight: 700, color: c.available ? "var(--duo-text-muted)" : "var(--duo-text-dim)" }}>
                               {c.level}
                             </div>
                           </div>

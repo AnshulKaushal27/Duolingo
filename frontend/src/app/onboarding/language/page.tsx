@@ -11,21 +11,22 @@ interface CourseOption {
   name: string;
   flag: string;
   learners: string;
+  available?: boolean;
 }
 
 const COURSES: CourseOption[] = [
-  { id: "es", name: "Spanish", flag: "/images/flags/es.svg", learners: "42M learners" },
-  { id: "fr", name: "French", flag: "/images/flags/fr.svg", learners: "22.7M learners" },
-  { id: "chess", name: "Chess", flag: "/images/flags/chess.svg", learners: "" },
-  { id: "en", name: "English", flag: "/images/flags/en.svg", learners: "19.8M learners" },
-  { id: "ja", name: "Japanese", flag: "/images/flags/ja.svg", learners: "17.9M learners" },
-  { id: "de", name: "German", flag: "/images/flags/de.svg", learners: "15.9M learners" },
-  { id: "math", name: "Math", flag: "/images/flags/math.svg", learners: "" },
-  { id: "hi", name: "Hindi", flag: "/images/flags/hi.svg", learners: "13.6M learners" },
-  { id: "it", name: "Italian", flag: "/images/flags/it.svg", learners: "10.2M learners" },
-  { id: "ko", name: "Korean", flag: "/images/flags/ko.svg", learners: "12.1M learners" },
-  { id: "zh", name: "Chinese", flag: "/images/flags/zh.svg", learners: "9.2M learners" },
-  { id: "pt", name: "Portuguese", flag: "/images/flags/pt.svg", learners: "4.6M learners" },
+  { id: "es", name: "Spanish", flag: "/images/flags/es.svg", learners: "42M learners", available: true },
+  { id: "ja", name: "Japanese", flag: "/images/flags/ja.svg", learners: "17.9M learners", available: true },
+  { id: "fr", name: "French", flag: "/images/flags/fr.svg", learners: "Coming soon", available: false },
+  { id: "de", name: "German", flag: "/images/flags/de.svg", learners: "Coming soon", available: false },
+  { id: "chess", name: "Chess", flag: "/images/flags/chess.svg", learners: "Coming soon", available: false },
+  { id: "en", name: "English", flag: "/images/flags/en.svg", learners: "Coming soon", available: false },
+  { id: "math", name: "Math", flag: "/images/flags/math.svg", learners: "Coming soon", available: false },
+  { id: "hi", name: "Hindi", flag: "/images/flags/hi.svg", learners: "Coming soon", available: false },
+  { id: "it", name: "Italian", flag: "/images/flags/it.svg", learners: "Coming soon", available: false },
+  { id: "ko", name: "Korean", flag: "/images/flags/ko.svg", learners: "Coming soon", available: false },
+  { id: "zh", name: "Chinese", flag: "/images/flags/zh.svg", learners: "Coming soon", available: false },
+  { id: "pt", name: "Portuguese", flag: "/images/flags/pt.svg", learners: "Coming soon", available: false },
 ];
 
 const SITE_LANGUAGES = [
@@ -60,6 +61,7 @@ export default function LanguagePickerPage() {
   }, []);
 
   const handleSelect = (course: CourseOption) => {
+    if (course.available === false) return;
     setSelected(course.id);
     playClickSound();
     setTargetLanguage(course.id, course.name);
@@ -262,11 +264,13 @@ export default function LanguagePickerPage() {
         >
           {COURSES.map((course) => {
             const isSelected = selected === course.id;
+            const isAvailable = course.available !== false;
             return (
               <button
                 key={course.id}
                 type="button"
                 onClick={() => handleSelect(course)}
+                disabled={!isAvailable}
                 style={{
                   minHeight: "182px",
                   padding: "24px 16px 20px 16px",
@@ -274,7 +278,8 @@ export default function LanguagePickerPage() {
                   border: isSelected ? "2px solid #cecece" : "2px solid #e5e5e5",
                   borderBottom: isSelected ? "4px solid #cecece" : "4px solid #e5e5e5",
                   backgroundColor: isSelected ? "#e5e5e5" : "#ffffff",
-                  cursor: "pointer",
+                  cursor: isAvailable ? "pointer" : "not-allowed",
+                  opacity: isAvailable ? 1 : 0.55,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -284,22 +289,26 @@ export default function LanguagePickerPage() {
                   userSelect: "none",
                 }}
                 onMouseEnter={(e) => {
-                  if (!isSelected) {
+                  if (!isSelected && isAvailable) {
                     e.currentTarget.style.backgroundColor = "#f7f7f7";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!isSelected) {
+                  if (!isSelected && isAvailable) {
                     e.currentTarget.style.backgroundColor = "#ffffff";
                   }
                 }}
                 onMouseDown={(e) => {
-                  e.currentTarget.style.transform = "translateY(2px)";
-                  e.currentTarget.style.borderBottomWidth = "2px";
+                  if (isAvailable) {
+                    e.currentTarget.style.transform = "translateY(2px)";
+                    e.currentTarget.style.borderBottomWidth = "2px";
+                  }
                 }}
                 onMouseUp={(e) => {
-                  e.currentTarget.style.transform = "translateY(0px)";
-                  e.currentTarget.style.borderBottomWidth = "4px";
+                  if (isAvailable) {
+                    e.currentTarget.style.transform = "translateY(0px)";
+                    e.currentTarget.style.borderBottomWidth = "4px";
+                  }
                 }}
               >
                 {/* 3D Flag / Subject Icon */}
