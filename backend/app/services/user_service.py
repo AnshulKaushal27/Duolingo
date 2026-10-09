@@ -2,30 +2,6 @@ from datetime import date, datetime, timedelta
 from sqlalchemy.orm import Session
 from ..models import User, ActivityLog
 
-def get_or_create_default_user(db: Session) -> User:
-    """Returns the default learner (Alex Ramos), creating him if missing."""
-    user = db.query(User).filter((User.username == "alexramos") | (User.username == "duofan_alex")).first()
-    if not user:
-        from ..core.security import hash_password
-        user = User(
-            username="alexramos",
-            email="alex@example.com",
-            display_name="Alex Ramos",
-            password_hash=hash_password("development-only-password"),
-            auth_provider="local",
-            avatar_url="/mascot/duo-happy.svg",
-            streak=7,
-            last_active_date=date.today(),
-            hearts=5,
-            max_hearts=5,
-            gems=780,
-            total_xp=345,
-            created_at=datetime.utcnow()
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-    return user
 
 HEART_REGEN_INTERVAL_SECONDS = 3600  # 1 hour per heart regeneration
 

@@ -6,6 +6,7 @@ import RightSidebar from "@/components/layout/RightSidebar";
 import { api, QuestItem, UserProfile } from "@/lib/api";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useAuth } from "@/lib/auth-context";
 
 export default function QuestsPage() {
   return (
@@ -16,6 +17,7 @@ export default function QuestsPage() {
 }
 
 function QuestsContent() {
+  const { user, updateGems } = useAuth();
   const [quests, setQuests] = useState<QuestItem[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -132,11 +134,14 @@ function QuestsContent() {
       </main>
 
       <RightSidebar
-        streak={profile?.streak || 7}
-        gems={profile?.gems || 780}
-        hearts={profile?.hearts || 5}
-        xp={profile?.total_xp || 345}
-        onHeartsUpdated={() => {}}
+        streak={profile?.streak ?? (user?.streak ?? 1)}
+        gems={profile?.gems ?? (user?.gems ?? 0)}
+        hearts={profile?.hearts ?? (user?.hearts ?? 5)}
+        xp={profile?.total_xp ?? (user?.total_xp ?? 0)}
+        onHeartsUpdated={(h, g) => {
+          if (profile) setProfile({ ...profile, hearts: h, gems: g });
+          updateGems(g);
+        }}
       />
     </div>
   );

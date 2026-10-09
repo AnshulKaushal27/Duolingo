@@ -130,12 +130,6 @@ def main():
             units_data=get_japanese_units_data()
         )
 
-        # 3. Check Alex Ramos user
-        alex = db.query(User).filter(User.username == "alexramos").first()
-        if alex and not alex.current_course_id:
-            alex.current_course_id = spanish.id
-            db.commit()
-
         print("=== Seeding Finished Successfully! ===")
     finally:
         db.close()

@@ -324,22 +324,6 @@ export default function HomePage() {
                   >
                     <span className="_2NRlK _9lHjd">I ALREADY HAVE AN ACCOUNT</span>
                   </Link>
-
-                  <Link
-                    href="/learn"
-                    onClick={() => playClickSound()}
-                    style={{
-                      textAlign: "center",
-                      color: "rgb(var(--color-macaw))",
-                      fontWeight: 800,
-                      fontSize: "13px",
-                      textDecoration: "underline",
-                      marginTop: "6px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Evaluator Demo: Open /learn directly (Alex Ramos) →
-                  </Link>
                 </>
               ) : (
                 <>

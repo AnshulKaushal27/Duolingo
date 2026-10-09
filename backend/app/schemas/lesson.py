@@ -51,3 +51,5 @@ class LessonCompleteResponse(BaseModel):
     skill_completed: bool
     next_skill_unlocked_id: Optional[int] = None
     accuracy_percentage: int
+    gems: int
+    gems_earned: Optional[int] = 10

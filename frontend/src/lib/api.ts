@@ -93,6 +93,8 @@ export interface LessonCompleteResult {
   skill_completed: boolean;
   next_skill_unlocked_id: number | null;
   accuracy_percentage: number;
+  gems?: number;
+  gems_earned?: number;
 }
 
 export interface LeaderboardUser {
@@ -295,6 +297,22 @@ export const api = {
   jumpAhead: (unitId: number) => fetchJson<{ success: boolean; message: string }>(`/courses/units/${unitId}/jump-ahead`, { method: "POST" }),
   claimChest: () => fetchJson<{ success: boolean; gems: number; reward: number }>("/user/chest/claim", { method: "POST" }),
   buyStreakFreeze: () => fetchJson<{ success: boolean; streak_freezes: number; gems: number; message: string }>("/user/shop/streak-freeze", { method: "POST" }),
+  placeWager: () => fetchJson<{ success: boolean; gems: number; message: string }>("/user/shop/wager", { method: "POST" }),
+  buyOutfit: (data: { outfit_id: string; price: number; name: string }) =>
+    fetchJson<{ success: boolean; gems: number; outfit_id: string; message: string }>("/user/shop/buy-outfit", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  buyGemsPack: (data: { amount: number; package_name: string }) =>
+    fetchJson<{ success: boolean; gems: number; message: string }>("/user/shop/buy-gems", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  modifyGems: (data: { amount: number; action: "add" | "spend"; reason?: string }) =>
+    fetchJson<{ success: boolean; gems: number; message: string }>("/user/gems/modify", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   updateDailyGoal: (daily_goal_xp: number) => fetchJson<{ success: boolean; daily_goal_xp: number }>("/user/daily-goal", { method: "PUT", body: JSON.stringify({ daily_goal_xp }) }),
   simulateDay: (days_ago: number = 1) => fetchJson<{ success: boolean; simulated_last_active_date: string; streak: number; streak_freezes: number; message: string }>(`/user/debug/simulate-day?days_ago=${days_ago}`, { method: "POST" }),
 

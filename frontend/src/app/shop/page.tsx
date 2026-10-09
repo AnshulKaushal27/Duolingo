@@ -7,6 +7,7 @@ import { api, UserProfile } from "@/lib/api";
 import { playClickSound, playCorrectSound } from "@/lib/sound";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useAuth } from "@/lib/auth-context";
 
 export default function ShopPage() {
   return (
@@ -17,6 +18,7 @@ export default function ShopPage() {
 }
 
 function ShopContent() {
+  const { user, updateGems, updateHearts } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -41,6 +43,8 @@ function ShopContent() {
         if (profile) {
           setProfile({ ...profile, hearts: res.hearts, gems: res.gems });
         }
+        updateGems(res.gems);
+        updateHearts(res.hearts);
         setMessage("Hearts successfully refilled! ❤️❤️❤️❤️❤️");
       } else {
         setMessage(res.message);
@@ -63,12 +67,70 @@ function ShopContent() {
             streak_freezes: res.streak_freezes,
           });
         }
+        updateGems(res.gems);
         setMessage(`Streak Freeze equipped! 🧊 (${res.streak_freezes}/2 held). Your streak is protected for 1 missed day.`);
       } else {
         setMessage(res.message);
       }
     } catch (e: any) {
       setMessage(e.message || "Failed to purchase Streak Freeze");
+    }
+  };
+
+  const handlePlaceWager = async () => {
+    playClickSound();
+    try {
+      const res = await api.placeWager();
+      if (res.success) {
+        playCorrectSound();
+        if (profile) {
+          setProfile({ ...profile, gems: res.gems });
+        }
+        updateGems(res.gems);
+        setMessage(res.message);
+      } else {
+        setMessage(res.message);
+      }
+    } catch (e: any) {
+      setMessage(e.message || "Failed to place wager");
+    }
+  };
+
+  const handleBuyOutfit = async (outfit: { id: string; name: string; price: number }) => {
+    playClickSound();
+    try {
+      const res = await api.buyOutfit({ outfit_id: outfit.id, price: outfit.price, name: outfit.name });
+      if (res.success) {
+        playCorrectSound();
+        if (profile) {
+          setProfile({ ...profile, gems: res.gems });
+        }
+        updateGems(res.gems);
+        setMessage(res.message);
+      } else {
+        setMessage(res.message);
+      }
+    } catch (e: any) {
+      setMessage(e.message || `Failed to purchase ${outfit.name}`);
+    }
+  };
+
+  const handleBuyGems = async (bundle: { name: string; amount: number; price: string }) => {
+    playClickSound();
+    try {
+      const res = await api.buyGemsPack({ amount: bundle.amount, package_name: bundle.name });
+      if (res.success) {
+        playCorrectSound();
+        if (profile) {
+          setProfile({ ...profile, gems: res.gems });
+        }
+        updateGems(res.gems);
+        setMessage(res.message);
+      } else {
+        setMessage(res.message);
+      }
+    } catch (e: any) {
+      setMessage(e.message || `Failed to credit gems`);
     }
   };
 
@@ -232,15 +294,7 @@ function ShopContent() {
             </div>
 
             <button
-              onClick={() => {
-                if (!profile || profile.gems < 50) {
-                  setMessage("Not enough gems to place a wager!");
-                  return;
-                }
-                playCorrectSound();
-                setProfile({ ...profile, gems: profile.gems - 50 });
-                setMessage("🎲 7-Day Wager placed! Keep your streak active for 7 days to win 100 gems!");
-              }}
+              onClick={handlePlaceWager}
               className="duo-btn duo-btn-outline"
               style={{ padding: "10px 18px", fontSize: "14px" }}
             >
@@ -282,15 +336,7 @@ function ShopContent() {
                 {outfit.desc}
               </p>
               <button
-                onClick={() => {
-                  if (!profile || profile.gems < outfit.price) {
-                    setMessage(`Not enough gems for ${outfit.name}!`);
-                    return;
-                  }
-                  playCorrectSound();
-                  setProfile({ ...profile, gems: profile.gems - outfit.price });
-                  setMessage(`✨ Equipped ${outfit.name}! Duo looks spectacular.`);
-                }}
+                onClick={() => handleBuyOutfit(outfit)}
                 className="duo-btn duo-btn-blue"
                 style={{ width: "100%", padding: "10px", fontSize: "13px" }}
               >
@@ -335,11 +381,7 @@ function ShopContent() {
               </div>
 
               <button
-                onClick={() => {
-                  playCorrectSound();
-                  if (profile) setProfile({ ...profile, gems: profile.gems + bundle.amount });
-                  setMessage(`🎉 Purchased ${bundle.name}! Added +${bundle.amount} gems.`);
-                }}
+                onClick={() => handleBuyGems(bundle)}
                 className="duo-btn duo-btn-green"
                 style={{ padding: "10px 20px", fontSize: "14px" }}
               >
@@ -351,12 +393,14 @@ function ShopContent() {
       </main>
 
       <RightSidebar
-        streak={profile?.streak || 7}
-        gems={profile?.gems || 780}
-        hearts={profile?.hearts || 5}
-        xp={profile?.total_xp || 345}
+        streak={profile?.streak ?? (user?.streak ?? 1)}
+        gems={profile?.gems ?? (user?.gems ?? 0)}
+        hearts={profile?.hearts ?? (user?.hearts ?? 5)}
+        xp={profile?.total_xp ?? (user?.total_xp ?? 0)}
         onHeartsUpdated={(h, g) => {
           if (profile) setProfile({ ...profile, hearts: h, gems: g });
+          updateGems(g);
+          updateHearts(h);
         }}
       />
     </div>

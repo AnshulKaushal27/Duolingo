@@ -737,12 +737,17 @@ function CharactersContent() {
       {/* 3. Right Sticky Sidebar */}
       <RightSidebar
         streak={profile?.streak ?? (user?.streak ?? 1)}
-        gems={profile?.gems ?? (user?.gems ?? 505)}
+        gems={profile?.gems ?? (user?.gems ?? 0)}
         hearts={profile?.hearts ?? (user?.hearts ?? 5)}
-        xp={profile?.total_xp ?? (user?.total_xp ?? 20)}
+        xp={profile?.total_xp ?? (user?.total_xp ?? 0)}
         courseCode="ja"
         courseTitle="Japanese"
-        onHeartsUpdated={() => {}}
+        onHeartsUpdated={(h, g) => {
+          if (profile) setProfile({ ...profile, hearts: h, gems: g });
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("duo:gems_updated", { detail: { gems: g } }));
+          }
+        }}
       />
 
       {/* Interactive Kana Practice Drill Modal */}

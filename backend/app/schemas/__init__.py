@@ -7,6 +7,13 @@ from .user import (
     SimulateDayRequest,
     SimulateDayResponse,
     SwitchCourseRequest,
+    WagerResponse,
+    BuyOutfitRequest,
+    BuyOutfitResponse,
+    BuyGemsRequest,
+    BuyGemsResponse,
+    GemModifyRequest,
+    GemModifyResponse,
 )
 from .auth import (
     SignupRequest,

@@ -125,89 +125,49 @@ def seed_database_if_empty(db: Session):
         units_data=get_japanese_units_data()
     )
 
-    # 2. Check if default user exists
-    user = db.query(User).filter(User.username == "alexramos").first()
-    if not user:
-        user = User(
-            username="alexramos",
-            email="alex@example.com",
-            display_name="Alex Ramos",
-            password_hash=hash_password("development-only-password"),
-            auth_provider="local",
-            avatar_url="/mascot/duo-happy.svg",
-            streak=7,
-            last_active_date=date.today(),
-            hearts=5,
-            max_hearts=5,
-            gems=780,
-            total_xp=345,
-            streak_freezes=1,
-            daily_goal_xp=30,
-            current_course_id=es_course.id,
-            created_at=datetime.utcnow()
-        )
-        db.add(user)
-        db.flush()
+    # 2. Cleanup any legacy demo user alexramos if present
+    legacy_alex = db.query(User).filter(User.username == "alexramos").first()
+    if legacy_alex:
+        from ..models import UserSession
+        db.query(UserSession).filter(UserSession.user_id == legacy_alex.id).delete()
+        db.query(UserProgress).filter(UserProgress.user_id == legacy_alex.id).delete()
+        db.query(ActivityLog).filter(ActivityLog.user_id == legacy_alex.id).delete()
+        db.query(DailyQuest).filter(DailyQuest.user_id == legacy_alex.id).delete()
+        db.query(LeaderboardEntry).filter(LeaderboardEntry.user_id == legacy_alex.id).delete()
+        db.delete(legacy_alex)
+        db.commit()
 
-        # Find first two lessons in Spanish basics
-        first_skill = es_course.units[0].skills[0] if es_course.units and es_course.units[0].skills else None
-        if first_skill and len(first_skill.lessons) >= 2:
-            prog1 = UserProgress(
-                user_id=user.id,
-                lesson_id=first_skill.lessons[0].id,
-                skill_id=first_skill.id,
-                completed=True,
-                mistakes_count=0,
-                xp_earned=15,
-                completed_at=datetime.utcnow()
-            )
-            prog2 = UserProgress(
-                user_id=user.id,
-                lesson_id=first_skill.lessons[1].id,
-                skill_id=first_skill.id,
-                completed=True,
-                mistakes_count=1,
-                xp_earned=15,
-                completed_at=datetime.utcnow()
-            )
-            db.add_all([prog1, prog2])
+    # 3. Leaderboard - Seed rival learner bots
+    # Clean any stale alexramos leaderboard entries
+    db.query(LeaderboardEntry).filter(LeaderboardEntry.username == "alexramos").delete()
+    db.commit()
 
-        activity = ActivityLog(
-            user_id=user.id,
-            activity_date=date.today(),
-            xp_earned=30,
-            lessons_completed=2
-        )
-        db.add(activity)
-
-    # 3. Leaderboard
     if db.query(LeaderboardEntry).count() == 0:
         leaderboard_data = [
             ("sofia_lingo", "Sofia Chen", 520, "/mascot/avatar-1.svg"),
             ("marco_v", "Marco Rossi", 475, "/mascot/avatar-2.svg"),
             ("charlotte_b", "Charlotte Dubois", 390, "/mascot/avatar-3.svg"),
-            ("alexramos", "Alex Ramos (You)", 345, "/mascot/duo-happy.svg"),
-            ("liam_k", "Liam Knight", 310, "/mascot/avatar-4.svg"),
-            ("emma_w", "Emma Watson", 280, "/mascot/avatar-5.svg"),
-            ("mateo_s", "Mateo Silva", 220, "/mascot/avatar-6.svg"),
-            ("yuki_t", "Yuki Tanaka", 195, "/mascot/avatar-7.svg"),
-            ("zain_m", "Zain Malik", 150, "/mascot/avatar-8.svg"),
-            ("elena_r", "Elena Rostova", 90, "/mascot/avatar-9.svg"),
+            ("lucas_d", "Lucas Dupont", 345, "/mascot/avatar-4.svg"),
+            ("liam_k", "Liam Knight", 310, "/mascot/avatar-5.svg"),
+            ("emma_w", "Emma Watson", 280, "/mascot/avatar-6.svg"),
+            ("mateo_s", "Mateo Silva", 220, "/mascot/avatar-7.svg"),
+            ("yuki_t", "Yuki Tanaka", 195, "/mascot/avatar-8.svg"),
+            ("zain_m", "Zain Malik", 150, "/mascot/avatar-9.svg"),
+            ("elena_r", "Elena Rostova", 90, "/mascot/avatar-1.svg"),
         ]
         for uname, dname, wxp, av in leaderboard_data:
-            is_me = (uname == "alexramos")
             entry = LeaderboardEntry(
-                user_id=user.id if is_me else None,
+                user_id=None,
                 league="Ruby",
                 username=uname,
                 display_name=dname,
                 avatar_url=av,
                 weekly_xp=wxp,
-                is_current_user=is_me
+                is_current_user=False
             )
             db.add(entry)
 
-    # 4. Achievements
+    # 4. Achievements Catalog
     if db.query(Achievement).count() == 0:
         achievements = [
             Achievement(code="wildfire", title="Wildfire", description="Reach a 7-day streak", icon="flame", target_value=7),
@@ -216,23 +176,6 @@ def seed_database_if_empty(db: Session):
             Achievement(code="champion", title="Champion", description="Finish in the top 3 of your leaderboard league", icon="trophy", target_value=3),
         ]
         db.add_all(achievements)
-        db.flush()
-
-        db.add_all([
-            UserAchievement(user_id=user.id, achievement_id=achievements[0].id, current_value=7, unlocked=True, unlocked_at=datetime.utcnow()),
-            UserAchievement(user_id=user.id, achievement_id=achievements[1].id, current_value=345, unlocked=False),
-            UserAchievement(user_id=user.id, achievement_id=achievements[2].id, current_value=1, unlocked=True, unlocked_at=datetime.utcnow()),
-            UserAchievement(user_id=user.id, achievement_id=achievements[3].id, current_value=4, unlocked=False),
-        ])
-
-    # 5. Quests
-    if db.query(DailyQuest).count() == 0:
-        quests = [
-            DailyQuest(user_id=user.id, title="Earn 30 XP today", current_progress=15, target_progress=30, reward_gems=10, completed=False),
-            DailyQuest(user_id=user.id, title="Complete 2 lessons", current_progress=1, target_progress=2, reward_gems=15, completed=False),
-            DailyQuest(user_id=user.id, title="Score 90%+ in 1 lesson", current_progress=1, target_progress=1, reward_gems=20, completed=True),
-        ]
-        db.add_all(quests)
 
     db.commit()
     print("Database seeding and curriculum verification complete!")

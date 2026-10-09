@@ -9,55 +9,63 @@ from app.main import app
 client = TestClient(app)
 
 def test_auth_comprehensive():
-    print("--- 1. Testing Default Learner Fallback (No Cookie) ---")
+    print("--- 1. Testing Unauthenticated Access (Must Return 401) ---")
     res = client.get("/api/v1/auth/me")
-    assert res.status_code == 200, f"Expected 200 with default learner, got {res.status_code}"
-    assert res.json()["username"] == "alexramos"
-    print("✓ /auth/me returns default learner Alex Ramos for unauthenticated visitors (per assignment spec)")
+    assert res.status_code == 401, f"Expected 401 without session, got {res.status_code}"
+    print("✓ /auth/me correctly rejects unauthenticated visitors with 401 (strict auth enforced)")
 
     res = client.get("/api/v1/user/profile")
-    assert res.status_code == 200
-    assert res.json()["username"] == "alexramos"
-    print("✓ /user/profile serves default learner without cookie (200)")
+    assert res.status_code == 401, f"Expected 401 without session, got {res.status_code}"
+    print("✓ /user/profile correctly requires authentication with 401")
 
     res = client.get("/api/v1/courses/es/tree")
     assert res.status_code == 200
-    print("✓ /courses/es/tree accessible without session cookie (200)")
+    print("✓ /courses/es/tree accessible as public curriculum (200)")
 
-    print("\n--- 2. Testing Seed User Login via Username ---")
+    print("\n--- 2. Testing Registered User Login via Username ---")
+    import uuid
+    base_id = uuid.uuid4().hex[:6]
+    test_user_name = f"learner_{base_id}"
+    test_user_email = f"learner_{base_id}@example.com"
+    signup_res = client.post("/api/v1/auth/signup", json={
+        "name": "Maria Learner",
+        "username": test_user_name,
+        "email": test_user_email,
+        "password": "strong-password-123"
+    })
+    assert signup_res.status_code == 201
+
     res = client.post("/api/v1/auth/login", json={
-        "identifier": "alexramos",
-        "password": "development-only-password"
+        "identifier": test_user_name,
+        "password": "strong-password-123"
     })
     assert res.status_code == 200, res.text
     user = res.json()
-    assert user["username"] == "alexramos"
-    assert user["display_name"] == "Alex Ramos"
-    assert user["total_xp"] >= 345
-    assert user["streak"] >= 7
+    assert user["username"] == test_user_name
+    assert user["display_name"] == "Maria Learner"
     assert user["hearts"] >= 0
     assert "duo_session" in res.cookies
     session_cookie = res.cookies["duo_session"]
-    print(f"✓ Alex logged in via username! Cookie received: {session_cookie[:10]}...")
+    print(f"✓ Logged in via username! Cookie received: {session_cookie[:10]}...")
 
     print("\n--- 3. Testing Authenticated /auth/me with Cookie ---")
     res = client.get("/api/v1/auth/me", cookies={"duo_session": session_cookie})
     assert res.status_code == 200
-    assert res.json()["username"] == "alexramos"
+    assert res.json()["username"] == test_user_name
     print("✓ /auth/me verified for active session")
 
-    print("\n--- 4. Testing Seed User Login via Email ---")
+    print("\n--- 4. Testing User Login via Email ---")
     res = client.post("/api/v1/auth/login", json={
-        "identifier": "alex@example.com",
-        "password": "development-only-password"
+        "identifier": test_user_email,
+        "password": "strong-password-123"
     })
     assert res.status_code == 200
-    assert res.json()["username"] == "alexramos"
-    print("✓ Alex logged in via email successfully!")
+    assert res.json()["username"] == test_user_name
+    print("✓ Logged in via email successfully!")
 
     print("\n--- 5. Testing Invalid Login Credentials ---")
     res = client.post("/api/v1/auth/login", json={
-        "identifier": "alexramos",
+        "identifier": test_user_name,
         "password": "wrong-password-here"
     })
     assert res.status_code == 401

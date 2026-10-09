@@ -83,10 +83,10 @@ export default function LessonCompleteScreen({ result }: LessonCompleteScreenPro
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateColumns: result.gems_earned ? "repeat(auto-fit, minmax(130px, 1fr))" : "repeat(3, 1fr)",
           gap: "16px",
           width: "100%",
-          maxWidth: "520px",
+          maxWidth: result.gems_earned ? "620px" : "520px",
           marginBottom: "48px",
         }}
       >
@@ -113,6 +113,32 @@ export default function LessonCompleteScreen({ result }: LessonCompleteScreenPro
             </span>
           </div>
         </div>
+
+        {/* Gems Card */}
+        {result.gems_earned ? (
+          <div
+            style={{
+              backgroundColor: "rgba(28, 176, 246, 0.15)",
+              border: "2px solid var(--duo-blue)",
+              borderBottom: "4px solid var(--duo-blue-dark)",
+              borderRadius: "20px",
+              padding: "20px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "6px",
+            }}
+          >
+            <span style={{ fontSize: "13px", fontWeight: 800, textTransform: "uppercase", color: "var(--duo-blue)" }}>
+              GEMS
+            </span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+              <span style={{ fontSize: "24px" }}>💎</span>
+              <span style={{ fontSize: "26px", fontWeight: 900, color: "var(--duo-blue)" }}>
+                +{result.gems_earned}
+              </span>
+            </div>
+          </div>
+        ) : null}
 
         {/* Accuracy Card */}
         <div

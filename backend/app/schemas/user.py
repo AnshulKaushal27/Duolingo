@@ -54,3 +54,39 @@ class SimulateDayResponse(BaseModel):
     streak: int
     streak_freezes: int
     message: str
+
+class WagerResponse(BaseModel):
+    success: bool
+    gems: int
+    message: str
+
+class BuyOutfitRequest(BaseModel):
+    outfit_id: str
+    price: int
+    name: str
+
+class BuyOutfitResponse(BaseModel):
+    success: bool
+    gems: int
+    outfit_id: str
+    message: str
+
+class BuyGemsRequest(BaseModel):
+    amount: int
+    package_name: str
+
+class BuyGemsResponse(BaseModel):
+    success: bool
+    gems: int
+    message: str
+
+class GemModifyRequest(BaseModel):
+    amount: int
+    action: str  # "add" | "spend"
+    reason: Optional[str] = None
+
+class GemModifyResponse(BaseModel):
+    success: bool
+    gems: int
+    message: str
+

@@ -33,6 +33,10 @@ export default function HeartsModal({
       if (res.success) {
         playCorrectSound();
         onHeartsUpdated(res.hearts, res.gems);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("duo:gems_updated", { detail: { gems: res.gems } }));
+          window.dispatchEvent(new CustomEvent("duo:hearts_updated", { detail: { hearts: res.hearts } }));
+        }
         setMessage("Hearts fully refilled! ❤️❤️❤️❤️❤️");
         setTimeout(() => onClose(), 1200);
       } else {
@@ -54,6 +58,10 @@ export default function HeartsModal({
       if (res.success) {
         playCorrectSound();
         onHeartsUpdated(res.hearts, res.gems);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("duo:gems_updated", { detail: { gems: res.gems } }));
+          window.dispatchEvent(new CustomEvent("duo:hearts_updated", { detail: { hearts: res.hearts } }));
+        }
         setMessage("+1 Heart gained from practice! ❤️");
         setTimeout(() => onClose(), 1200);
       } else {

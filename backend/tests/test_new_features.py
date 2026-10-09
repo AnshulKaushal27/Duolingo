@@ -9,14 +9,18 @@ from app.main import app
 client = TestClient(app)
 
 def test_new_features():
-    print("--- 1. Authenticate as Alex Ramos ---")
-    login_res = client.post("/api/v1/auth/login", json={
-        "identifier": "alexramos",
-        "password": "development-only-password"
+    print("--- 1. Authenticate as Registered Learner ---")
+    import uuid
+    uid = uuid.uuid4().hex[:6]
+    signup_res = client.post("/api/v1/auth/signup", json={
+        "name": "Feature Tester",
+        "username": f"feature_{uid}",
+        "email": f"feature_{uid}@example.com",
+        "password": "feature-password-123"
     })
-    assert login_res.status_code == 200
-    cookies = login_res.cookies
-    print("✓ Alex authenticated")
+    assert signup_res.status_code == 201
+    cookies = signup_res.cookies
+    print("✓ Test learner registered and authenticated")
 
     print("\n--- 2. Testing Unit Guidebook Endpoint ---")
     res = client.get("/api/v1/courses/units/1/guidebook", cookies=cookies)

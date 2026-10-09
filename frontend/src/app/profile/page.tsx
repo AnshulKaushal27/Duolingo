@@ -17,7 +17,7 @@ export default function ProfilePage() {
 }
 
 function ProfileContent() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateGems } = useAuth();
   const [achievements, setAchievements] = useState<AchievementItem[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,10 +82,10 @@ function ProfileContent() {
 
             <div>
               <h1 style={{ fontSize: "26px", fontWeight: 900, color: "var(--duo-text)" }}>
-                {activeUser?.display_name || "Alex Ramos"}
+                {activeUser?.display_name || "Learner"}
               </h1>
               <p style={{ color: "var(--duo-text-muted)", fontSize: "15px", fontWeight: 700 }}>
-                @{activeUser?.username || "alexramos"} • {activeUser?.email || "alex@example.com"}
+                @{activeUser?.username || "learner"} • {activeUser?.email || ""}
               </p>
             </div>
           </div>
@@ -249,11 +249,14 @@ function ProfileContent() {
       </main>
 
       <RightSidebar
-        streak={profile?.streak || 7}
-        gems={profile?.gems || 780}
-        hearts={profile?.hearts || 5}
-        xp={profile?.total_xp || 345}
-        onHeartsUpdated={() => {}}
+        streak={profile?.streak ?? (activeUser?.streak ?? 1)}
+        gems={profile?.gems ?? (activeUser?.gems ?? 0)}
+        hearts={profile?.hearts ?? (activeUser?.hearts ?? 5)}
+        xp={profile?.total_xp ?? (activeUser?.total_xp ?? 0)}
+        onHeartsUpdated={(h, g) => {
+          if (profile) setProfile({ ...profile, hearts: h, gems: g });
+          updateGems(g);
+        }}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import RightSidebar from "@/components/layout/RightSidebar";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useAuth } from "@/lib/auth-context";
 import { api, UserProfile } from "@/lib/api";
 import { playClickSound, playCorrectSound } from "@/lib/sound";
 import { speakText } from "@/lib/speech";
@@ -41,6 +42,7 @@ export default function PracticePage() {
 }
 
 function PracticeContent() {
+  const { user, updateGems } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "vocabulary" | "stories">("overview");
   const [activeStoryId, setActiveStoryId] = useState<string | null>(null);
@@ -496,11 +498,14 @@ function PracticeContent() {
       </main>
 
       <RightSidebar
-        streak={profile?.streak || 7}
-        gems={profile?.gems || 780}
-        hearts={profile?.hearts || 5}
-        xp={profile?.total_xp || 345}
-        onHeartsUpdated={() => {}}
+        streak={profile?.streak ?? (user?.streak ?? 1)}
+        gems={profile?.gems ?? (user?.gems ?? 0)}
+        hearts={profile?.hearts ?? (user?.hearts ?? 5)}
+        xp={profile?.total_xp ?? (user?.total_xp ?? 0)}
+        onHeartsUpdated={(h, g) => {
+          if (profile) setProfile({ ...profile, hearts: h, gems: g });
+          updateGems(g);
+        }}
       />
     </div>
   );

@@ -28,6 +28,9 @@ export default function ChestRewardModal({
       setGemsAwarded(res.reward || 25);
       setOpened(true);
       onClaimed(res.gems);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("duo:gems_updated", { detail: { gems: res.gems } }));
+      }
     } catch (err) {
       console.error("Failed to claim chest", err);
       // Fallback local open

@@ -21,6 +21,7 @@ import OutOfHeartsModal from "@/components/lesson/OutOfHeartsModal";
 import LessonCompleteScreen from "@/components/lesson/LessonCompleteScreen";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useAuth } from "@/lib/auth-context";
 
 export default function LessonPage() {
   return (
@@ -46,11 +47,11 @@ function LessonContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Lesson State Machine
+  const { user, updateGems } = useAuth();
   const [lessonData, setLessonData] = useState<LessonStartData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hearts, setHearts] = useState(5);
-  const [gems, setGems] = useState(780);
+  const [gems, setGems] = useState(user?.gems ?? 0);
   const [comboStreak, setComboStreak] = useState(0);
 
   // Current Exercise interaction state
@@ -206,10 +207,13 @@ function LessonContent() {
       setFeedbackStatus("idle");
       setEvalResult(null);
     } else {
-      // Complete lesson!
       try {
         const finalRes = await api.completeLesson(lessonId, lessonData.attempt_id);
         setCompleteResult(finalRes);
+        if (typeof finalRes.gems === "number") {
+          setGems(finalRes.gems);
+          updateGems(finalRes.gems);
+        }
       } catch (err: any) {
         alert("Error finalizing lesson: " + err.message);
         router.push("/learn");
@@ -423,6 +427,7 @@ function LessonContent() {
             if (res.success) {
               setHearts(res.hearts);
               setGems(res.gems);
+              updateGems(res.gems);
               setOutOfHeartsOpen(false);
             }
           } catch (e: any) {

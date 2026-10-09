@@ -14,23 +14,28 @@ def test_full_api_workflow():
     assert res.status_code == 200, res.text
     print("✓ Health check OK:", res.json())
 
-    print("\n--- 1b. Authenticate as Alex Ramos ---")
+    print("\n--- 1b. Authenticate as Test Learner ---")
+    import uuid
+    test_id = uuid.uuid4().hex[:6]
+    test_username = f"workflow_{test_id}"
+    signup_res = client.post("/api/v1/auth/signup", json={
+        "name": "Workflow Learner",
+        "username": test_username,
+        "email": f"workflow_{test_id}@example.com",
+        "password": "workflow-password-123"
+    })
+    assert signup_res.status_code == 201
     from app.core.database import SessionLocal
     from app.models.user import User
     db = SessionLocal()
-    u = db.query(User).filter(User.username == "alexramos").first()
+    u = db.query(User).filter(User.username == test_username).first()
     if u:
         u.hearts = 5
         u.gems = 1000
         u.streak = 7
         db.commit()
     db.close()
-    res = client.post("/api/v1/auth/login", json={
-        "identifier": "alexramos",
-        "password": "development-only-password"
-    })
-    assert res.status_code == 200, res.text
-    print("✓ Alex authenticated for full workflow test")
+    print("✓ Test user registered and authenticated for full workflow test")
 
     print("\n--- 2. Testing Course Tree (Spanish) ---")
     res = client.get("/api/v1/courses/es/tree")
@@ -66,13 +71,14 @@ def test_full_api_workflow():
     res = client.get("/api/v1/user/profile")
     assert res.status_code == 200, res.text
     user = res.json()
-    assert user["username"] == "alexramos"
+    assert user["username"] == test_username
     assert user["streak"] >= 7
     assert user["hearts"] == 5
     print(f"✓ Profile OK: {user['display_name']}, Streak: {user['streak']} days, Hearts: {user['hearts']}/5, XP: {user['total_xp']}")
 
     print("\n--- 4. Testing Start Lesson (Sanitized Payloads) ---")
-    res = client.post("/api/v1/lessons/3/start")
+    active_lesson_id = tree["units"][0]["skills"][0]["next_lesson_id"]
+    res = client.post(f"/api/v1/lessons/{active_lesson_id}/start")
     assert res.status_code == 200, res.text
     start_data = res.json()
     attempt_id = start_data["attempt_id"]
@@ -90,10 +96,9 @@ def test_full_api_workflow():
     print("✓ SECURITY VERIFIED: Zero answers/solutions exposed in client payload!")
 
     print("\n--- 5. Testing Backend-Authoritative Exercise Submission ---")
-    # Exercise 1 in Lesson 3 is multiple choice: "How do you say 'Hello'?" -> "opt_1" ("Hola")
     ex1 = exercises[0]
     res = client.post(
-        f"/api/v1/lessons/3/exercises/{ex1['id']}/submit",
+        f"/api/v1/lessons/{active_lesson_id}/exercises/{ex1['id']}/submit",
         json={"attempt_id": attempt_id, "submitted_answer": "opt_1"}
     )
     assert res.status_code == 200, res.text
@@ -105,7 +110,7 @@ def test_full_api_workflow():
     print("\n--- 6. Testing Duplicate Submission Protection ---")
     # Submitting the exact same exercise again in the same attempt
     res_dup = client.post(
-        f"/api/v1/lessons/3/exercises/{ex1['id']}/submit",
+        f"/api/v1/lessons/{active_lesson_id}/exercises/{ex1['id']}/submit",
         json={"attempt_id": attempt_id, "submitted_answer": "opt_1"}
     )
     assert res_dup.status_code == 200, res_dup.text
@@ -118,7 +123,7 @@ def test_full_api_workflow():
     # Submit wrong answer on Exercise 2
     ex2 = exercises[1]
     res_wrong = client.post(
-        f"/api/v1/lessons/3/exercises/{ex2['id']}/submit",
+        f"/api/v1/lessons/{active_lesson_id}/exercises/{ex2['id']}/submit",
         json={"attempt_id": attempt_id, "submitted_answer": ["wrong", "tokens"]}
     )
     assert res_wrong.status_code == 200, res_wrong.text
@@ -130,7 +135,7 @@ def test_full_api_workflow():
 
     print("\n--- 8. Testing Lesson Completion & XP Reward ---")
     res_complete = client.post(
-        "/api/v1/lessons/3/complete",
+        f"/api/v1/lessons/{active_lesson_id}/complete",
         json={"attempt_id": attempt_id}
     )
     assert res_complete.status_code == 200, res_complete.text
@@ -149,20 +154,39 @@ def test_full_api_workflow():
         marker = " 👈 (YOU)" if entry["is_current_user"] else ""
         print(f"   #{entry['rank']} {entry['display_name']} - {entry['weekly_xp']} XP{marker}")
 
-    print("\n--- 10. Testing Hearts Refill ---")
-    from app.core.database import SessionLocal
-    from app.models.user import User
-    db = SessionLocal()
-    u = db.query(User).filter(User.username == "alexramos").first()
-    if u and u.gems < 350:
-        u.gems += 500
-        db.commit()
-    db.close()
+    print("\n--- 10. Testing Hearts Refill & Gems Deduction ---")
     res_refill = client.post("/api/v1/user/hearts/refill")
     assert res_refill.status_code == 200, res_refill.text
     refill_data = res_refill.json()
     assert refill_data["hearts"] == 5
     print(f"✓ Hearts refill OK: {refill_data['hearts']}/5 hearts, remaining gems: {refill_data['gems']}")
+
+    print("\n--- 11. Testing Shop Purchases & Diamond State Maintenance ---")
+    # Test Wager
+    res_wager = client.post("/api/v1/user/shop/wager")
+    assert res_wager.status_code == 200, res_wager.text
+    wager_gems = res_wager.json()["gems"]
+    print(f"✓ Wager placed! New gem balance: {wager_gems}")
+
+    # Test Outfit Purchase
+    res_outfit = client.post("/api/v1/user/shop/buy-outfit", json={
+        "outfit_id": "tux",
+        "price": 400,
+        "name": "Formal Attire"
+    })
+    assert res_outfit.status_code == 200, res_outfit.text
+    outfit_gems = res_outfit.json()["gems"]
+    assert outfit_gems == wager_gems - 400
+    print(f"✓ Outfit bought! Remaining gems accurately persisted: {outfit_gems}")
+
+    # Test Gem Bank Purchase (+500 gems)
+    res_buy_gems = client.post("/api/v1/user/shop/buy-gems", json={
+        "amount": 500,
+        "package_name": "Handful of Gems"
+    })
+    assert res_buy_gems.status_code == 200
+    assert res_buy_gems.json()["gems"] == outfit_gems + 500
+    print(f"✓ Gem Bank credit OK! New balance: {res_buy_gems.json()['gems']}")
 
     print("\n🎉 ALL BACKEND APIs, VALIDATION, AND GAMIFICATION TESTS PASSED 100%!")
 

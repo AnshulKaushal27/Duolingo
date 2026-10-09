@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import HeartsModal from "./HeartsModal";
 import { playClickSound } from "@/lib/sound";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
 
 interface RightSidebarProps {
   streak: number;
@@ -37,6 +38,40 @@ export default function RightSidebar({
   onCourseSwitched,
 }: RightSidebarProps) {
   const router = useRouter();
+  const { user } = useAuth();
+
+  const displayGems = typeof gems === "number" ? gems : (user?.gems ?? 0);
+  const displayHearts = typeof hearts === "number" ? hearts : (user?.hearts ?? 5);
+  const [localGems, setLocalGems] = useState<number>(displayGems);
+  const [localHearts, setLocalHearts] = useState<number>(displayHearts);
+
+  useEffect(() => {
+    setLocalGems(displayGems);
+  }, [displayGems]);
+
+  useEffect(() => {
+    setLocalHearts(displayHearts);
+  }, [displayHearts]);
+
+  useEffect(() => {
+    const handleGems = (e: any) => {
+      if (typeof e.detail?.gems === "number") {
+        setLocalGems(e.detail.gems);
+      }
+    };
+    const handleHearts = (e: any) => {
+      if (typeof e.detail?.hearts === "number") {
+        setLocalHearts(e.detail.hearts);
+      }
+    };
+    window.addEventListener("duo:gems_updated", handleGems);
+    window.addEventListener("duo:hearts_updated", handleHearts);
+    return () => {
+      window.removeEventListener("duo:gems_updated", handleGems);
+      window.removeEventListener("duo:hearts_updated", handleHearts);
+    };
+  }, []);
+
   const [heartsModalOpen, setHeartsModalOpen] = useState(false);
 
   // Active hover dropdown state: 'course' | 'streak' | 'gems' | 'hearts' | null
@@ -92,7 +127,7 @@ export default function RightSidebar({
           onClick={() => playClickSound()}
         >
           <img src="/icons/gem.svg" alt="Gems" style={{ width: "22px", height: "22px" }} />
-          <span style={{ fontWeight: 800, fontSize: "14px", color: "var(--duo-blue)" }}>{gems}</span>
+          <span style={{ fontWeight: 800, fontSize: "14px", color: "var(--duo-blue)" }}>{localGems}</span>
         </div>
 
         <div
@@ -421,7 +456,7 @@ export default function RightSidebar({
               }}
             >
               <img src="/icons/gem.svg" alt="Gems" style={{ width: "22px", height: "22px" }} />
-              <span>{gems}</span>
+              <span>{localGems}</span>
             </div>
 
             {/* Gems Dropdown Popover */}
@@ -448,7 +483,7 @@ export default function RightSidebar({
                   <img src="/icons/gem.svg" alt="Gems" style={{ width: "36px", height: "36px" }} />
                   <div>
                     <h4 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text)" }}>
-                      {gems} Gems
+                      {localGems} Gems
                     </h4>
                     <p style={{ fontSize: "12px", color: "var(--duo-text-muted)", fontWeight: 600 }}>
                       Duolingo Currency
@@ -457,7 +492,7 @@ export default function RightSidebar({
                 </div>
 
                 <p style={{ fontSize: "13px", color: "var(--duo-text)", lineHeight: 1.4, margin: 0 }}>
-                  You have <strong>{gems} gems</strong>. Spend them on streak freezes, heart refills, and outfits in the Shop!
+                  You have <strong>{localGems} gems</strong>. Spend them on streak freezes, heart refills, and outfits in the Shop!
                 </p>
 
                 <Link
@@ -731,9 +766,13 @@ export default function RightSidebar({
       <HeartsModal
         isOpen={heartsModalOpen}
         onClose={() => setHeartsModalOpen(false)}
-        hearts={hearts}
-        gems={gems}
-        onHeartsUpdated={onHeartsUpdated}
+        hearts={localHearts}
+        gems={localGems}
+        onHeartsUpdated={(h, g) => {
+          setLocalHearts(h);
+          setLocalGems(g);
+          onHeartsUpdated(h, g);
+        }}
       />
     </>
   );

@@ -47,6 +47,16 @@ def get_league_leaderboard(db: Session, current_user: User) -> Dict[str, Any]:
 
 def get_user_quests(db: Session, user: User) -> List[Dict[str, Any]]:
     quests = db.query(DailyQuest).filter(DailyQuest.user_id == user.id).all()
+    if not quests:
+        initial_quests = [
+            DailyQuest(user_id=user.id, title="Earn 30 XP today", current_progress=0, target_progress=30, reward_gems=10, completed=False),
+            DailyQuest(user_id=user.id, title="Complete 2 lessons", current_progress=0, target_progress=2, reward_gems=15, completed=False),
+            DailyQuest(user_id=user.id, title="Score 90%+ in 1 lesson", current_progress=0, target_progress=1, reward_gems=20, completed=False),
+        ]
+        db.add_all(initial_quests)
+        db.commit()
+        quests = initial_quests
+
     return [
         {
             "id": q.id,
@@ -60,9 +70,40 @@ def get_user_quests(db: Session, user: User) -> List[Dict[str, Any]]:
     ]
 
 def get_user_achievements(db: Session, user: User) -> List[Dict[str, Any]]:
-    user_achievements = db.query(UserAchievement).filter(UserAchievement.user_id == user.id).all()
+    all_achievements = db.query(Achievement).all()
+    existing_records = db.query(UserAchievement).filter(UserAchievement.user_id == user.id).all()
+    existing_map = {ua.achievement_id: ua for ua in existing_records}
+
+    created_any = False
+    for ach in all_achievements:
+        if ach.id not in existing_map:
+            # Check if user meets condition right away
+            cur_val = 0
+            if ach.code == "wildfire":
+                cur_val = user.streak
+            elif ach.code == "sage":
+                cur_val = user.total_xp
+            elif ach.code == "sharpshooter":
+                cur_val = 0
+            elif ach.code == "champion":
+                cur_val = 0
+            unlocked = cur_val >= ach.target_value
+
+            new_ua = UserAchievement(
+                user_id=user.id,
+                achievement_id=ach.id,
+                current_value=cur_val,
+                unlocked=unlocked
+            )
+            db.add(new_ua)
+            existing_map[ach.id] = new_ua
+            created_any = True
+
+    if created_any:
+        db.commit()
+
     result = []
-    for ua in user_achievements:
+    for ua in existing_map.values():
         result.append({
             "id": ua.achievement.id,
             "code": ua.achievement.code,
@@ -74,3 +115,4 @@ def get_user_achievements(db: Session, user: User) -> List[Dict[str, Any]]:
             "unlocked": ua.unlocked
         })
     return result
+

@@ -98,12 +98,8 @@ def login_user(db: Session, data: LoginRequest) -> Tuple[User, str]:
 
     if "@" in identifier_clean:
         user = db.query(User).filter(User.email.ilike(identifier_clean)).first()
-        if not user and identifier_clean == "alex@duolingo.example":
-            user = db.query(User).filter(User.username == "alexramos").first()
     else:
         user = db.query(User).filter(User.username.ilike(identifier_clean)).first()
-        if not user and identifier_clean == "duofan_alex":
-            user = db.query(User).filter(User.username == "alexramos").first()
 
     if not user or not user.password_hash or not verify_password(data.password, user.password_hash):
         raise HTTPException(

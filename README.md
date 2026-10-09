@@ -15,7 +15,7 @@ Built as an **SDE Fullstack Assignment** following modern software engineering p
 
 ## 📌 Executive Summary (Assumptions / Mocked Data / Notes)
 
-- **Assumptions**: Assumes a pre-authenticated demo user (`alexramos`, 7-day streak) with backend-authoritative grading and browser Web Speech API for TTS.
+- **Assumptions**: Authenticated user sessions with strict DB-backed state persistence, backend-authoritative grading, and browser Web Speech API for TTS.
 - **Mocked Data**: Pre-seeded SQLite database with 12 Spanish and Japanese units (125+ exercises across all 5 types), bilingual guidebooks, Kana charts, and 9 leaderboard rivals.
 - **Notes**: Zero exercise answers are exposed in client payloads, all SFX are generated procedurally via the Web Audio API, and server cold starts auto-recover via live polling.
 
@@ -317,7 +317,7 @@ Duolingo/
 │   │   ├── seeds/
 │   │   │   ├── spanish_curriculum.py # 6 Spanish units, 12 lessons, 65 exercises
 │   │   │   ├── japanese_curriculum.py# 6 Japanese units, 11 lessons, 60 exercises
-│   │   │   └── seed_data.py         # Primary database seeder & demo user builder
+│   │   │   └── seed_data.py         # Primary database seeder & course curriculum builder
 │   │   ├── services/
 │   │   │   ├── guidebook_service.py # Bilingual unit guidebooks and grammar tips
 │   │   │   └── lesson_service.py    # Answer evaluation & tolerant matching engine
@@ -652,8 +652,7 @@ To handle this smoothly:
 
 Because Vercel (`*.vercel.app`) and Render (`*.onrender.com`) operate on different top-level domains:
 - **Primary Channel**: HTTP-only session cookies configured with `SameSite=None; Secure`.
-- **Fallback Channel**: The backend returns an `X-Duo-Token` header on login, which the frontend stores in `localStorage` and transmits via `Authorization: Bearer <token>`. This guarantees persistent login even on browsers with aggressive third-party cookie blocking (e.g. Safari ITP, Chrome Incognito).
-- **Default Learner Fallback**: If no cookie or token is supplied, requests automatically resolve to the pre-seeded demo user **Alex Ramos** (`7-day streak`, `345+ XP`), eliminating 401 barriers for reviewers.
+- **Strict Authentication & Diamond State**: Unauthenticated requests to protected endpoints return `401 Unauthorized`, automatically routing visitors to `/auth/login`. Authenticated sessions maintain full persistent state across diamonds/gems, streaks, hearts, crowns, and shop inventory via live cross-component events (`duo:gems_updated`).
 
 ---
 

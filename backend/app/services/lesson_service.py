@@ -265,7 +265,9 @@ def complete_lesson(db: Session, user: User, lesson_id: int, attempt_id: str) ->
             "lesson_id": lesson_id,
             "skill_completed": False,
             "next_skill_unlocked_id": None,
-            "accuracy_percentage": 100
+            "accuracy_percentage": 100,
+            "gems": user.gems,
+            "gems_earned": 0
         }
 
     attempt.is_completed = True
@@ -297,6 +299,10 @@ def complete_lesson(db: Session, user: User, lesson_id: int, attempt_id: str) ->
     if total_exercises > 0:
         accuracy = max(0, int(((total_exercises - mistakes) / total_exercises) * 100))
 
+    # Base gems reward for lesson completion
+    gems_earned = 10
+    user.gems += gems_earned
+
     # Update Daily Quests progress
     quests = db.query(DailyQuest).filter(DailyQuest.user_id == user.id, DailyQuest.completed == False).all()
     for q in quests:
@@ -307,6 +313,7 @@ def complete_lesson(db: Session, user: User, lesson_id: int, attempt_id: str) ->
         if q.current_progress >= q.target_progress:
             q.completed = True
             user.gems += q.reward_gems
+            gems_earned += q.reward_gems
 
     # Update Leaderboard weekly XP for current user
     lb_entry = db.query(LeaderboardEntry).filter(LeaderboardEntry.user_id == user.id).first()
@@ -344,5 +351,7 @@ def complete_lesson(db: Session, user: User, lesson_id: int, attempt_id: str) ->
         "lesson_id": lesson_id,
         "skill_completed": skill_completed,
         "next_skill_unlocked_id": next_skill_unlocked_id,
-        "accuracy_percentage": accuracy
+        "accuracy_percentage": accuracy,
+        "gems": user.gems,
+        "gems_earned": gems_earned
     }

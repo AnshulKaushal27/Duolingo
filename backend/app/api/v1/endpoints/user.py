@@ -12,6 +12,13 @@ from ....schemas import (
     SimulateDayRequest,
     SimulateDayResponse,
     SwitchCourseRequest,
+    WagerResponse,
+    BuyOutfitRequest,
+    BuyOutfitResponse,
+    BuyGemsRequest,
+    BuyGemsResponse,
+    GemModifyRequest,
+    GemModifyResponse,
 )
 from ....services.user_service import (
     refill_hearts_with_gems,
@@ -146,4 +153,97 @@ def claim_chest(
     reward = 25
     user.gems += reward
     db.commit()
+    db.refresh(user)
     return {"success": True, "gems": user.gems, "reward": reward}
+
+@router.post("/shop/wager", response_model=WagerResponse)
+def place_wager(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    cost = 50
+    if user.gems < cost:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=400,
+            detail=f"Not enough gems to place a wager! Required: {cost}, you have: {user.gems}"
+        )
+    user.gems -= cost
+    db.commit()
+    db.refresh(user)
+    return WagerResponse(
+        success=True,
+        gems=user.gems,
+        message="🎲 7-Day Wager placed! Keep your streak active for 7 days to win 100 gems!"
+    )
+
+@router.post("/shop/buy-outfit", response_model=BuyOutfitResponse)
+def buy_outfit(
+    payload: BuyOutfitRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if user.gems < payload.price:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=400,
+            detail=f"Not enough gems for {payload.name}! Required: {payload.price}, you have: {user.gems}"
+        )
+    user.gems -= payload.price
+    db.commit()
+    db.refresh(user)
+    return BuyOutfitResponse(
+        success=True,
+        gems=user.gems,
+        outfit_id=payload.outfit_id,
+        message=f"✨ Equipped {payload.name}! Duo looks spectacular."
+    )
+
+@router.post("/shop/buy-gems", response_model=BuyGemsResponse)
+def buy_gems(
+    payload: BuyGemsRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if payload.amount <= 0:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail="Invalid gem amount.")
+    user.gems += payload.amount
+    db.commit()
+    db.refresh(user)
+    return BuyGemsResponse(
+        success=True,
+        gems=user.gems,
+        message=f"🎉 Purchased {payload.package_name}! Added +{payload.amount} gems."
+    )
+
+@router.post("/gems/modify", response_model=GemModifyResponse)
+def modify_gems(
+    payload: GemModifyRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    from fastapi import HTTPException
+    if payload.amount <= 0:
+        raise HTTPException(status_code=400, detail="Amount must be positive.")
+    if payload.action == "spend":
+        if user.gems < payload.amount:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient gems! Required: {payload.amount}, available: {user.gems}"
+            )
+        user.gems -= payload.amount
+        msg = f"Deducted {payload.amount} gems."
+    elif payload.action == "add":
+        user.gems += payload.amount
+        msg = f"Added {payload.amount} gems."
+    else:
+        raise HTTPException(status_code=400, detail="Invalid action. Use 'add' or 'spend'.")
+    db.commit()
+    db.refresh(user)
+    return GemModifyResponse(
+        success=True,
+        gems=user.gems,
+        message=msg
+    )
+

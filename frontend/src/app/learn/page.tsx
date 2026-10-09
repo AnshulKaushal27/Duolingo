@@ -128,6 +128,11 @@ function LearnContent() {
       const updated = { ...profile, gems: newGems };
       setProfile(updated);
       updateUserLocally(() => updated);
+    } else {
+      updateUserLocally((prev) => (prev ? { ...prev, gems: newGems } : null));
+    }
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("duo:gems_updated", { detail: { gems: newGems } }));
     }
   };
 
@@ -140,6 +145,12 @@ function LearnContent() {
       };
       setProfile(updated);
       updateUserLocally(() => updated);
+    } else {
+      updateUserLocally((prev) => (prev ? { ...prev, hearts: newHearts, gems: newGems } : null));
+    }
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("duo:gems_updated", { detail: { gems: newGems } }));
+      window.dispatchEvent(new CustomEvent("duo:hearts_updated", { detail: { hearts: newHearts } }));
     }
   };
 
@@ -245,9 +256,9 @@ function LearnContent() {
       {/* 3. Right Sticky Sidebar */}
       <RightSidebar
         streak={profile?.streak ?? (user?.streak ?? 1)}
-        gems={profile?.gems ?? (user?.gems ?? 505)}
+        gems={profile?.gems ?? (user?.gems ?? 0)}
         hearts={profile?.hearts ?? (user?.hearts ?? 5)}
-        xp={profile?.total_xp ?? (user?.total_xp ?? 20)}
+        xp={profile?.total_xp ?? (user?.total_xp ?? 0)}
         courseCode={tree?.code || activeCourse}
         courseTitle={tree?.title || (activeCourse === "ja" ? "Japanese" : "Spanish")}
         onHeartsUpdated={handleHeartsUpdated}

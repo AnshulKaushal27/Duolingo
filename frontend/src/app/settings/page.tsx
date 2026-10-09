@@ -6,6 +6,7 @@ import RightSidebar from "@/components/layout/RightSidebar";
 import { api, UserProfile } from "@/lib/api";
 import { playClickSound, playCorrectSound } from "@/lib/sound";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useAuth } from "@/lib/auth-context";
 
 const GOAL_OPTIONS = [
   { xp: 10, label: "Casual", description: "5 min a day" },
@@ -23,6 +24,7 @@ export default function SettingsPage() {
 }
 
 function SettingsContent() {
+  const { user, updateGems } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
@@ -163,7 +165,7 @@ function SettingsContent() {
                   {profile?.display_name || "Learner"}
                 </div>
                 <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--duo-text-muted)" }}>
-                  @{profile?.username || "alexramos"} • {profile?.email || "alex@example.com"}
+                  @{profile?.username || user?.username || "learner"} • {profile?.email || user?.email || ""}
                 </div>
               </div>
             </div>
@@ -340,12 +342,13 @@ function SettingsContent() {
       </main>
 
       <RightSidebar
-        streak={profile?.streak || 7}
-        gems={profile?.gems || 780}
-        hearts={profile?.hearts || 5}
-        xp={profile?.total_xp || 345}
+        streak={profile?.streak ?? (user?.streak ?? 1)}
+        gems={profile?.gems ?? (user?.gems ?? 0)}
+        hearts={profile?.hearts ?? (user?.hearts ?? 5)}
+        xp={profile?.total_xp ?? (user?.total_xp ?? 0)}
         onHeartsUpdated={(h, g) => {
           if (profile) setProfile({ ...profile, hearts: h, gems: g });
+          updateGems(g);
         }}
       />
     </div>

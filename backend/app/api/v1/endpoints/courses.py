@@ -138,10 +138,9 @@ def jump_ahead_to_unit(
                     prog = UserProgress(
                         user_id=user.id,
                         lesson_id=les.id,
+                        skill_id=sk.id,
                         completed=True,
-                        crowns=sk.total_crowns,
-                        attempts_count=1,
-                        highest_accuracy=100.0
+                        xp_earned=les.xp_reward or 15
                     )
                     db.add(prog)
                 else:
