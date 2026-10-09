@@ -6,6 +6,7 @@ from .user import (
     DailyGoalUpdateRequest,
     SimulateDayRequest,
     SimulateDayResponse,
+    SwitchCourseRequest,
 )
 from .auth import (
     SignupRequest,

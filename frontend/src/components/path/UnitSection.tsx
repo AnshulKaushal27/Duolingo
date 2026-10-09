@@ -9,12 +9,14 @@ import { playClickSound } from "@/lib/sound";
 
 interface UnitSectionProps {
   unit: UnitWithSkills;
+  courseCode?: string;
   onRefreshPath?: () => void;
   onGemsUpdated?: (newGems: number) => void;
 }
 
 export default function UnitSection({
   unit,
+  courseCode = "es",
   onRefreshPath,
   onGemsUpdated,
 }: UnitSectionProps) {
@@ -70,10 +72,10 @@ export default function UnitSection({
                   opacity: 0.9,
                 }}
               >
-                Section 1 • CEFR A1
+                {courseCode === "ja" ? "Section 1 • Intro to Japanese" : "Section 1 • CEFR A1"}
               </span>
               <h3 style={{ fontSize: "18px", fontWeight: 800, margin: 0 }}>
-                Rookie: First Steps in Spanish
+                {courseCode === "ja" ? "Hiragana & Everyday Basics" : "Rookie: First Steps in Spanish"}
               </h3>
             </div>
           </div>
@@ -87,7 +89,7 @@ export default function UnitSection({
               borderRadius: "12px",
             }}
           >
-            Units 1 - 3
+            Units 1 - 6
           </span>
         </div>
       )}

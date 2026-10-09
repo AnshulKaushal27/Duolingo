@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from ....core.database import get_db
 from ....core.deps import get_current_user
-from ....models import User
+from ....models import User, Course
 from ....schemas import (
     UserProfile,
     RefillHeartsResponse,
@@ -11,6 +11,7 @@ from ....schemas import (
     DailyGoalUpdateRequest,
     SimulateDayRequest,
     SimulateDayResponse,
+    SwitchCourseRequest,
 )
 from ....services.user_service import (
     refill_hearts_with_gems,
@@ -41,7 +42,35 @@ def get_profile(
                 user.streak = 0
                 db.commit()
 
+    # Determine current course code
+    course_code = "es"
+    if user.current_course_id:
+        c = db.query(Course).filter(Course.id == user.current_course_id).first()
+        if c:
+            course_code = c.code
+    user.current_course_code = course_code
+
     return user
+
+@router.post("/course/switch")
+def switch_course(
+    payload: SwitchCourseRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    target = payload.course_code.strip().lower()
+    course = db.query(Course).filter(Course.code == target).first()
+    if not course:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail=f"Course '{payload.course_code}' not found")
+    user.current_course_id = course.id
+    db.commit()
+    return {
+        "success": True,
+        "current_course_id": course.id,
+        "course_code": course.code,
+        "course_title": course.title
+    }
 
 @router.post("/hearts/refill", response_model=RefillHeartsResponse)
 def refill_hearts(

@@ -12,8 +12,8 @@ def normalize_text(text: str) -> str:
     if not text:
         return ""
     normalized = text.strip().lower()
-    # Also strip common punctuation like commas, periods, question marks
-    for ch in [".", ",", "!", "?", "¿", "¡"]:
+    # Also strip common punctuation like commas, periods, question marks, and Japanese punctuation
+    for ch in [".", ",", "!", "?", "¿", "¡", "。", "、", "！", "？", "・", "「", "」", "〜", "ー"]:
         normalized = normalized.replace(ch, "")
     return " ".join(normalized.split())
 

@@ -13,6 +13,8 @@ export interface UserProfile {
   daily_goal_xp?: number;
   last_active_date: string;
   next_heart_in_seconds?: number;
+  current_course_id?: number;
+  current_course_code?: string;
 }
 
 export interface SkillStatus {
@@ -221,7 +223,7 @@ export interface GuidebookData {
   grammar_tips: Array<{
     title: string;
     explanation: string;
-    examples: Array<{ es: string; en: string }>;
+    examples: Array<{ es?: string; ja?: string; en: string }>;
   }>;
 }
 
@@ -281,6 +283,11 @@ export const api = {
 
   // Course Tree & Profile
   getCourseTree: (code: string = "es") => fetchJson<CourseTree>(`/courses/${code}/tree`),
+  switchCourse: (courseCode: string) =>
+    fetchJson<{ success: boolean; current_course_id: number; course_code: string; course_title: string }>("/user/course/switch", {
+      method: "POST",
+      body: JSON.stringify({ course_code: courseCode }),
+    }),
   getUserProfile: () => fetchJson<UserProfile>("/user/profile"),
   refillHearts: () => fetchJson<{ success: boolean; hearts: number; gems: number; message: string }>("/user/hearts/refill", { method: "POST" }),
   practiceHeart: () => fetchJson<{ success: boolean; hearts: number; gems: number; message: string }>("/user/hearts/practice", { method: "POST" }),

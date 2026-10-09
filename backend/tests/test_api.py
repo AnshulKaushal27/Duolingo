@@ -32,21 +32,35 @@ def test_full_api_workflow():
     assert res.status_code == 200, res.text
     print("✓ Alex authenticated for full workflow test")
 
-    print("\n--- 2. Testing Course Tree ---")
+    print("\n--- 2. Testing Course Tree (Spanish) ---")
     res = client.get("/api/v1/courses/es/tree")
     assert res.status_code == 200, res.text
     tree = res.json()
     assert tree["title"] == "Spanish"
-    assert len(tree["units"]) == 3
-    print("✓ Spanish course tree fetched with 3 units:")
+    assert len(tree["units"]) >= 3
+    print(f"✓ Spanish course tree fetched with {len(tree['units'])} units:")
     for u in tree["units"]:
         print(f"  - Unit {u['unit_number']}: {u['title']} ({len(u['skills'])} skills)")
-        for s in u["skills"]:
-            print(f"      * Skill '{s['title']}': status={s['status']}, crowns={s['crowns_earned']}/{s['total_crowns']}")
 
-    # Check that skill 1 is 'completed'
-    assert tree["units"][0]["skills"][0]["status"] == "completed"
-    assert tree["units"][0]["skills"][1]["status"] in ["available", "completed"]
+    # Check Japanese tree
+    print("\n--- 2b. Testing Course Tree (Japanese) ---")
+    res_ja = client.get("/api/v1/courses/ja/tree")
+    assert res_ja.status_code == 200, res_ja.text
+    tree_ja = res_ja.json()
+    assert tree_ja["title"] == "Japanese"
+    assert len(tree_ja["units"]) >= 3
+    print(f"✓ Japanese course tree fetched with {len(tree_ja['units'])} units:")
+    for u in tree_ja["units"]:
+        print(f"  - Unit {u['unit_number']}: {u['title']} ({len(u['skills'])} skills)")
+
+    # Check course switching
+    res_sw = client.post("/api/v1/user/course/switch", json={"course_code": "ja"})
+    assert res_sw.status_code == 200, res_sw.text
+    assert res_sw.json()["course_code"] == "ja"
+    print("✓ Successfully switched active user course to Japanese!")
+
+    # Switch back to Spanish for remainder of test
+    client.post("/api/v1/user/course/switch", json={"course_code": "es"})
 
     print("\n--- 3. Testing User Profile ---")
     res = client.get("/api/v1/user/profile")

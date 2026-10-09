@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { ExerciseClient } from "@/lib/api";
 import { playClickSound } from "@/lib/sound";
-import { speakText } from "@/lib/speech";
+import { speakText, isJapaneseText } from "@/lib/speech";
 
 interface TypeTheAnswerExerciseProps {
   exercise: ExerciseClient;
@@ -12,7 +12,21 @@ interface TypeTheAnswerExerciseProps {
   disabled?: boolean;
 }
 
-const ACCENT_CHARS = ["á", "é", "í", "ó", "ú", "ñ", "¿", "¡"];
+const SPANISH_ACCENT_CHARS = ["á", "é", "í", "ó", "ú", "ñ", "¿", "¡"];
+
+// Curated frequent Japanese kana pills for quick typing assistance
+const JAPANESE_QUICK_KANA = [
+  "あ", "い", "う", "え", "お",
+  "か", "き", "く", "け", "こ",
+  "さ", "し", "す", "せ", "そ",
+  "た", "ち", "つ", "て", "と",
+  "な", "に", "ぬ", "ね", "の",
+  "は", "ひ", "ふ", "へ", "ほ",
+  "ま", "み", "む", "め", "も",
+  "や", "ゆ", "よ",
+  "ら", "り", "る", "れ", "ろ",
+  "わ", "を", "ん", "っ", "ー", "。"
+];
 
 export default function TypeTheAnswerExercise({
   exercise,
@@ -21,6 +35,15 @@ export default function TypeTheAnswerExercise({
   disabled,
 }: TypeTheAnswerExerciseProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [showAllKana, setShowAllKana] = useState(false);
+
+  const isJapanese =
+    exercise.client_payload?.target_language === "ja" ||
+    isJapaneseText(exercise.audio_text || "") ||
+    isJapaneseText(exercise.question_text || "") ||
+    exercise.prompt.toLowerCase().includes("japanese");
+
+  const langCode = isJapanese ? "ja-JP" : "es-ES";
 
   const handleInsertChar = (char: string) => {
     if (disabled) return;
@@ -31,6 +54,8 @@ export default function TypeTheAnswerExercise({
       inputRef.current.focus();
     }
   };
+
+  const displayedKana = showAllKana ? JAPANESE_QUICK_KANA : JAPANESE_QUICK_KANA.slice(0, 15);
 
   return (
     <div style={{ width: "100%", maxWidth: "600px", margin: "0 auto" }}>
@@ -46,19 +71,21 @@ export default function TypeTheAnswerExercise({
           alt="Duo"
           style={{ width: "72px", height: "72px", flexShrink: 0 }}
         />
-        <div style={{
-          backgroundColor: "var(--duo-canvas)",
-          border: "2px solid var(--duo-border)",
-          padding: "16px 20px",
-          borderRadius: "18px",
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-        }}>
+        <div
+          style={{
+            backgroundColor: "var(--duo-canvas)",
+            border: "2px solid var(--duo-border)",
+            padding: "16px 20px",
+            borderRadius: "18px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
           {exercise.audio_text && (
             <div style={{ display: "flex", gap: "6px" }}>
               <button
-                onClick={() => speakText(exercise.audio_text || "", "es-ES", 0.9)}
+                onClick={() => speakText(exercise.audio_text || "", langCode, 0.9)}
                 className="duo-btn duo-btn-blue"
                 title="Normal pronunciation"
                 style={{ width: "36px", height: "36px", borderRadius: "10px", padding: 0 }}
@@ -66,7 +93,7 @@ export default function TypeTheAnswerExercise({
                 🔊
               </button>
               <button
-                onClick={() => speakText(exercise.audio_text || "", "es-ES", 0.65)}
+                onClick={() => speakText(exercise.audio_text || "", langCode, 0.65)}
                 className="duo-btn duo-btn-outline"
                 title="Slow pronunciation"
                 style={{ width: "36px", height: "36px", borderRadius: "10px", padding: 0, fontSize: "16px" }}
@@ -88,7 +115,7 @@ export default function TypeTheAnswerExercise({
           value={answerText}
           onChange={(e) => onTextChange(e.target.value)}
           disabled={disabled}
-          placeholder="Type in Spanish..."
+          placeholder={isJapanese ? "Type in Japanese or Romaji (e.g. arigatou)..." : "Type in Spanish..."}
           rows={3}
           style={{
             width: "100%",
@@ -112,25 +139,63 @@ export default function TypeTheAnswerExercise({
         />
       </div>
 
-      {/* Accented Character Helper Keyboard Pills */}
-      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
-        {ACCENT_CHARS.map((char) => (
+      {/* Helper Keyboard Bar */}
+      {isJapanese ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: "center" }}>
+            {displayedKana.map((char) => (
+              <button
+                key={char}
+                onClick={() => handleInsertChar(char)}
+                disabled={disabled}
+                className="duo-btn duo-btn-outline"
+                style={{
+                  padding: "6px 12px",
+                  fontSize: "16px",
+                  minWidth: "36px",
+                  textTransform: "none",
+                }}
+              >
+                {char}
+              </button>
+            ))}
+          </div>
           <button
-            key={char}
-            onClick={() => handleInsertChar(char)}
-            disabled={disabled}
-            className="duo-btn duo-btn-outline"
+            type="button"
+            onClick={() => setShowAllKana(!showAllKana)}
             style={{
-              padding: "8px 14px",
-              fontSize: "16px",
-              minWidth: "40px",
-              textTransform: "none",
+              background: "none",
+              border: "none",
+              color: "var(--duo-blue)",
+              fontSize: "12px",
+              fontWeight: 800,
+              cursor: "pointer",
+              padding: "4px 8px",
             }}
           >
-            {char}
+            {showAllKana ? "▲ SHOW FEWER KANA" : "▼ SHOW MORE KANA"}
           </button>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+          {SPANISH_ACCENT_CHARS.map((char) => (
+            <button
+              key={char}
+              onClick={() => handleInsertChar(char)}
+              disabled={disabled}
+              className="duo-btn duo-btn-outline"
+              style={{
+                padding: "8px 14px",
+                fontSize: "16px",
+                minWidth: "40px",
+                textTransform: "none",
+              }}
+            >
+              {char}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

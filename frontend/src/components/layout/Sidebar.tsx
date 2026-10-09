@@ -12,8 +12,13 @@ interface NavItem {
   icon: string;
 }
 
+interface SidebarProps {
+  activeCourse?: string;
+}
+
 const NAV_ITEMS: NavItem[] = [
   { label: "LEARN", href: "/learn", icon: "🏠" },
+  { label: "CHARACTERS", href: "/characters", icon: "あ" },
   { label: "PRACTICE", href: "/practice", icon: "🏋️" },
   { label: "LEADERBOARDS", href: "/leaderboard", icon: "🏆" },
   { label: "QUESTS", href: "/quests", icon: "📜" },
@@ -21,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "PROFILE", href: "/profile", icon: "👤" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ activeCourse }: SidebarProps = {}) {
   const pathname = usePathname();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [showMoreMenu, setShowMoreMenu] = useState(false);

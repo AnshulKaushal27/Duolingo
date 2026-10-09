@@ -108,7 +108,8 @@ def get_guidebook(unit_id: int, db: Session = Depends(get_db)):
     unit = db.query(Unit).filter(Unit.id == unit_id).first()
     if not unit:
         raise HTTPException(status_code=404, detail="Unit not found")
-    return get_unit_guidebook(unit.unit_number)
+    course_code = unit.course.code if unit.course else "es"
+    return get_unit_guidebook(unit.unit_number, course_code)
 
 @router.post("/units/{unit_id}/jump-ahead")
 def jump_ahead_to_unit(

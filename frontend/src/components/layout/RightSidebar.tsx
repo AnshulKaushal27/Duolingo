@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import HeartsModal from "./HeartsModal";
 import { playClickSound } from "@/lib/sound";
+import { api } from "@/lib/api";
 
 interface RightSidebarProps {
   streak: number;
@@ -14,12 +15,13 @@ interface RightSidebarProps {
   courseCode?: string;
   courseTitle?: string;
   onHeartsUpdated: (newHearts: number, newGems: number) => void;
+  onCourseSwitched?: (code: string) => void;
 }
 
 const AVAILABLE_COURSES = [
-  { code: "es", title: "Spanish", flag: "/images/flags/es.svg", level: "Section 1 • Rookie", active: true },
+  { code: "es", title: "Spanish", flag: "/images/flags/es.svg", level: "Section 1 • 6 Units" },
+  { code: "ja", title: "Japanese", flag: "/images/flags/ja.svg", level: "Section 1 • Hiragana & 6 Units" },
   { code: "fr", title: "French", flag: "/images/flags/fr.svg", level: "Section 1 • Intro" },
-  { code: "ja", title: "Japanese", flag: "/images/flags/ja.svg", level: "Section 1 • Hiragana" },
   { code: "de", title: "German", flag: "/images/flags/de.svg", level: "Section 1 • Basics" },
   { code: "chess", title: "Chess", flag: "/images/flags/chess.svg", level: "Section 1 • Openings" },
 ];
@@ -32,6 +34,7 @@ export default function RightSidebar({
   courseCode = "es",
   courseTitle = "Spanish",
   onHeartsUpdated,
+  onCourseSwitched,
 }: RightSidebarProps) {
   const router = useRouter();
   const [heartsModalOpen, setHeartsModalOpen] = useState(false);
@@ -195,10 +198,25 @@ export default function RightSidebar({
                     return (
                       <div
                         key={c.code}
-                        onClick={() => {
+                        onClick={async () => {
                           playClickSound();
                           if (!isCurrent) {
-                            router.push(`/learn`);
+                            try {
+                              localStorage.setItem("duo_active_course", c.code);
+                              await api.switchCourse(c.code).catch(() => {});
+                              window.dispatchEvent(
+                                new CustomEvent("duo:course_changed", {
+                                  detail: { code: c.code, title: c.title },
+                                })
+                              );
+                              if (onCourseSwitched) {
+                                onCourseSwitched(c.code);
+                              } else {
+                                router.push(`/learn?course=${c.code}`);
+                              }
+                            } catch (e) {
+                              console.error(e);
+                            }
                           }
                           setActiveDropdown(null);
                         }}

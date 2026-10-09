@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { api, GuidebookData } from "@/lib/api";
 import { playClickSound } from "@/lib/sound";
+import { speakText } from "@/lib/speech";
 
 interface GuidebookModalProps {
   unitId: number;
@@ -36,13 +37,7 @@ export default function GuidebookModal({
   }, [unitId]);
 
   const speak = (text: string) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "es-ES";
-      utterance.rate = 0.9;
-      window.speechSynthesis.speak(utterance);
-    }
+    speakText(text);
   };
 
   return (
@@ -310,7 +305,7 @@ export default function GuidebookModal({
                               }}
                             >
                               <span style={{ fontWeight: 800, color: "var(--duo-text-dark)" }}>
-                                {ex.es}
+                                {ex.ja || ex.es}
                               </span>
                               <span style={{ color: "var(--duo-text-muted)", fontWeight: 700 }}>
                                 {ex.en}

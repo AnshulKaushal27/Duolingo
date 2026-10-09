@@ -20,9 +20,14 @@ class UserProfile(UserBase):
     last_active_date: date
     created_at: datetime
     next_heart_in_seconds: Optional[int] = 0
+    current_course_id: Optional[int] = None
+    current_course_code: Optional[str] = "es"
 
     class Config:
         from_attributes = True
+
+class SwitchCourseRequest(BaseModel):
+    course_code: str
 
 class RefillHeartsResponse(BaseModel):
     success: bool

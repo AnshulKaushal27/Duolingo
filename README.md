@@ -13,13 +13,16 @@ Built as an SDE Fullstack Assignment following modern software engineering pract
 - **Duolingo Color System**: Faithful palette with brand greens (`#58cc02`), blues (`#1cb0f6`), reds (`#ff4b4b`), yellows (`#ffc800`), and dark mode tokens.
 - **Duo Mascot & Celebratory Flourishes**: SVG illustrations of Duo the Owl in cheering, coaching, and crying states.
 - **Web Audio Sound Effects**: Low-latency procedural sound synthesizer for button taps, correct chords, wrong buzzes, heart breaks, and victory fanfares.
-- **Web Speech API Text-to-Speech**: Authentic pronunciation of vocabulary sentences in Spanish.
+- **Web Speech API Text-to-Speech**: Authentic pronunciation for Spanish (`es-ES`) and Japanese (`ja-JP`) with automatic script detection.
+- **Dedicated Japanese Characters Hub (`/characters`)**: Authentic Duolingo "あ" Kana learning center featuring complete Hiragana & Katakana interactive Gojūon charts, audio playback on tap, and gamified practice drills.
+- **Extensive Multi-Course Support**: Seamless instant switching between Spanish (🇪🇸) and Japanese (🇯🇵) across the entire application, header, right sidebar, and learning path.
 - **Celebratory Confetti**: Interactive confetti cannon on lesson completion.
 - **Dark Mode**: Full toggleable dark mode respecting Duolingo's dark theme palette.
 
 ### 2. Learning Path / Skill Tree (`/learn`)
+- **Extensive Spanish & Japanese Curricula**: 6 authentic units each with multiple skills, lessons, and exercises covering all 5 core exercise types.
 - **Serpentine Winding Path**: Mathematical curve offset placing skill circles along an authentic curved path.
-- **Unit Cards & Guidebooks**: Unit titles, descriptions, and guidebook previews.
+- **Unit Cards & Comprehensive Guidebooks**: Unit titles, descriptions, and guidebooks featuring key phrases, audio pronunciation, and grammar explanations in Spanish and Japanese.
 - **Skill States**: Visually distinct Completed (Gold with crown badge), Available (pulsing glow with Duo mascot cameo), and Locked states.
 - **Milestone Treasure Chests**: Periodic reward chests along the trail.
 - **Sticky Status Header / Sidebar**: Real-time streak counter (🔥), gems (💎), and hearts (❤️).

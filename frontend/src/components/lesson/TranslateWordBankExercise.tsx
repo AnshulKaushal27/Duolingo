@@ -37,14 +37,14 @@ export default function TranslateWordBankExercise({
   const handleAddToken = (token: string, bankIndex: number) => {
     if (disabled || usedIndices.has(bankIndex)) return;
     playTilePlaceSound();
-    speakText(token, "es-ES", 0.9);
+    speakText(token);
     onTokensChange([...placedTokens, token]);
   };
 
   const handleRemoveToken = (placedIndex: number) => {
     if (disabled) return;
     playTileRemoveSound();
-    speakText(placedTokens[placedIndex], "es-ES", 0.9);
+    speakText(placedTokens[placedIndex]);
     const updated = placedTokens.filter((_, idx) => idx !== placedIndex);
     onTokensChange(updated);
   };

@@ -24,7 +24,7 @@ export default function MultipleChoiceExercise({
     if (disabled) return;
     playClickSound();
     if (opt.text) {
-      speakText(opt.text, "es-ES", 0.9);
+      speakText(opt.text);
     }
     onSelectAnswer(opt.id);
   };
