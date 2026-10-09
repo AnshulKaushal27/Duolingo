@@ -66,7 +66,7 @@ export default function LanguagePickerPage() {
 
     // Tactile delay matching Duolingo's authentic registration transition
     setTimeout(() => {
-      router.push("/onboarding/source");
+      router.push("/welcome");
     }, 280);
   };
 

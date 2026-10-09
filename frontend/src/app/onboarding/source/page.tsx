@@ -40,7 +40,7 @@ export default function ReferralSourcePage() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "var(--duo-canvas)" }}>
-      <OnboardingHeader progressPercent={24} onBack={() => router.push("/onboarding/language")} />
+      <OnboardingHeader progressPercent={24} onBack={() => router.push("/welcome")} />
 
       <main
         style={{

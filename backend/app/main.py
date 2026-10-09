@@ -61,3 +61,15 @@ def root():
 @app.get("/health", tags=["Health Check"])
 def health():
     return {"status": "ok"}
+
+@app.get("/welcome", tags=["Welcome"])
+@app.get(f"{settings.API_V1_STR}/welcome", tags=["Welcome"])
+def welcome():
+    return {
+        "status": "ok",
+        "message": "Hi there! I'm Duo!",
+        "mascot": "duo",
+        "theme": "dark",
+        "bodyBg": "rgb(19, 31, 36)"
+    }
+
