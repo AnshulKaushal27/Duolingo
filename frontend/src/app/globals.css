@@ -615,6 +615,35 @@ html, body {
   filter: brightness(1.08);
 }
 
+/* Sleek, Duolingo-styled Custom Scrollbar */
+.duo-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--duo-border-dark) transparent;
+}
+.duo-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.duo-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.duo-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--duo-border-dark);
+  border-radius: 8px;
+}
+.duo-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--duo-text-muted);
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @media (max-width: 1100px) {
   .duo-scroll-top-btn {
     right: 20px !important;

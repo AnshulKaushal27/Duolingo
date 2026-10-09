@@ -262,13 +262,16 @@ export default function GuidebookModal({
             =================================================================== */}
         {!loading && (phrasesCount > 0 || grammarCount > 0) && (
           <div
+            className="no-scrollbar"
             style={{
               display: "flex",
-              gap: "8px",
-              padding: "14px 28px",
+              alignItems: "center",
+              gap: "10px",
+              padding: "12px 24px",
               backgroundColor: "var(--duo-surface)",
               borderBottom: "2px solid var(--duo-border)",
-              overflowX: "auto",
+              flexWrap: "wrap",
+              overflow: "hidden",
             }}
           >
             <button
@@ -277,17 +280,24 @@ export default function GuidebookModal({
                 setActiveTab("all");
               }}
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
                 padding: "8px 16px",
+                minHeight: "36px",
                 borderRadius: "14px",
                 border: "2px solid",
+                borderBottom: activeTab === "all" ? "3px solid var(--duo-blue-dark)" : "3px solid var(--duo-border)",
                 borderColor: activeTab === "all" ? "var(--duo-blue)" : "var(--duo-border)",
                 backgroundColor: activeTab === "all" ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
                 color: activeTab === "all" ? "var(--duo-blue-dark)" : "var(--duo-text)",
                 fontWeight: 800,
                 fontSize: "13px",
                 cursor: "pointer",
-                transition: "all 0.15s ease",
+                transition: "all 0.1s ease",
                 whiteSpace: "nowrap",
+                lineHeight: 1,
+                boxSizing: "border-box",
               }}
             >
               📖 All Notes
@@ -300,20 +310,24 @@ export default function GuidebookModal({
                   setActiveTab("phrases");
                 }}
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
                   padding: "8px 16px",
+                  minHeight: "36px",
                   borderRadius: "14px",
                   border: "2px solid",
+                  borderBottom: activeTab === "phrases" ? "3px solid var(--duo-blue-dark)" : "3px solid var(--duo-border)",
                   borderColor: activeTab === "phrases" ? "var(--duo-blue)" : "var(--duo-border)",
                   backgroundColor: activeTab === "phrases" ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
                   color: activeTab === "phrases" ? "var(--duo-blue-dark)" : "var(--duo-text)",
                   fontWeight: 800,
                   fontSize: "13px",
                   cursor: "pointer",
-                  transition: "all 0.15s ease",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
+                  transition: "all 0.1s ease",
                   whiteSpace: "nowrap",
+                  lineHeight: 1,
+                  boxSizing: "border-box",
                 }}
               >
                 <span>💬 Key Phrases</span>
@@ -322,8 +336,10 @@ export default function GuidebookModal({
                     backgroundColor: activeTab === "phrases" ? "var(--duo-blue)" : "var(--duo-border)",
                     color: activeTab === "phrases" ? "#ffffff" : "var(--duo-text-muted)",
                     fontSize: "11px",
-                    padding: "2px 6px",
+                    fontWeight: 900,
+                    padding: "2px 7px",
                     borderRadius: "8px",
+                    lineHeight: 1.2,
                   }}
                 >
                   {phrasesCount}
@@ -338,20 +354,24 @@ export default function GuidebookModal({
                   setActiveTab("grammar");
                 }}
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
                   padding: "8px 16px",
+                  minHeight: "36px",
                   borderRadius: "14px",
                   border: "2px solid",
+                  borderBottom: activeTab === "grammar" ? "3px solid var(--duo-blue-dark)" : "3px solid var(--duo-border)",
                   borderColor: activeTab === "grammar" ? "var(--duo-blue)" : "var(--duo-border)",
                   backgroundColor: activeTab === "grammar" ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
                   color: activeTab === "grammar" ? "var(--duo-blue-dark)" : "var(--duo-text)",
                   fontWeight: 800,
                   fontSize: "13px",
                   cursor: "pointer",
-                  transition: "all 0.15s ease",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
+                  transition: "all 0.1s ease",
                   whiteSpace: "nowrap",
+                  lineHeight: 1,
+                  boxSizing: "border-box",
                 }}
               >
                 <span>💡 Grammar & Culture</span>
@@ -360,8 +380,10 @@ export default function GuidebookModal({
                     backgroundColor: activeTab === "grammar" ? "var(--duo-blue)" : "var(--duo-border)",
                     color: activeTab === "grammar" ? "#ffffff" : "var(--duo-text-muted)",
                     fontSize: "11px",
-                    padding: "2px 6px",
+                    fontWeight: 900,
+                    padding: "2px 7px",
                     borderRadius: "8px",
+                    lineHeight: 1.2,
                   }}
                 >
                   {grammarCount}
@@ -375,6 +397,7 @@ export default function GuidebookModal({
             SCROLLABLE CONTENT: High Contrast, Multi-Language, Accessible
             =================================================================== */}
         <div
+          className="duo-scrollbar"
           style={{
             padding: "24px 28px",
             overflowY: "auto",
