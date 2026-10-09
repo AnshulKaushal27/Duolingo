@@ -222,9 +222,14 @@ export default function MatchMadnessModal({
                       opacity: isMatched ? 0.35 : 1,
                       fontWeight: 800,
                       fontSize: "15px",
-                      color: "var(--duo-text-dark)",
+                      color: isSelected
+                        ? "var(--duo-blue)"
+                        : isMatched
+                        ? "var(--duo-text-muted)"
+                        : "var(--duo-text-dark)",
                       cursor: isMatched ? "default" : "pointer",
                       textAlign: "center",
+                      transition: "all 0.12s ease",
                     }}
                   >
                     {word}
@@ -262,9 +267,14 @@ export default function MatchMadnessModal({
                       opacity: isMatched ? 0.35 : 1,
                       fontWeight: 800,
                       fontSize: "15px",
-                      color: "var(--duo-text-dark)",
+                      color: isSelected
+                        ? "var(--duo-blue)"
+                        : isMatched
+                        ? "var(--duo-text-muted)"
+                        : "var(--duo-text-dark)",
                       cursor: isMatched ? "default" : "pointer",
                       textAlign: "center",
+                      transition: "all 0.12s ease",
                     }}
                   >
                     {word}
