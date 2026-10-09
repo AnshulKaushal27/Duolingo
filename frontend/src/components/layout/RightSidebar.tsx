@@ -211,7 +211,7 @@ export default function RightSidebar({
                   top: "calc(100% + 10px)",
                   left: 0,
                   width: "280px",
-                  backgroundColor: "var(--duo-canvas)",
+                  backgroundColor: "var(--duo-card-bg)",
                   border: "2px solid var(--duo-border)",
                   borderRadius: "18px",
                   boxShadow: "0 12px 32px rgba(0,0,0,0.22)",
@@ -223,6 +223,21 @@ export default function RightSidebar({
                   animation: "fadeIn 0.15s ease",
                 }}
               >
+                {/* Pointer Arrow */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-7px",
+                    left: "24px",
+                    width: "12px",
+                    height: "12px",
+                    backgroundColor: "var(--duo-card-bg)",
+                    borderTop: "2px solid var(--duo-border)",
+                    borderLeft: "2px solid var(--duo-border)",
+                    transform: "rotate(45deg)",
+                  }}
+                />
+
                 <div style={{ fontSize: "12px", fontWeight: 800, color: "var(--duo-text-muted)", letterSpacing: "0.8px", textTransform: "uppercase" }}>
                   MY COURSES
                 </div>
@@ -367,9 +382,9 @@ export default function RightSidebar({
                 style={{
                   position: "absolute",
                   top: "calc(100% + 10px)",
-                  right: "-40px",
+                  left: "-60px",
                   width: "290px",
-                  backgroundColor: "var(--duo-canvas)",
+                  backgroundColor: "var(--duo-card-bg)",
                   border: "2px solid var(--duo-border)",
                   borderRadius: "18px",
                   boxShadow: "0 12px 32px rgba(0,0,0,0.22)",
@@ -381,13 +396,28 @@ export default function RightSidebar({
                   animation: "fadeIn 0.15s ease",
                 }}
               >
+                {/* Pointer Arrow pointing to Streak Flame */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-7px",
+                    left: "76px",
+                    width: "12px",
+                    height: "12px",
+                    backgroundColor: "var(--duo-card-bg)",
+                    borderTop: "2px solid var(--duo-border)",
+                    borderLeft: "2px solid var(--duo-border)",
+                    transform: "rotate(45deg)",
+                  }}
+                />
+
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <img src="/icons/streak-flame.svg" alt="Streak" style={{ width: "36px", height: "36px" }} />
                   <div>
-                    <h4 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text)" }}>
+                    <h4 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text-dark)", margin: 0 }}>
                       {streak} day streak!
                     </h4>
-                    <p style={{ fontSize: "12px", color: "var(--duo-text-muted)", fontWeight: 600 }}>
+                    <p style={{ fontSize: "12px", color: "var(--duo-text-muted)", fontWeight: 600, margin: "2px 0 0 0" }}>
                       Practice today to keep it active
                     </p>
                   </div>
@@ -474,9 +504,9 @@ export default function RightSidebar({
                 style={{
                   position: "absolute",
                   top: "calc(100% + 10px)",
-                  right: "-20px",
+                  right: "-65px",
                   width: "270px",
-                  backgroundColor: "var(--duo-canvas)",
+                  backgroundColor: "var(--duo-card-bg)",
                   border: "2px solid var(--duo-border)",
                   borderRadius: "18px",
                   boxShadow: "0 12px 32px rgba(0,0,0,0.22)",
@@ -488,13 +518,28 @@ export default function RightSidebar({
                   animation: "fadeIn 0.15s ease",
                 }}
               >
+                {/* Pointer Arrow pointing to Gem */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-7px",
+                    right: "80px",
+                    width: "12px",
+                    height: "12px",
+                    backgroundColor: "var(--duo-card-bg)",
+                    borderTop: "2px solid var(--duo-border)",
+                    borderLeft: "2px solid var(--duo-border)",
+                    transform: "rotate(45deg)",
+                  }}
+                />
+
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <img src="/icons/gem.svg" alt="Gems" style={{ width: "36px", height: "36px" }} />
                   <div>
-                    <h4 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text)" }}>
+                    <h4 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text-dark)", margin: 0 }}>
                       {localGems} Gems
                     </h4>
-                    <p style={{ fontSize: "12px", color: "var(--duo-text-muted)", fontWeight: 600 }}>
+                    <p style={{ fontSize: "12px", color: "var(--duo-text-muted)", fontWeight: 600, margin: "2px 0 0 0" }}>
                       Duolingo Currency
                     </p>
                   </div>
@@ -555,7 +600,7 @@ export default function RightSidebar({
                   top: "calc(100% + 10px)",
                   right: 0,
                   width: "280px",
-                  backgroundColor: "var(--duo-canvas)",
+                  backgroundColor: "var(--duo-card-bg)",
                   border: "2px solid var(--duo-border)",
                   borderRadius: "18px",
                   boxShadow: "0 12px 32px rgba(0,0,0,0.22)",
@@ -567,13 +612,28 @@ export default function RightSidebar({
                   animation: "fadeIn 0.15s ease",
                 }}
               >
+                {/* Pointer Arrow pointing to Heart */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-7px",
+                    right: "24px",
+                    width: "12px",
+                    height: "12px",
+                    backgroundColor: "var(--duo-card-bg)",
+                    borderTop: "2px solid var(--duo-border)",
+                    borderLeft: "2px solid var(--duo-border)",
+                    transform: "rotate(45deg)",
+                  }}
+                />
+
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <img src="/icons/heart.svg" alt="Hearts" style={{ width: "36px", height: "36px" }} />
                   <div>
-                    <h4 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text)" }}>
+                    <h4 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text-dark)", margin: 0 }}>
                       {hearts} / 5 Hearts
                     </h4>
-                    <p style={{ fontSize: "12px", color: "var(--duo-text-muted)", fontWeight: 600 }}>
+                    <p style={{ fontSize: "12px", color: "var(--duo-text-muted)", fontWeight: 600, margin: "2px 0 0 0" }}>
                       {hearts === 5 ? "Full Health" : "Hearts depleted"}
                     </p>
                   </div>
