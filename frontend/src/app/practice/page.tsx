@@ -157,14 +157,15 @@ function PracticeContent() {
                   borderBottom: isActive
                     ? "4px solid var(--duo-blue-dark)"
                     : "4px solid var(--duo-border-dark)",
-                  backgroundColor: isActive ? "var(--duo-blue-bg)" : "#ffffff",
-                  color: isActive ? "var(--duo-blue-dark)" : "var(--duo-text-muted)",
+                  backgroundColor: isActive ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
+                  color: isActive ? "var(--duo-blue)" : "var(--duo-text)",
                   fontWeight: 800,
                   fontSize: "14px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
+                  transition: "all 0.12s ease",
                 }}
               >
                 <span>{tab.icon}</span>
@@ -180,9 +181,10 @@ function PracticeContent() {
             {/* Card 1: Practice Mistakes */}
             <div
               style={{
-                backgroundColor: "#ffffff",
+                backgroundColor: "var(--duo-card-bg)",
                 borderRadius: "20px",
                 border: "2px solid var(--duo-border)",
+                borderBottom: "4px solid var(--duo-border-dark)",
                 padding: "24px",
                 display: "flex",
                 alignItems: "center",
@@ -201,6 +203,7 @@ function PracticeContent() {
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "28px",
+                    flexShrink: 0,
                   }}
                 >
                   🎯
@@ -209,7 +212,7 @@ function PracticeContent() {
                   <h3 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text-dark)" }}>
                     Practice Your Mistakes
                   </h3>
-                  <p style={{ fontSize: "14px", color: "var(--duo-text-muted)", marginTop: "2px" }}>
+                  <p style={{ fontSize: "14.5px", color: "var(--duo-text-muted)", marginTop: "4px", lineHeight: 1.4 }}>
                     Clear flagged exercises to regain full confidence and reinforce weak areas.
                   </p>
                 </div>
@@ -221,7 +224,7 @@ function PracticeContent() {
                   window.location.href = "/lesson/1";
                 }}
                 className="duo-btn duo-btn-green"
-                style={{ padding: "10px 20px", fontSize: "14px", whiteSpace: "nowrap" }}
+                style={{ padding: "12px 24px", fontSize: "14px", whiteSpace: "nowrap", flexShrink: 0 }}
               >
                 START (+15 XP)
               </button>
@@ -230,9 +233,10 @@ function PracticeContent() {
             {/* Card 2: Match Madness */}
             <div
               style={{
-                backgroundColor: "#ffffff",
+                backgroundColor: "var(--duo-card-bg)",
                 borderRadius: "20px",
                 border: "2px solid var(--duo-border)",
+                borderBottom: "4px solid var(--duo-border-dark)",
                 padding: "24px",
                 display: "flex",
                 alignItems: "center",
@@ -251,6 +255,7 @@ function PracticeContent() {
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "28px",
+                    flexShrink: 0,
                   }}
                 >
                   ⚡
@@ -259,7 +264,7 @@ function PracticeContent() {
                   <h3 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text-dark)" }}>
                     Match Madness
                   </h3>
-                  <p style={{ fontSize: "14px", color: "var(--duo-text-muted)", marginTop: "2px" }}>
+                  <p style={{ fontSize: "14.5px", color: "var(--duo-text-muted)", marginTop: "4px", lineHeight: 1.4 }}>
                     Race against the clock in 45 seconds to pair words as fast as possible!
                   </p>
                 </div>
@@ -271,7 +276,7 @@ function PracticeContent() {
                   setShowMatchMadness(true);
                 }}
                 className="duo-btn duo-btn-yellow"
-                style={{ padding: "10px 20px", fontSize: "14px", whiteSpace: "nowrap" }}
+                style={{ padding: "12px 24px", fontSize: "14px", whiteSpace: "nowrap", flexShrink: 0 }}
               >
                 PLAY NOW (+25 XP)
               </button>
@@ -280,9 +285,10 @@ function PracticeContent() {
             {/* Card 3: Listening Practice */}
             <div
               style={{
-                backgroundColor: "#ffffff",
+                backgroundColor: "var(--duo-card-bg)",
                 borderRadius: "20px",
                 border: "2px solid var(--duo-border)",
+                borderBottom: "4px solid var(--duo-border-dark)",
                 padding: "24px",
                 display: "flex",
                 alignItems: "center",
@@ -301,6 +307,7 @@ function PracticeContent() {
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "28px",
+                    flexShrink: 0,
                   }}
                 >
                   🎧
@@ -309,7 +316,7 @@ function PracticeContent() {
                   <h3 style={{ fontSize: "18px", fontWeight: 800, color: "var(--duo-text-dark)" }}>
                     Listening Practice
                   </h3>
-                  <p style={{ fontSize: "14px", color: "var(--duo-text-muted)", marginTop: "2px" }}>
+                  <p style={{ fontSize: "14.5px", color: "var(--duo-text-muted)", marginTop: "4px", lineHeight: 1.4 }}>
                     Sharpen your ear with high-speed and slow audio pronunciation drills.
                   </p>
                 </div>
@@ -321,7 +328,7 @@ function PracticeContent() {
                   window.location.href = "/lesson/2";
                 }}
                 className="duo-btn duo-btn-blue"
-                style={{ padding: "10px 20px", fontSize: "14px", whiteSpace: "nowrap" }}
+                style={{ padding: "12px 24px", fontSize: "14px", whiteSpace: "nowrap", flexShrink: 0 }}
               >
                 START (+15 XP)
               </button>
@@ -342,7 +349,8 @@ function PracticeContent() {
                 padding: "14px 18px",
                 borderRadius: "16px",
                 border: "2px solid var(--duo-border)",
-                backgroundColor: "#ffffff",
+                backgroundColor: "var(--duo-card-bg)",
+                color: "var(--duo-text-dark)",
                 fontSize: "15px",
                 fontWeight: 700,
                 outline: "none",
@@ -357,8 +365,9 @@ function PracticeContent() {
                   style={{
                     padding: "16px 20px",
                     borderRadius: "16px",
-                    backgroundColor: "#ffffff",
+                    backgroundColor: "var(--duo-card-bg)",
                     border: "2px solid var(--duo-border)",
+                    borderBottom: "4px solid var(--duo-border-dark)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
@@ -373,9 +382,13 @@ function PracticeContent() {
                         height: "38px",
                         borderRadius: "10px",
                         border: "2px solid var(--duo-blue)",
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "var(--duo-surface)",
+                        color: "var(--duo-blue)",
                         cursor: "pointer",
                         fontSize: "16px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       🔊
@@ -448,9 +461,10 @@ function PracticeContent() {
               <div
                 key={story.id}
                 style={{
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "var(--duo-card-bg)",
                   borderRadius: "20px",
                   border: "2px solid var(--duo-border)",
+                  borderBottom: "4px solid var(--duo-border-dark)",
                   padding: "24px",
                   display: "flex",
                   alignItems: "center",
@@ -487,7 +501,7 @@ function PracticeContent() {
                     setActiveStoryId(story.id);
                   }}
                   className="duo-btn duo-btn-blue"
-                  style={{ padding: "10px 20px", fontSize: "14px", whiteSpace: "nowrap" }}
+                  style={{ padding: "12px 24px", fontSize: "14px", whiteSpace: "nowrap" }}
                 >
                   READ STORY (+{story.xp} XP)
                 </button>

@@ -167,6 +167,17 @@ html, body {
   filter: brightness(1.06);
 }
 
+/* Yellow Lightning / Match Madness Button */
+.duo-btn-yellow {
+  background-color: var(--duo-yellow);
+  color: #ffffff;
+  border-color: var(--duo-yellow-dark);
+  border-bottom-color: var(--duo-yellow-dark);
+}
+.duo-btn-yellow:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
 /* Outline / White Button */
 .duo-btn-outline {
   background-color: var(--duo-canvas);

@@ -112,10 +112,11 @@ export default function MatchMadnessModal({
         style={{
           width: "100%",
           maxWidth: "560px",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--duo-modal-bg, var(--duo-card-bg))",
           borderRadius: "24px",
+          border: "2px solid var(--duo-border)",
           padding: "28px",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
           display: "flex",
           flexDirection: "column",
           gap: "20px",
@@ -217,7 +218,7 @@ export default function MatchMadnessModal({
                         ? "var(--duo-surface)"
                         : isSelected
                         ? "var(--duo-blue-bg)"
-                        : "#ffffff",
+                        : "var(--duo-card-bg)",
                       opacity: isMatched ? 0.35 : 1,
                       fontWeight: 800,
                       fontSize: "15px",
@@ -257,7 +258,7 @@ export default function MatchMadnessModal({
                         ? "var(--duo-surface)"
                         : isSelected
                         ? "var(--duo-blue-bg)"
-                        : "#ffffff",
+                        : "var(--duo-card-bg)",
                       opacity: isMatched ? 0.35 : 1,
                       fontWeight: 800,
                       fontSize: "15px",

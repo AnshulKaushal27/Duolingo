@@ -198,9 +198,10 @@ export default function StoryReaderModal({
           width: "100%",
           maxWidth: "680px",
           height: "85vh",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--duo-modal-bg, var(--duo-card-bg))",
           borderRadius: "24px",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+          border: "2px solid var(--duo-border)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.35)",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -253,7 +254,7 @@ export default function StoryReaderModal({
               padding: "6px 12px",
               borderRadius: "12px",
               border: "2px solid var(--duo-border)",
-              backgroundColor: showTranslations ? "var(--duo-blue-bg)" : "#fff",
+              backgroundColor: showTranslations ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
               color: showTranslations ? "var(--duo-blue-dark)" : "var(--duo-text-muted)",
               cursor: "pointer",
             }}
@@ -363,7 +364,7 @@ export default function StoryReaderModal({
                         borderBottom: isSelected
                           ? "5px solid var(--duo-blue-dark)"
                           : "4px solid var(--duo-border-dark)",
-                        backgroundColor: isSelected ? "var(--duo-blue-bg)" : "#ffffff",
+                        backgroundColor: isSelected ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
                         fontSize: "16px",
                         fontWeight: 800,
                         textAlign: "left",
@@ -482,7 +483,7 @@ export default function StoryReaderModal({
             borderTop: "2px solid var(--duo-border)",
             display: "flex",
             justifyContent: "flex-end",
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--duo-surface)",
           }}
         >
           {completed ? (
