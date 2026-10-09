@@ -178,6 +178,7 @@ export default function GuidebookModal({
             justifyContent: "space-between",
             position: "relative",
             borderBottom: "4px solid rgba(0, 0, 0, 0.15)",
+            flexShrink: 0,
           }}
         >
           <div style={{ flex: 1, paddingRight: "16px" }}>
@@ -267,11 +268,14 @@ export default function GuidebookModal({
               display: "flex",
               alignItems: "center",
               gap: "10px",
-              padding: "12px 24px",
+              padding: "14px 28px",
               backgroundColor: "var(--duo-surface)",
               borderBottom: "2px solid var(--duo-border)",
-              flexWrap: "wrap",
-              overflow: "hidden",
+              flexShrink: 0,
+              minHeight: "fit-content",
+              overflowX: "auto",
+              overflowY: "hidden",
+              whiteSpace: "nowrap",
             }}
           >
             <button
@@ -282,13 +286,12 @@ export default function GuidebookModal({
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "6px",
+                gap: "8px",
                 padding: "8px 16px",
-                minHeight: "36px",
+                height: "38px",
                 borderRadius: "14px",
-                border: "2px solid",
-                borderBottom: activeTab === "all" ? "3px solid var(--duo-blue-dark)" : "3px solid var(--duo-border)",
-                borderColor: activeTab === "all" ? "var(--duo-blue)" : "var(--duo-border)",
+                border: `2px solid ${activeTab === "all" ? "var(--duo-blue)" : "var(--duo-border)"}`,
+                borderBottom: `4px solid ${activeTab === "all" ? "var(--duo-blue-dark)" : "var(--duo-border-dark)"}`,
                 backgroundColor: activeTab === "all" ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
                 color: activeTab === "all" ? "var(--duo-blue-dark)" : "var(--duo-text)",
                 fontWeight: 800,
@@ -298,9 +301,11 @@ export default function GuidebookModal({
                 whiteSpace: "nowrap",
                 lineHeight: 1,
                 boxSizing: "border-box",
+                flexShrink: 0,
               }}
             >
-              📖 All Notes
+              <span>📖</span>
+              <span>All Notes</span>
             </button>
 
             {phrasesCount > 0 && (
@@ -312,13 +317,12 @@ export default function GuidebookModal({
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "6px",
+                  gap: "8px",
                   padding: "8px 16px",
-                  minHeight: "36px",
+                  height: "38px",
                   borderRadius: "14px",
-                  border: "2px solid",
-                  borderBottom: activeTab === "phrases" ? "3px solid var(--duo-blue-dark)" : "3px solid var(--duo-border)",
-                  borderColor: activeTab === "phrases" ? "var(--duo-blue)" : "var(--duo-border)",
+                  border: `2px solid ${activeTab === "phrases" ? "var(--duo-blue)" : "var(--duo-border)"}`,
+                  borderBottom: `4px solid ${activeTab === "phrases" ? "var(--duo-blue-dark)" : "var(--duo-border-dark)"}`,
                   backgroundColor: activeTab === "phrases" ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
                   color: activeTab === "phrases" ? "var(--duo-blue-dark)" : "var(--duo-text)",
                   fontWeight: 800,
@@ -328,9 +332,11 @@ export default function GuidebookModal({
                   whiteSpace: "nowrap",
                   lineHeight: 1,
                   boxSizing: "border-box",
+                  flexShrink: 0,
                 }}
               >
-                <span>💬 Key Phrases</span>
+                <span>💬</span>
+                <span>Key Phrases</span>
                 <span
                   style={{
                     backgroundColor: activeTab === "phrases" ? "var(--duo-blue)" : "var(--duo-border)",
@@ -340,6 +346,9 @@ export default function GuidebookModal({
                     padding: "2px 7px",
                     borderRadius: "8px",
                     lineHeight: 1.2,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   {phrasesCount}
@@ -356,13 +365,12 @@ export default function GuidebookModal({
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "6px",
+                  gap: "8px",
                   padding: "8px 16px",
-                  minHeight: "36px",
+                  height: "38px",
                   borderRadius: "14px",
-                  border: "2px solid",
-                  borderBottom: activeTab === "grammar" ? "3px solid var(--duo-blue-dark)" : "3px solid var(--duo-border)",
-                  borderColor: activeTab === "grammar" ? "var(--duo-blue)" : "var(--duo-border)",
+                  border: `2px solid ${activeTab === "grammar" ? "var(--duo-blue)" : "var(--duo-border)"}`,
+                  borderBottom: `4px solid ${activeTab === "grammar" ? "var(--duo-blue-dark)" : "var(--duo-border-dark)"}`,
                   backgroundColor: activeTab === "grammar" ? "var(--duo-blue-bg)" : "var(--duo-card-bg)",
                   color: activeTab === "grammar" ? "var(--duo-blue-dark)" : "var(--duo-text)",
                   fontWeight: 800,
@@ -372,9 +380,11 @@ export default function GuidebookModal({
                   whiteSpace: "nowrap",
                   lineHeight: 1,
                   boxSizing: "border-box",
+                  flexShrink: 0,
                 }}
               >
-                <span>💡 Grammar & Culture</span>
+                <span>💡</span>
+                <span>Grammar & Culture</span>
                 <span
                   style={{
                     backgroundColor: activeTab === "grammar" ? "var(--duo-blue)" : "var(--duo-border)",
@@ -384,6 +394,9 @@ export default function GuidebookModal({
                     padding: "2px 7px",
                     borderRadius: "8px",
                     lineHeight: 1.2,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   {grammarCount}
@@ -401,7 +414,8 @@ export default function GuidebookModal({
           style={{
             padding: "24px 28px",
             overflowY: "auto",
-            flex: 1,
+            flex: "1 1 auto",
+            minHeight: 0,
             display: "flex",
             flexDirection: "column",
             gap: "28px",
@@ -506,7 +520,7 @@ export default function GuidebookModal({
                             padding: "16px 20px",
                             borderRadius: "18px",
                             border: "2px solid var(--duo-border)",
-                            borderBottom: "4px solid var(--duo-border)",
+                            borderBottom: "4px solid var(--duo-border-dark)",
                             backgroundColor: "var(--duo-card-bg)",
                             display: "flex",
                             alignItems: "center",
@@ -629,7 +643,7 @@ export default function GuidebookModal({
                           padding: "20px 22px",
                           borderRadius: "20px",
                           border: "2px solid var(--duo-border)",
-                          borderBottom: "4px solid var(--duo-border)",
+                          borderBottom: "4px solid var(--duo-border-dark)",
                           backgroundColor: "var(--duo-card-bg)",
                           display: "flex",
                           flexDirection: "column",
@@ -788,6 +802,18 @@ export default function GuidebookModal({
                   </div>
                 </div>
               )}
+              {/* Empty state if both key phrases and grammar tips are empty */}
+              {phrasesCount === 0 && grammarCount === 0 && (
+                <div style={{ textAlign: "center", padding: "48px 16px", color: "var(--duo-text-muted)" }}>
+                  <div style={{ fontSize: "40px", marginBottom: "12px" }}>🦉</div>
+                  <div style={{ fontSize: "16px", fontWeight: 800, color: "var(--duo-text-dark)" }}>
+                    No notes yet for this unit
+                  </div>
+                  <div style={{ fontSize: "13px", fontWeight: 600, marginTop: "4px" }}>
+                    Check back soon as more content is added!
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -803,6 +829,7 @@ export default function GuidebookModal({
             alignItems: "center",
             justifyContent: "space-between",
             backgroundColor: "var(--duo-surface)",
+            flexShrink: 0,
           }}
         >
           <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--duo-text-muted)" }}>
