@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <radialGradient id="duoBody" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#78d91c"/>
+      <stop offset="85%" stop-color="#58cc02"/>
+      <stop offset="100%" stop-color="#46a302"/>
+    </radialGradient>
+    <linearGradient id="duoBelly" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a5ed3d"/>
+      <stop offset="100%" stop-color="#84dc17"/>
+    </linearGradient>
+    <linearGradient id="duoBeak" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffb100"/>
+      <stop offset="100%" stop-color="#e58700"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Feet -->
+  <ellipse cx="44" cy="110" rx="14" ry="7" fill="#e58700"/>
+  <ellipse cx="76" cy="110" rx="14" ry="7" fill="#e58700"/>
+  <ellipse cx="44" cy="108" rx="13" ry="6" fill="#ffb100"/>
+  <ellipse cx="76" cy="108" rx="13" ry="6" fill="#ffb100"/>
+
+  <!-- Body -->
+  <ellipse cx="60" cy="62" rx="46" ry="46" fill="url(#duoBody)" filter="url(#shadow)"/>
+
+  <!-- Left Wing (waving) -->
+  <path d="M 16 64 C 8 50, 4 36, 12 32 C 20 28, 26 44, 24 60 Z" fill="#46a302"/>
+  <path d="M 18 62 C 12 50, 8 38, 14 34 C 20 30, 24 44, 24 58 Z" fill="#58cc02"/>
+
+  <!-- Right Wing -->
+  <path d="M 104 64 C 112 55, 114 42, 108 40 C 102 38, 96 50, 96 62 Z" fill="#46a302"/>
+  <path d="M 102 62 C 108 55, 110 44, 106 42 C 102 40, 96 50, 96 60 Z" fill="#58cc02"/>
+
+  <!-- Belly -->
+  <ellipse cx="60" cy="74" rx="28" ry="24" fill="url(#duoBelly)"/>
+  <!-- Belly Feather Markings -->
+  <path d="M 52 70 Q 60 76 68 70" stroke="#58cc02" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M 54 80 Q 60 86 66 80" stroke="#58cc02" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+  <!-- Face Glasses Rings (Duo's iconic orange spectacles) -->
+  <ellipse cx="42" cy="48" rx="19" ry="19" fill="#ff9600"/>
+  <ellipse cx="78" cy="48" rx="19" ry="19" fill="#ff9600"/>
+  <ellipse cx="42" cy="48" rx="16" ry="16" fill="#ffffff"/>
+  <ellipse cx="78" cy="48" rx="16" ry="16" fill="#ffffff"/>
+
+  <!-- Pupils -->
+  <ellipse cx="45" cy="48" rx="8" ry="9" fill="#202020"/>
+  <ellipse cx="75" cy="48" rx="8" ry="9" fill="#202020"/>
+
+  <!-- Eye Highlights -->
+  <circle cx="48" cy="44" r="3.5" fill="#ffffff"/>
+  <circle cx="78" cy="44" r="3.5" fill="#ffffff"/>
+
+  <!-- Beak -->
+  <polygon points="52,54 68,54 60,67" fill="url(#duoBeak)"/>
+  <polygon points="54,54 66,54 60,64" fill="#ffc800"/>
+</svg>

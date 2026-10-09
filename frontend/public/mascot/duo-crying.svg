@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <radialGradient id="duoCryingBody" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#78d91c"/>
+      <stop offset="85%" stop-color="#58cc02"/>
+      <stop offset="100%" stop-color="#46a302"/>
+    </radialGradient>
+    <linearGradient id="tearGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#84d8ff"/>
+      <stop offset="100%" stop-color="#1cb0f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Feet -->
+  <ellipse cx="44" cy="110" rx="14" ry="7" fill="#e58700"/>
+  <ellipse cx="76" cy="110" rx="14" ry="7" fill="#e58700"/>
+
+  <!-- Body (slightly hunched) -->
+  <ellipse cx="60" cy="65" rx="46" ry="44" fill="url(#duoCryingBody)"/>
+
+  <!-- Belly -->
+  <ellipse cx="60" cy="76" rx="27" ry="22" fill="#84dc17"/>
+
+  <!-- Sad Wings -->
+  <path d="M 16 66 C 14 78, 18 90, 24 92 C 28 92, 26 80, 24 68 Z" fill="#46a302"/>
+  <path d="M 104 66 C 106 78, 102 90, 96 92 C 92 92, 94 80, 96 68 Z" fill="#46a302"/>
+
+  <!-- Spectacles -->
+  <ellipse cx="42" cy="52" rx="18" ry="18" fill="#ff9600"/>
+  <ellipse cx="78" cy="52" rx="18" ry="18" fill="#ff9600"/>
+  <ellipse cx="42" cy="52" rx="15" ry="15" fill="#ffffff"/>
+  <ellipse cx="78" cy="52" rx="15" ry="15" fill="#ffffff"/>
+
+  <!-- Sad Crying Eyes (arcs) -->
+  <path d="M 34 54 Q 42 46 50 54" stroke="#202020" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M 70 54 Q 78 46 86 54" stroke="#202020" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+  <!-- Downward Sad Beak -->
+  <polygon points="53,60 67,60 60,54" fill="#e58700"/>
+  <polygon points="54,60 66,60 60,56" fill="#ffb100"/>
+
+  <!-- Streaming Tear Droplets -->
+  <path d="M 34 58 C 30 64, 28 72, 33 78 C 38 78, 38 68, 34 58 Z" fill="url(#tearGrad)"/>
+  <path d="M 86 58 C 90 64, 92 72, 87 78 C 82 78, 82 68, 86 58 Z" fill="url(#tearGrad)"/>
+  <circle cx="31" cy="85" r="4" fill="#1cb0f6"/>
+  <circle cx="89" cy="85" r="4" fill="#1cb0f6"/>
+</svg>

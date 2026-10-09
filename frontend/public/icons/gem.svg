@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gemTop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#49c0f8"/>
+      <stop offset="100%" stop-color="#1cb0f6"/>
+    </linearGradient>
+    <linearGradient id="gemBottom" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1899d6"/>
+      <stop offset="100%" stop-color="#0f7cb3"/>
+    </linearGradient>
+  </defs>
+  <!-- 3D Shadow -->
+  <polygon points="9,6 23,6 30,14 16,30 2,14" fill="#0c6390"/>
+  <!-- Top facets -->
+  <polygon points="9,4 23,4 30,12 16,16 2,12" fill="url(#gemTop)"/>
+  <polygon points="9,4 23,4 21,11 11,11" fill="#8de0fd" opacity="0.8"/>
+  <!-- Bottom facets -->
+  <polygon points="2,12 16,16 16,28" fill="#1899d6"/>
+  <polygon points="30,12 16,16 16,28" fill="url(#gemBottom)"/>
+  <polygon points="11,11 21,11 16,16" fill="#ffffff" opacity="0.5"/>
+</svg>

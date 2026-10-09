@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%">
+  <defs>
+    <linearGradient id="crownGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe249"/>
+      <stop offset="60%" stop-color="#ffc800"/>
+      <stop offset="100%" stop-color="#e5a400"/>
+    </linearGradient>
+  </defs>
+  <!-- 3D Shadow -->
+  <polygon points="4,24 28,24 30,12 22,17 16,7 10,17 2,12" fill="#b88300"/>
+  <!-- Crown body -->
+  <polygon points="4,22 28,22 30,10 22,15 16,5 10,15 2,10" fill="url(#crownGrad)"/>
+  <!-- Base band -->
+  <rect x="4" y="21" width="24" height="4" rx="2" fill="#ff9600"/>
+  <!-- Jewels -->
+  <circle cx="16" cy="5" r="2.2" fill="#ffffff"/>
+  <circle cx="2" cy="10" r="2" fill="#ffffff"/>
+  <circle cx="30" cy="10" r="2" fill="#ffffff"/>
+  <circle cx="16" cy="23" r="1.5" fill="#ff4b4b"/>
+  <circle cx="10" cy="23" r="1.5" fill="#1cb0f6"/>
+  <circle cx="22" cy="23" r="1.5" fill="#58cc02"/>
+</svg>

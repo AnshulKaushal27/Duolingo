@@ -1,0 +1,430 @@
+@import "./duo_official.css";
+
+/* ==========================================================================
+   DUOLINGO DESIGN SYSTEM & CSS TOKENS
+   High-Fidelity 1:1 reproduction of the modern Duolingo Web Application
+   ========================================================================== */
+
+:root {
+  /* Brand Duolingo Colors */
+  --duo-green: #58cc02;
+  --duo-green-dark: #46a302;
+  --duo-green-light: #89e219;
+  --duo-green-bg: #d7ffb8;
+
+  --duo-blue: #1cb0f6;
+  --duo-blue-dark: #1899d6;
+  --duo-blue-light: #58ccff;
+  --duo-blue-bg: #ddf4ff;
+
+  --duo-red: #ff4b4b;
+  --duo-red-dark: #ea2b2b;
+  --duo-red-bg: #ffdfe0;
+
+  --duo-yellow: #ffc800;
+  --duo-yellow-dark: #e5a400;
+  --duo-yellow-bg: #fff5cc;
+
+  --duo-orange: #ff9600;
+  --duo-orange-dark: #e58700;
+
+  --duo-purple: #ce82ff;
+  --duo-purple-dark: #a560e8;
+
+  /* Surfaces & Canvas */
+  --duo-canvas: #ffffff;
+  --duo-surface: #f7f7f7;
+  --duo-surface-hover: #f1f1f1;
+  --duo-border: #e5e5e5;
+  --duo-border-dark: #cecece;
+
+  /* Typography - Official Duolingo Rounded Brand Typeface */
+  --duo-font: "DIN Next Rounded LT Pro", "feather", "duolingo-sans", "DIN Next for Duolingo", var(--font-nunito), "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+[data-theme="dark"] {
+  --duo-canvas: #131f24;
+  --duo-surface: #202f36;
+  --duo-surface-hover: #293840;
+  --duo-border: #37464f;
+  --duo-border-dark: #263339;
+
+  --duo-text: #f1f7fb;
+  --duo-text-dark: #ffffff;
+  --duo-text-muted: #a5b6c0;
+  --duo-text-dim: #64747d;
+
+  --duo-green-bg: #1c3821;
+  --duo-blue-bg: #193547;
+  --duo-red-bg: #401f22;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--duo-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  background-color: var(--duo-canvas);
+  color: var(--duo-text);
+  font-family: var(--duo-font);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   3D TACTILE BUTTONS (THE DUOLINGO SIGNATURE BUTTON)
+   -------------------------------------------------------------------------- */
+
+.duo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--duo-font);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: filter 0.12s ease, transform 0.08s ease, border-bottom-width 0.08s ease;
+  user-select: none;
+  outline: none;
+  text-decoration: none;
+}
+
+.duo-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.duo-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Green Brand Button */
+.duo-btn-green {
+  background-color: var(--duo-green);
+  color: #ffffff;
+  border-color: var(--duo-green-dark);
+  border-bottom-color: var(--duo-green-dark);
+}
+.duo-btn-green:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+/* Blue Secondary Button */
+.duo-btn-blue {
+  background-color: var(--duo-blue);
+  color: #ffffff;
+  border-color: var(--duo-blue-dark);
+  border-bottom-color: var(--duo-blue-dark);
+}
+.duo-btn-blue:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+/* Red Danger Button */
+.duo-btn-red {
+  background-color: var(--duo-red);
+  color: #ffffff;
+  border-color: var(--duo-red-dark);
+  border-bottom-color: var(--duo-red-dark);
+}
+.duo-btn-red:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+/* Outline / White Button */
+.duo-btn-outline {
+  background-color: var(--duo-canvas);
+  color: var(--duo-blue);
+  border-color: var(--duo-border);
+  border-bottom-color: var(--duo-border-dark);
+}
+.duo-btn-outline:hover:not(:disabled) {
+  background-color: var(--duo-surface);
+}
+
+/* Disabled Inactive Gray Button */
+.duo-btn-disabled {
+  background-color: var(--duo-border);
+  color: var(--duo-text-dim);
+  border-color: var(--duo-border-dark);
+  border-bottom-color: var(--duo-border-dark);
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   WORD TILES (Word Bank & Sentence Slots)
+   -------------------------------------------------------------------------- */
+
+.word-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background-color: var(--duo-canvas);
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--duo-text);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.08s ease, filter 0.1s ease, border-bottom-width 0.08s ease;
+}
+
+.word-tile:hover {
+  filter: brightness(0.97);
+}
+
+.word-tile:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.word-tile-placed {
+  background-color: var(--duo-surface);
+  border: 2px dashed var(--duo-border);
+  border-bottom: 2px dashed var(--duo-border);
+  color: transparent;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   MULTIPLE CHOICE & EXERCISE CARDS
+   -------------------------------------------------------------------------- */
+
+.duo-card {
+  background-color: var(--duo-canvas);
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  border-radius: 16px;
+  transition: all 0.12s ease;
+  cursor: pointer;
+}
+
+.duo-card:hover {
+  border-color: var(--duo-border-dark);
+  background-color: var(--duo-surface);
+}
+
+.duo-card.selected {
+  border-color: var(--duo-blue);
+  border-bottom-color: var(--duo-blue-dark);
+  background-color: var(--duo-blue-bg);
+  color: var(--duo-blue-dark);
+}
+
+/* --------------------------------------------------------------------------
+   MATCH PAIRS TILES
+   -------------------------------------------------------------------------- */
+
+.pair-tile {
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  background-color: var(--duo-canvas);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+  text-align: center;
+}
+
+.pair-tile:hover:not(.matched):not(.selected) {
+  border-color: var(--duo-border-dark);
+}
+
+.pair-tile.selected {
+  border-color: var(--duo-blue);
+  border-bottom-color: var(--duo-blue-dark);
+  background-color: var(--duo-blue-bg);
+}
+
+.pair-tile.matched {
+  border-color: var(--duo-green);
+  border-bottom-color: var(--duo-green-dark);
+  background-color: var(--duo-green-bg);
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.pair-tile.mismatch {
+  border-color: var(--duo-red);
+  border-bottom-color: var(--duo-red-dark);
+  background-color: var(--duo-red-bg);
+  animation: duoShake 0.4s ease;
+}
+
+/* --------------------------------------------------------------------------
+   PROGRESS BAR
+   -------------------------------------------------------------------------- */
+
+.duo-progress-track {
+  width: 100%;
+  height: 16px;
+  background-color: var(--duo-border);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.duo-progress-fill {
+  height: 100%;
+  background-color: var(--duo-green);
+  border-radius: 999px;
+  transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.duo-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  right: 6px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+}
+
+/* --------------------------------------------------------------------------
+   ANIMATIONS & KEYFRAMES
+   -------------------------------------------------------------------------- */
+
+@keyframes duoShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes duoBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes duoPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(88, 204, 2, 0.4); }
+  70% { transform: scale(1.04); box-shadow: 0 0 0 14px rgba(88, 204, 2, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(88, 204, 2, 0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.anim-shake {
+  animation: duoShake 0.4s ease;
+}
+
+.anim-bounce {
+  animation: duoBounce 0.5s ease;
+}
+
+.anim-pulse {
+  animation: duoPulse 2s infinite;
+}
+
+.anim-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2.5deg);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-2deg);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.anim-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.anim-float-rev {
+  animation: floatReverse 5s ease-in-out infinite;
+}
+
+.anim-spin-slow {
+  animation: spinSlow 30s linear infinite;
+}
+
+.anim-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Duolingo Landing Page Feature Alternate Rows */
+.duo-feature-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  max-width: 1040px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 860px) {
+  .duo-feature-grid {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 36px;
+  }
+}
+

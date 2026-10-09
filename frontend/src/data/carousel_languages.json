@@ -1,0 +1,212 @@
+[
+  {
+    "name": "English",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/bbe17e16aa4a106032d8e3521eaed13e.svg",
+    "href": "/course/en/en/Learn-English"
+  },
+  {
+    "name": "Chess",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/c8bad7c09aaf7bc29ddddc50808adb54.svg",
+    "href": "/chess"
+  },
+  {
+    "name": "Math",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/395c8a6ee9783610b578b02fda405e85.svg",
+    "href": "/math"
+  },
+  {
+    "name": "Spanish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/59a90a2cedd48b751a8fd22014768fd7.svg",
+    "href": "/course/es/en/Learn-Spanish"
+  },
+  {
+    "name": "French",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/482fda142ee4abd728ebf4ccce5d3307.svg",
+    "href": "/course/fr/en/Learn-French"
+  },
+  {
+    "name": "German",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/c71db846ffab7e0a74bc6971e34ad82e.svg",
+    "href": "/course/de/en/Learn-German"
+  },
+  {
+    "name": "Italian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/635a09df9323279d39934a991edd4510.svg",
+    "href": "/course/it/en/Learn-Italian"
+  },
+  {
+    "name": "Portuguese",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/27d253ae1272917fc9f4a79459aacd53.svg",
+    "href": "/course/pt/en/Learn-Portuguese"
+  },
+  {
+    "name": "Dutch",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/de945d789e249dcd74333a6996472ef8.svg",
+    "href": "/course/nl-NL/en/Learn-Dutch"
+  },
+  {
+    "name": "Japanese",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/edea4fa18ff3e7d8c0282de3f102aaed.svg",
+    "href": "/course/ja/en/Learn-Japanese"
+  },
+  {
+    "name": "Arabic",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/9ab6930a263c981b57f9d578ac97cae7.svg",
+    "href": "/course/ar/en/Learn-Arabic"
+  },
+  {
+    "name": "Czech",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/828bf0fea457d3beaaab3d6c0bfcc975.svg",
+    "href": "/course/cs/en/Learn-Czech"
+  },
+  {
+    "name": "Welsh",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/f773f1b240623072e48843ecdf90d756.svg",
+    "href": "/course/cy/en/Learn-Welsh"
+  },
+  {
+    "name": "Danish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/6af84a7cb8e99ea8a567c2b9c55b9926.svg",
+    "href": "/course/da/en/Learn-Danish"
+  },
+  {
+    "name": "Greek",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/8db373482261397a3159d3f370eed2f3.svg",
+    "href": "/course/el/en/Learn-Greek"
+  },
+  {
+    "name": "Esperanto",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/6de7e4731b2a82a6458268e1a3d67ce4.svg",
+    "href": "/course/eo/en/Learn-Esperanto"
+  },
+  {
+    "name": "Finnish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/b4d0e4f6451f504e1441eb93efdbea5e.svg",
+    "href": "/course/fi/en/Learn-Finnish"
+  },
+  {
+    "name": "Irish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/ef0bfb96037b127473bd7bcbfde1a6ed.svg",
+    "href": "/course/ga/en/Learn-Irish"
+  },
+  {
+    "name": "Scottish Gaelic",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/09eba3135efe8fe93a4662dba813b921.svg",
+    "href": "/course/gd/en/Learn-Scottish%20Gaelic"
+  },
+  {
+    "name": "Hebrew",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/f818f545a703ddaa046ca8786e781742.svg",
+    "href": "/course/he/en/Learn-Hebrew"
+  },
+  {
+    "name": "Hindi",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/73837fa39dbf1bcc4c95a17a58ed0ffb.svg",
+    "href": "/course/hi/en/Learn-Hindi"
+  },
+  {
+    "name": "Haitian Creole",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/8cb302b44c183c1a8ec3b90caf90d922.svg",
+    "href": "/course/ht/en/Learn-Haitian%20Creole"
+  },
+  {
+    "name": "Hungarian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/2ed8d0a73eab3c9cba0290e2b459684a.svg",
+    "href": "/course/hu/en/Learn-Hungarian"
+  },
+  {
+    "name": "High Valyrian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/2880099b038848abbfd11104097953ad.svg",
+    "href": "/course/hv/en/Learn-High%20Valyrian"
+  },
+  {
+    "name": "Hawaiian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/312e21f793c555787d01a45e20ee8191.svg",
+    "href": "/course/hw/en/Learn-Hawaiian"
+  },
+  {
+    "name": "Indonesian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/339c0413e542f19b234971d7740447e7.svg",
+    "href": "/course/id/en/Learn-Indonesian"
+  },
+  {
+    "name": "Korean",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/ec5835ac9f465ff3dad4b1b8725d4314.svg",
+    "href": "/course/ko/en/Learn-Korean"
+  },
+  {
+    "name": "Latin",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/f7cee6cc09270371b097129faf792c2a.svg",
+    "href": "/course/la/en/Learn-Latin"
+  },
+  {
+    "name": "Norwegian (Bokm\u00e5l)",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/90b37d97edc66e830dc2286279548f67.svg",
+    "href": "/course/no-BO/en/Learn-Norwegian%20Bokm%C3%A5l"
+  },
+  {
+    "name": "Navajo",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/bbc8ad0cfe2596d5193376ebdc3e969c.svg",
+    "href": "/course/nv/en/Learn-Navajo"
+  },
+  {
+    "name": "Polish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/f095084e6ec400e631d62c3d95fefaa2.svg",
+    "href": "/course/pl/en/Learn-Polish"
+  },
+  {
+    "name": "Romanian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/357e13bb10cf86fc06552d563957e2e6.svg",
+    "href": "/course/ro/en/Learn-Romanian"
+  },
+  {
+    "name": "Russian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/eadd7804652170c33814a89482f1f353.svg",
+    "href": "/course/ru/en/Learn-Russian"
+  },
+  {
+    "name": "Swedish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/f578430c9b7ab617c107893afbb501c0.svg",
+    "href": "/course/sv/en/Learn-Swedish"
+  },
+  {
+    "name": "Swahili",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/335311988405b4354e1b6ae9037c02db.svg",
+    "href": "/course/sw/en/Learn-Swahili"
+  },
+  {
+    "name": "Klingon",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/76d654213a8282b0ebc25b4f535ee003.svg",
+    "href": "/course/tlh/en/Learn-Klingon"
+  },
+  {
+    "name": "Turkish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/bc80a9518cd6d5af6ae14e8b22b8a1f4.svg",
+    "href": "/course/tr/en/Learn-Turkish"
+  },
+  {
+    "name": "Ukrainian",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/7c6e12bc57527843082f7f5bb77c9862.svg",
+    "href": "/course/uk/en/Learn-Ukrainian"
+  },
+  {
+    "name": "Vietnamese",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/2b077d42185bc45d4896ed55f15c4fea.svg",
+    "href": "/course/vi/en/Learn-Vietnamese"
+  },
+  {
+    "name": "Yiddish",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/55bad151fa6a8d9e2376fc9697c671c8.svg",
+    "href": "/course/yi/en/Learn-Yiddish"
+  },
+  {
+    "name": "Chinese (Simplified)",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/9905aa3a86fcb9e351b0b3bfaf04d8b9.svg",
+    "href": "/course/zh/en/Learn-Chinese%20Simplified"
+  },
+  {
+    "name": "Zulu",
+    "flag": "https://d35aaqx5ub95lt.cloudfront.net/vendor/112e1531d0ac198a9424bd1b0a7166e6.svg",
+    "href": "/course/zu/en/Learn-Zulu"
+  }
+]
