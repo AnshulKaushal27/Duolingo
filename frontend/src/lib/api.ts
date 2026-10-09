@@ -129,47 +129,83 @@ export interface AchievementItem {
   unlocked: boolean;
 }
 
-function getBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+export function getApiBaseUrl(): string {
+  let url = process.env.NEXT_PUBLIC_API_URL;
+  if (url) {
+    url = url.trim().replace(/\/+$/, "");
+    if (!url.endsWith("/api/v1")) {
+      url = `${url}/api/v1`;
+    }
+    return url;
   }
   if (typeof window !== "undefined") {
-    // Dynamically match the current browser hostname (localhost -> localhost:8000, 127.0.0.1 -> 127.0.0.1:8000)
-    // This ensures same-site cookie exchange so browsers never block SameSite=lax cookies on subresource fetch calls.
     return `${window.location.protocol}//${window.location.hostname}:8000/api/v1`;
   }
   return "http://127.0.0.1:8000/api/v1";
 }
 
-// Fetch helper with error handling
-async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const baseUrl = getBaseUrl();
-  const res = await fetch(`${baseUrl}${url}`, {
-    credentials: "include", // Ensure duo_session HTTP-only cookie is passed
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options?.headers || {}),
-    },
-  });
-
-  if (!res.ok) {
-    let message = `Request failed (${res.status})`;
-    try {
-      const errData = await res.json();
-      if (errData && errData.detail) {
-        message = typeof errData.detail === "string" ? errData.detail : JSON.stringify(errData.detail);
-      }
-    } catch {
-      const raw = await res.text().catch(() => "");
-      if (raw) message = raw;
+export function getServerRootUrl(): string {
+  let url = process.env.NEXT_PUBLIC_API_URL;
+  if (url) {
+    url = url.trim().replace(/\/+$/, "");
+    if (url.endsWith("/api/v1")) {
+      url = url.substring(0, url.length - "/api/v1".length);
     }
-    const error = new Error(message) as Error & { status?: number };
-    error.status = res.status;
-    throw error;
+    return url;
   }
+  if (typeof window !== "undefined") {
+    return `${window.location.protocol}//${window.location.hostname}:8000`;
+  }
+  return "http://127.0.0.1:8000";
+}
 
-  return res.json();
+// Fetch helper with error handling, cross-origin Authorization headers, and spin-down detection
+async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
+  const baseUrl = getApiBaseUrl();
+  const token = typeof window !== "undefined" ? localStorage.getItem("duo_token") : null;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...((options?.headers as Record<string, string>) || {}),
+  };
+
+  try {
+    const res = await fetch(`${baseUrl}${url}`, {
+      credentials: "include", // Ensure duo_session HTTP-only cookie is passed
+      ...options,
+      headers,
+    });
+
+    // Capture fallback token if returned in header
+    const tokenHeader = res.headers.get("X-Duo-Token");
+    if (tokenHeader && typeof window !== "undefined") {
+      localStorage.setItem("duo_token", tokenHeader);
+    }
+
+    if (!res.ok) {
+      let message = `Request failed (${res.status})`;
+      try {
+        const errData = await res.json();
+        if (errData && errData.detail) {
+          message = typeof errData.detail === "string" ? errData.detail : JSON.stringify(errData.detail);
+        }
+      } catch {
+        const raw = await res.text().catch(() => "");
+        if (raw) message = raw;
+      }
+      const error = new Error(message) as Error & { status?: number };
+      error.status = res.status;
+      throw error;
+    }
+
+    return res.json();
+  } catch (err: any) {
+    // If Render backend is sleeping, fetch fails with TypeError or timeout
+    if (typeof window !== "undefined" && (err.name === "TypeError" || err.message?.includes("fetch"))) {
+      window.dispatchEvent(new CustomEvent("duo:backend_offline", { detail: { error: err.message } }));
+    }
+    throw err;
+  }
 }
 
 export interface GuidebookData {
@@ -203,10 +239,30 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-  logout: () =>
-    fetchJson<{ success: boolean; message: string }>("/auth/logout", {
+  logout: async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("duo_token");
+    }
+    return fetchJson<{ success: boolean; message: string }>("/auth/logout", {
       method: "POST",
-    }),
+    });
+  },
+
+  checkHealth: async (timeoutMs: number = 3500): Promise<boolean> => {
+    const rootUrl = getServerRootUrl();
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      const res = await fetch(`${rootUrl}/health`, {
+        signal: controller.signal,
+        cache: "no-store",
+      });
+      clearTimeout(timeoutId);
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
 
   getMe: () =>
     fetchJson<UserProfile>("/auth/me"),

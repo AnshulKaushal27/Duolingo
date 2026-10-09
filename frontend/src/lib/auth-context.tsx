@@ -44,6 +44,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
     initAuth();
+
+    const handleBackendOnline = () => {
+      initAuth();
+    };
+
+    window.addEventListener("duo:backend_online", handleBackendOnline);
+    return () => {
+      window.removeEventListener("duo:backend_online", handleBackendOnline);
+    };
   }, []);
 
   const login = async (identifier: string, password: string): Promise<UserProfile> => {

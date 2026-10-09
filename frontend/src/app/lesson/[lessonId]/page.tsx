@@ -86,6 +86,15 @@ function LessonContent() {
     if (lessonId) {
       loadLesson();
     }
+
+    const handleBackendOnline = () => {
+      if (lessonId) loadLesson();
+    };
+
+    window.addEventListener("duo:backend_online", handleBackendOnline);
+    return () => {
+      window.removeEventListener("duo:backend_online", handleBackendOnline);
+    };
   }, [lessonId]);
 
   const currentExercise = lessonData?.exercises?.[currentIndex];

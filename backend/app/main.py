@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from .core.config import settings
-from .core.database import engine, Base, SessionLocal
+from .core.database import engine, Base, SessionLocal, is_sqlite
 from .api.v1.router import api_router
 from .seeds.seed_data import seed_database_if_empty
 
@@ -17,31 +18,32 @@ app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc",
 )
 
-# CORS Middleware
+# CORS Middleware supporting local dev, custom domain, and any Vercel deployment preview/production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=settings.get_cors_origins(),
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Duo-Token"],
 )
 
 # Mount API v1 router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-from sqlalchemy import text
-
 @app.on_event("startup")
 def on_startup():
-    # Ensure any new columns exist in sqlite if migrating
-    with engine.connect() as conn:
-        res = conn.execute(text("PRAGMA table_info(users)"))
-        columns = [row[1] for row in res.fetchall()]
-        if "password_hash" not in columns:
-            conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
-        if "auth_provider" not in columns:
-            conn.execute(text("ALTER TABLE users ADD COLUMN auth_provider VARCHAR(50) DEFAULT 'local'"))
-        conn.commit()
+    # Ensure any new columns exist in sqlite if migrating from earlier schema
+    if is_sqlite:
+        with engine.connect() as conn:
+            res = conn.execute(text("PRAGMA table_info(users)"))
+            columns = [row[1] for row in res.fetchall()]
+            if "password_hash" not in columns:
+                conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
+            if "auth_provider" not in columns:
+                conn.execute(text("ALTER TABLE users ADD COLUMN auth_provider VARCHAR(50) DEFAULT 'local'"))
+            conn.commit()
 
     db = SessionLocal()
     try:
@@ -72,4 +74,3 @@ def welcome():
         "theme": "dark",
         "bodyBg": "rgb(19, 31, 36)"
     }
-

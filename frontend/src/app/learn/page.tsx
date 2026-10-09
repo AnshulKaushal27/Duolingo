@@ -48,6 +48,15 @@ function LearnContent() {
       }
     }
     loadData();
+
+    const handleBackendOnline = () => {
+      loadData();
+    };
+
+    window.addEventListener("duo:backend_online", handleBackendOnline);
+    return () => {
+      window.removeEventListener("duo:backend_online", handleBackendOnline);
+    };
   }, []);
 
   const refreshPath = async () => {

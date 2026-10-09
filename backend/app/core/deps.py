@@ -7,13 +7,19 @@ from ..services.auth_service import get_user_from_session_token
 from ..services.user_service import get_or_create_default_user
 
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
-    """Reads the HTTP-only duo_session cookie and resolves the active UserSession.
-    If no session cookie is present, seamlessly falls back to the default
-    pre-seeded learner (Alex Ramos) per assignment specification:
-    'Real user authentication may be simplified (assume a default logged-in learner)'.
-    If an explicit invalid/expired session cookie is passed, rejects with 401.
+    """Reads session token from HTTP-only duo_session cookie, Authorization header (Bearer),
+    or X-Duo-Token header. If no token is provided, gracefully defaults to the pre-seeded learner (Alex Ramos).
     """
     session_token = request.cookies.get("duo_session")
+    
+    if not session_token:
+        auth_header = request.headers.get("authorization", "")
+        if auth_header.lower().startswith("bearer "):
+            session_token = auth_header[7:].strip()
+            
+    if not session_token:
+        session_token = request.headers.get("x-duo-token")
+
     if session_token:
         user = get_user_from_session_token(db, session_token)
         if not user:
@@ -23,6 +29,7 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
                 detail="Invalid or expired session. Please log in again."
             )
         return user
+        
     return get_or_create_default_user(db)
 
 def get_current_user_optional(request: Request, db: Session = Depends(get_db)) -> Optional[User]:
