@@ -274,6 +274,7 @@ function LearnContent() {
           unitId={guidebookTarget.unitId}
           unitTitle={guidebookTarget.unitTitle}
           unitColor={guidebookTarget.unitColor}
+          courseCode={tree?.code || activeCourse}
           onClose={() => setGuidebookTarget(null)}
         />
       )}

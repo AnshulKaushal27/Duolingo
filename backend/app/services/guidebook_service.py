@@ -563,20 +563,26 @@ GUIDEBOOKS: Dict[Tuple[str, int], Dict[str, Any]] = {
 }
 
 def get_unit_guidebook(unit_number: int, course_code: str = "es") -> Dict[str, Any]:
-    key = (course_code.lower(), unit_number)
+    norm_code = course_code.lower()
+    key = (norm_code, unit_number)
     if key in GUIDEBOOKS:
-        return GUIDEBOOKS[key]
+        data = dict(GUIDEBOOKS[key])
+        data["course_code"] = norm_code
+        return data
 
-    # Fallback to course default
-    if course_code.lower() == "ja":
+    # Japanese fallback
+    if norm_code == "ja":
         return {
             "unit_number": unit_number,
             "title": f"Unit {unit_number}: Japanese Practice",
             "description": "Essential Japanese phrases, kana, and polite grammar points.",
             "color_hex": "#ff4b4b",
+            "course_code": "ja",
             "key_phrases": [
                 {"phrase": "こんにちは", "translation": "Hello", "pronunciation": "Konnichiwa"},
-                {"phrase": "ありがとうございます", "translation": "Thank you very much", "pronunciation": "Arigatō gozaimasu"}
+                {"phrase": "ありがとうございます", "translation": "Thank you very much", "pronunciation": "Arigatō gozaimasu"},
+                {"phrase": "すみません", "translation": "Excuse me / I'm sorry", "pronunciation": "Sumimasen"},
+                {"phrase": "いただきます", "translation": "Let's eat (grace before meals)", "pronunciation": "Itadakimasu"}
             ],
             "grammar_tips": [
                 {
@@ -587,14 +593,95 @@ def get_unit_guidebook(unit_number: int, course_code: str = "es") -> Dict[str, A
             ]
         }
 
+    # French fallback
+    if norm_code == "fr":
+        return {
+            "unit_number": unit_number,
+            "title": f"Unit {unit_number}: French Essentials",
+            "description": "Form basic French sentences, order food, and express courtesy.",
+            "color_hex": "#1cb0f6",
+            "course_code": "fr",
+            "key_phrases": [
+                {"phrase": "Bonjour, comment allez-vous ?", "translation": "Hello, how are you?", "pronunciation": "bohn-zhoor, koh-mahn tah-lay voo"},
+                {"phrase": "S'il vous plaît et merci beaucoup.", "translation": "Please and thank you very much.", "pronunciation": "seel voo pleh ay mair-see boh-koo"},
+                {"phrase": "Enchanté de faire votre connaissance.", "translation": "Pleased to meet you.", "pronunciation": "ahn-shahn-tay duh fair vo-truh"},
+                {"phrase": "Je voudrais un croissant et un café.", "translation": "I would like a croissant and a coffee.", "pronunciation": "zhuh voo-dreh uh krwah-sahn"}
+            ],
+            "grammar_tips": [
+                {
+                    "title": "Articles & Gender: Le, La, Un, Une",
+                    "explanation": "All French nouns have grammatical gender. Use 'le' or 'un' for masculine words, and 'la' or 'une' for feminine words.",
+                    "examples": [
+                        {"fr": "Le garçon mange un pain.", "en": "The boy eats a bread."},
+                        {"fr": "La fille boit de l'eau.", "en": "The girl drinks water."}
+                    ]
+                }
+            ]
+        }
+
+    # German fallback
+    if norm_code == "de":
+        return {
+            "unit_number": unit_number,
+            "title": f"Unit {unit_number}: German Essentials",
+            "description": "Master German sentence structure, greetings, and daily vocabulary.",
+            "color_hex": "#ff9600",
+            "course_code": "de",
+            "key_phrases": [
+                {"phrase": "Guten Tag! Wie geht es Ihnen?", "translation": "Good day! How are you?", "pronunciation": "GOO-ten tahk! vee gayt es EE-nen?"},
+                {"phrase": "Bitte und vielen Dank.", "translation": "Please and thank you very much.", "pronunciation": "BIT-tuh oont FEE-len dahnk"},
+                {"phrase": "Ich heiße Anna und ich lerne Deutsch.", "translation": "My name is Anna and I learn German.", "pronunciation": "ikh HY-suh AH-nah..."},
+                {"phrase": "Einen schönen Tag noch!", "translation": "Have a nice day!", "pronunciation": "EYE-nen SHUR-nen tahk nokh"}
+            ],
+            "grammar_tips": [
+                {
+                    "title": "Capitalizing Nouns in German",
+                    "explanation": "In German, EVERY noun is always capitalized (e.g. der Hund, die Katze, das Haus). This makes spotting nouns easy!",
+                    "examples": [
+                        {"de": "Der Apfel ist lecker.", "en": "The apple is delicious."},
+                        {"de": "Das Wasser ist kalt.", "en": "The water is cold."}
+                    ]
+                }
+            ]
+        }
+
+    # Chess fallback
+    if norm_code == "chess":
+        return {
+            "unit_number": unit_number,
+            "title": f"Unit {unit_number}: Chess Strategy & Tactics",
+            "description": "Key tactical patterns, opening principles, and checkmate motifs.",
+            "color_hex": "#7852ff",
+            "course_code": "chess",
+            "key_phrases": [
+                {"phrase": "Control the center (e4, d4, e5, d5)", "translation": "Dominating center squares gives your pieces maximum mobility."},
+                {"phrase": "Develop Knights before Bishops", "translation": "Knights need central outposts early in the opening."},
+                {"phrase": "Castle early for king safety", "translation": "Tuck your king into the corner and connect your rooks."},
+                {"phrase": "Look for Checks, Captures, and Threats", "translation": "The golden rule of tactical blunder prevention."}
+            ],
+            "grammar_tips": [
+                {
+                    "title": "The Principle of Piece Activity",
+                    "explanation": "An active piece that controls key files and diagonals is worth more than a passive piece restricted by pawns.",
+                    "examples": [
+                        {"chess": "1. e4 e5 2. Nf3 Nc6", "en": "King's Pawn Opening: Classical fight for the center."},
+                        {"chess": "Pin, Fork & Skewer", "en": "The holy trinity of chess tactical motifs."}
+                    ]
+                }
+            ]
+        }
+
+    # Default Spanish fallback
     return {
         "unit_number": unit_number,
         "title": f"Unit {unit_number} Guidebook",
         "description": "Essential phrases and grammar tips for this unit.",
         "color_hex": "#58cc02",
+        "course_code": "es",
         "key_phrases": [
-            {"phrase": "¡Hola!", "translation": "Hello!", "pronunciation": "OH-lah"},
-            {"phrase": "Mucho gusto", "translation": "Nice to meet you", "pronunciation": "MOO-choh GOOS-toh"}
+            {"phrase": "¡Hola! ¿Cómo estás?", "translation": "Hello! How are you?", "pronunciation": "OH-lah, KOH-moh es-TAHS"},
+            {"phrase": "Mucho gusto, buenos días.", "translation": "Nice to meet you, good morning.", "pronunciation": "MOO-choh GOOS-toh, BWEH-nohs DEE-ahs"},
+            {"phrase": "Por favor y muchas gracias.", "translation": "Please and thank you very much.", "pronunciation": "Por fah-VOR ee MOO-chahs GRAH-syahs"}
         ],
         "grammar_tips": [
             {

@@ -217,6 +217,7 @@ export interface GuidebookData {
   title: string;
   description: string;
   color_hex: string;
+  course_code?: string;
   key_phrases: Array<{
     phrase: string;
     translation: string;
@@ -225,7 +226,7 @@ export interface GuidebookData {
   grammar_tips: Array<{
     title: string;
     explanation: string;
-    examples: Array<{ es?: string; ja?: string; en: string }>;
+    examples: Array<Record<string, string>>;
   }>;
 }
 

@@ -37,6 +37,14 @@
   --duo-surface-hover: #f1f1f1;
   --duo-border: #e5e5e5;
   --duo-border-dark: #cecece;
+  --duo-card-bg: #ffffff;
+  --duo-modal-bg: #ffffff;
+
+  /* Typography Text Tokens */
+  --duo-text: #4b4b4b;
+  --duo-text-dark: #1b1b1b;
+  --duo-text-muted: #777777;
+  --duo-text-dim: #afafaf;
 
   /* Typography - Official Duolingo Rounded Brand Typeface */
   --duo-font: "DIN Next Rounded LT Pro", "feather", "duolingo-sans", "DIN Next for Duolingo", var(--font-nunito), "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -48,6 +56,8 @@
   --duo-surface-hover: #293840;
   --duo-border: #37464f;
   --duo-border-dark: #263339;
+  --duo-card-bg: #1c2b33;
+  --duo-modal-bg: #16242c;
 
   --duo-text: #f1f7fb;
   --duo-text-dark: #ffffff;
