@@ -33,7 +33,7 @@ export default function DuoLottie({
 }: DuoLottieProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<AnimationItem | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [readyToShow, setReadyToShow] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -53,11 +53,19 @@ export default function DuoLottie({
 
     anim.addEventListener("DOMLoaded", () => {
       if (isCancelled) return;
-      setIsLoaded(true);
       if (loopSegment) {
         anim.playSegments(loopSegment, true);
         anim.setLoop(true);
       }
+      // Wait for the browser to actually paint the Lottie SVG
+      // before starting the crossfade, preventing the "pop"
+      requestAnimationFrame(() => {
+        if (isCancelled) return;
+        requestAnimationFrame(() => {
+          if (isCancelled) return;
+          setReadyToShow(true);
+        });
+      });
     });
 
     // Pause animation when off-screen to preserve 60 FPS performance
@@ -101,15 +109,15 @@ export default function DuoLottie({
       className={className}
     >
       {/* Official Duolingo Responsive Picture Fallback */}
-      {fallbackPicture && !isLoaded && (
+      {fallbackPicture && (
         <picture
           style={{
             position: "absolute",
             inset: 0,
             width: "100%",
             height: "100%",
-            transition: "opacity 0.3s ease",
-            opacity: isLoaded ? 0 : 1,
+            opacity: readyToShow ? 0 : 1,
+            transition: "opacity 0.8s ease-in-out",
             pointerEvents: "none",
             display: "flex",
             alignItems: "center",
@@ -136,7 +144,7 @@ export default function DuoLottie({
       )}
 
       {/* Fallback image shown until Lottie frames mount (standard img) */}
-      {!fallbackPicture && fallbackSrc && !isLoaded && (
+      {!fallbackPicture && fallbackSrc && (
         <img
           src={fallbackSrc}
           alt={alt}
@@ -146,8 +154,8 @@ export default function DuoLottie({
             width: "100%",
             height: "100%",
             objectFit: "contain",
-            transition: "opacity 0.3s ease",
-            opacity: isLoaded ? 0 : 1,
+            opacity: readyToShow ? 0 : 1,
+            transition: "opacity 0.8s ease-in-out",
             pointerEvents: "none",
           }}
         />
@@ -162,10 +170,11 @@ export default function DuoLottie({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          opacity: isLoaded ? 1 : 0,
-          transition: "opacity 0.3s ease",
+          opacity: readyToShow ? 1 : 0,
+          transition: "opacity 0.8s ease-in-out",
         }}
       />
     </div>
   );
 }
+
