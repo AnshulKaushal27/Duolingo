@@ -88,40 +88,13 @@ function LessonContent() {
     }
   }, [lessonId]);
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "16px" }}>
-        <img src="/mascot/duo-happy.svg" alt="Loading Duo" style={{ width: "90px", height: "90px", animation: "duoBounce 1s infinite" }} />
-        <h2 style={{ fontSize: "20px", fontWeight: 800, color: "var(--duo-text)" }}>Loading lesson...</h2>
-      </div>
-    );
-  }
-
-  if (error || !lessonData || !lessonData.exercises.length) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "16px", padding: "20px", textAlign: "center" }}>
-        <img src="/mascot/duo-crying.svg" alt="Error Duo" style={{ width: "90px", height: "90px" }} />
-        <h2 style={{ fontSize: "22px", fontWeight: 800, color: "var(--duo-red)" }}>Could not load lesson</h2>
-        <p style={{ color: "var(--duo-text-muted)" }}>{error || "No exercises found for this lesson"}</p>
-        <button onClick={() => router.push("/learn")} className="duo-btn duo-btn-blue" style={{ marginTop: "16px" }}>
-          RETURN TO HOME
-        </button>
-      </div>
-    );
-  }
-
-  // If lesson completed, show celebratory screen!
-  if (completeResult) {
-    return <LessonCompleteScreen result={completeResult} />;
-  }
-
-  const currentExercise = lessonData.exercises[currentIndex];
-  const totalExercises = lessonData.exercises.length;
+  const currentExercise = lessonData?.exercises?.[currentIndex];
+  const totalExercises = lessonData?.exercises?.length || 0;
   const isEvaluated = feedbackStatus === "correct" || feedbackStatus === "incorrect";
 
   // Check if user has provided an answer to enable the "CHECK" button
   const canCheckAnswer = () => {
-    if (!currentAnswer) return false;
+    if (!currentAnswer || !currentExercise) return false;
     if (currentExercise.type === "translate_word_bank") {
       return Array.isArray(currentAnswer) && currentAnswer.length > 0;
     }
@@ -137,6 +110,7 @@ function LessonContent() {
 
   // Submit answer to backend (Backend Authoritative!)
   const handleCheck = async () => {
+    if (!lessonData || !currentExercise) return;
     setFeedbackStatus("submitting");
     try {
       const res = await api.submitExercise(
@@ -180,7 +154,7 @@ function LessonContent() {
 
   // Handle Skip (E8: counts as wrong, loses a heart, reveals solution, requeues exercise)
   const handleSkip = async () => {
-    if (feedbackStatus === "submitting" || isEvaluated) return;
+    if (!lessonData || !currentExercise || feedbackStatus === "submitting" || isEvaluated) return;
     setFeedbackStatus("submitting");
     try {
       const res = await api.submitExercise(
@@ -216,6 +190,7 @@ function LessonContent() {
 
   // Continue to next exercise or complete lesson
   const handleContinue = async () => {
+    if (!lessonData) return;
     if (currentIndex + 1 < totalExercises) {
       setCurrentIndex((prev) => prev + 1);
       setCurrentAnswer(null);
@@ -236,8 +211,8 @@ function LessonContent() {
   // Keyboard shortcut: Enter key submits or continues (E7)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if exit modal or out of hearts modal is open
-      if (exitModalOpen || outOfHeartsOpen) return;
+      // Don't trigger if loading, modal open or completed
+      if (loading || !lessonData || completeResult || exitModalOpen || outOfHeartsOpen) return;
 
       if (e.key === "Enter") {
         if (isEvaluated) {
@@ -249,7 +224,34 @@ function LessonContent() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isEvaluated, feedbackStatus, exitModalOpen, outOfHeartsOpen, currentAnswer, currentIndex]);
+  }, [loading, lessonData, completeResult, exitModalOpen, outOfHeartsOpen, isEvaluated, feedbackStatus, currentAnswer, currentIndex]);
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "16px" }}>
+        <img src="/mascot/duo-happy.svg" alt="Loading Duo" style={{ width: "90px", height: "90px", animation: "duoBounce 1s infinite" }} />
+        <h2 style={{ fontSize: "20px", fontWeight: 800, color: "var(--duo-text)" }}>Loading lesson...</h2>
+      </div>
+    );
+  }
+
+  if (error || !lessonData || !lessonData.exercises.length || !currentExercise) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "16px", padding: "20px", textAlign: "center" }}>
+        <img src="/mascot/duo-crying.svg" alt="Error Duo" style={{ width: "90px", height: "90px" }} />
+        <h2 style={{ fontSize: "22px", fontWeight: 800, color: "var(--duo-red)" }}>Could not load lesson</h2>
+        <p style={{ color: "var(--duo-text-muted)" }}>{error || "No exercises found for this lesson"}</p>
+        <button onClick={() => router.push("/learn")} className="duo-btn duo-btn-blue" style={{ marginTop: "16px" }}>
+          RETURN TO HOME
+        </button>
+      </div>
+    );
+  }
+
+  // If lesson completed, show celebratory screen!
+  if (completeResult) {
+    return <LessonCompleteScreen result={completeResult} />;
+  }
 
   // Progress Bar width calculation
   const progressPercent = Math.round(((currentIndex + (isEvaluated ? 1 : 0)) / totalExercises) * 100);
